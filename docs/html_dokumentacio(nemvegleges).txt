@@ -1,0 +1,539 @@
+index.html - Dokumentációja
+
+Főbb tartalmi szekciók
+Hero szekció
+
+Hangsúlyozza az ingyenes helyi szállítást
+
+25.000 Ft feletti rendelésekre vonatkozó feltétel
+
+Azonnali vásárlásra ösztönző "Rendelj most!" gomb
+
+Heti akciók rész - Időhöz kötött promóciók
+
+Heti számozással (20. hét akció) - sürgető érzetet kelt
+
+Speciális akciók kiemelése -15% kedvezménnyel
+
+Termékgrid struktúra az akciós termékek megjelenítésére
+
+Alkatrész kategóriák - Szisztematikus böngészési lehetőség
+
+Logikus kategóriaszervezés
+
+Gyors hozzáférés a különböző alkatrésztípusokhoz
+
+Vizuális kategóriamegjelenítés
+
+Márkabemutató - Megbízhatósági tényező
+
+Ismert nemzetközi márkák (BOSCH, VALEO, MANN stb.)
+
+Minőségi garancia érzékeltetése
+
+Partnerségi kapcsolatok hangsúlyozása
+
+Információs architektúra
+Navigációs menü tartalmi csoportosítása:
+
+Főoldal (áttekintés)
+
+Akciók (kedvezmények)
+
+Alkatrészek (termékkatalógus)
+
+Márkák (manufacturer szűrés)
+
+Szerviz (további szolgáltatások)
+
+Kapcsolat (elérhetőség)
+
+Lábléc információs rétegezése
+Jogi információk - ÁSZF, adatvédelem, szállítás, garancia
+
+Ügyfélsegítség - GYIK, vásárlási útmutató, rendeléskövetés, visszatérítések
+
+Kapcsolati adatok - Fizikai cím, telefon, email, nyitvatartás
+
+Marketing csatorna - Hírlevél feliratkozás
+
+
+akciok.html - Dokumentációja
+
+Fejléc rész - Azonos a főoldallal, konzisztens navigációt biztosít
+
+Céglogó és mottó
+
+Elérhetőségi információk (telefon, email)
+
+Kosár és bejelentkezési gombok
+
+Navigációs menü - Kiemeli az "Akciók" menüpontot aktív állapotban
+
+Logikus menüszerkezet a fő kategóriákkal
+
+Integrált keresőmező a gyors termékkereséshez
+
+Oldal fejléc szekció - Erőteljes marketing üzenetekkel
+
+"Akciós Termékek" főcím
+
+Sürgető szöveg: "Ne hagyd ki a legjobb ajánlatokat!"
+
+"AKCIÓS HÉT" badge a limitált időtartam hangsúlyozására
+
+Kedvezményes kategóriák - Szisztematikus csoportosítás
+
+Motor alkatrészek (-25% kedvezmény)
+
+Fékrendszer (-30% kedvezmény - legmagasabb kedvezmény)
+
+Kipufogó rendszer (-20% kedvezmény)
+
+Szerviz csomagok (-15% kedvezmény)
+
+Minden kategóriában termékgrid struktúra
+
+Extra ajánlat szekció - Prémium promóció
+
+50.000 Ft feletti vásárlásra INGYENES olajcsere
+
+Pontos időintervallum: 2023.11.01-2023.11.30
+
+Figyelemfelkeltő "✨ EXTRA AJÁNLAT ✨" fejléc
+
+Üzleti és marketing stratégiák
+Kedvezményes szintek - 15-30% közötti különböző kedvezmények
+
+Kategória-specifikus akciók - Minden fő alkatrészcsoportra külön ajánlat
+
+Időhöz kötöttség - "Akciós hét" és konkrét dátumok használata
+
+Extra ösztönzők - Ingyenes szolgáltatás (olajcsere) magasabb vásárlási küszöbhöz
+
+Sürgető kommunikáció - "Korlátozott mennyiség" figyelmeztetés
+
+Technikai megvalósítás
+Moduláris JavaScript - külön script file az akciós termékek kezelésére (script-akciok.js)
+
+Reszponzív design - termékgrid elrendezés mobil eszközökre
+
+Modális ablakok - kosár, bejelentkezés, regisztráció, elfelejtett jelszó
+
+Felhasználói státusz kezelés - bejelentkezés utáni felhasználói menü
+
+Felhasználói élmény (UX) jellemzők
+Egyszerű navigáció - világos hierarchia az akciós kategóriák között
+
+Vizuális kiemelések - kedvezményes badge-ek (-25%, -30% stb.)
+
+Átlátható struktúra - minden kategória egyértelműen elválik
+
+Gyors vásárlási folyamat - kosár gomb mindig látható helyen
+
+Információs transzparencia - minden akció feltételei egyértelműen feltüntetve
+
+Az akciók oldal célja, hogy a vásárlókat a kedvezményes termékek felé terelje, miközben áttekinthető és motiváló vásárlási környezetet biztosít. A különböző kedvezményi szintek és kiegészítő ajánlatok segítségével növeli az átlagos rendelési értéket és a vásárlási gyakoriságot.
+
+
+alkatresz.html - Dokumentációja
+
+
+Konzisztens fejléc - Egységes branding és navigáció
+
+Céglogó és mottó megtartása
+
+Elérhetőségi információk helye változatlan
+
+Kosár és felhasználói funkciók
+
+Navigációs menü - "Alkatrészek" aktív állapotban
+
+Legördülő menüstruktúra a kategóriákkal
+
+Integrált keresőfunkció
+
+Logikus menühierarchia
+
+Oldal fejléc - Tiszta célmeghatározás
+
+"Alkatrészek" főcím
+
+Útmutató szöveg: "Válassz kategóriát..."
+
+Felhasználóközpontú megfogalmazás
+
+Kategória szűrőrendszer - Interaktív tartalomszervezés
+
+Összes - Teljes termékkatalógus megjelenítése
+
+Motor - Motorhoz kapcsolódó alkatrészek
+
+Fékrendszer - Fékrendszer komponensek
+
+Felfüggesztés - Futómű és felfüggesztési elemek
+
+Kipufogó - Kipufogórendszer alkatrészek
+
+Villamosság - Elektromos rendszer komponensek
+
+Technikai megvalósítás és funkcionalitás
+Dinamikus tartalom - JavaScript vezérelt termékmegjelenítés
+
+Kategóriaszűrés - data-category attribútumok alapján
+
+Aktív állapot kezelés - szűrőgombok aktív/inaktív státusza
+
+Moduláris script - külön script-alkatreszek.js a terméklistázáshoz
+
+Felhasználói élmény (UX) tervezési elvek
+Egyszerű navigáció - egykattintásos kategóriaváltás
+
+Gyors tartalomváltás - azonnali szűrés JavaScript segítségével
+
+Átlátható szerkezet - logikus kategóriacsoportosítás
+
+Reszponzív design - optimális megjelenítés minden eszközön
+
+Intuitív interfész - világos szűrőgombok és termékgrid
+
+Üzleti célok és marketing érték
+Teljes katalógus bemutatása - minden termék egy helyen
+
+Böngészési élmény - könnyű termékfelfedezés
+
+Konverzió optimalizálás - gyors hozzáférés a termékekhez
+
+Keresőmotor-optimalizálás - jól strukturált tartalom
+
+Cross-selling lehetőségek - kapcsolódó termékek csoportosítása
+
+Tartalomszervezési stratégiák
+Hierarchikus kategorizálás - fő alkatrészcsoportok szerint
+
+Technikai logika - autórendszerek szerinti csoportosítás
+
+Felhasználói szándék - gyakori javítási kategóriák
+
+Kompatibilitás - autótípusokhoz igazodó szervezés
+
+Az Alkatrészek oldal a webáruház szívében helyezkedik el, biztosítva hogy a vásárlók könnyedén megtalálják a szükséges termékeket. A jól megtervezett kategóriarendszer és szűrőfunkciók lehetővé teszik a hatékony termékkutatást, miközben a felhasználó számára áttekinthető és inspiráló vásárlási környezetet teremtenek.
+
+
+markak.html - Dokumentációja
+
+Konzisztens fejléc és navigáció - Egységes weboldal struktúra
+
+"Márkák" menüpont aktív állapotban
+
+Standard fejléc elemek (logó, elérhetőség, felhasználói funkciók)
+
+Oldal fejléc szekció - Egyértelmű célmeghatározás
+
+"Nagy Márkák" főcím
+
+Minőségi hangsúly: "Minőségi alkatrészek a legjobb gyártóktól"
+
+Bizalomépítő kommunikáció
+
+Márkaszűrő rendszer - Interaktív tartalom-szervezés
+
+Összes márka - Teljes márkaportfólió megjelenítése
+
+Egyedi márkagombok: BOSCH, VALEO, MANN, CONTINENTAL, NGK, BREMBO, stb...
+
+data-brand attribútumok a JavaScript szűréshez
+
+Márkabemutató szekció - Vizuális márka prezentáció
+
+brands-grid konténer a márkák rendezett megjelenítésére
+
+Grafikus elemekkel támogatott márkamegjelenítés
+
+Márka termékek szekció - Dinamikus termékmegjelenítés
+
+"Márka termékek" alcím
+
+Termékgrid struktúra a kiválasztott márka termékeinek
+
+Valós idejű tartalomfrissítés szűrés alapján
+
+Technikai megvalósítás és funkcionalitás
+Dinamikus tartalomkezelés - script-markak.js speciális funkcionalitással
+
+Interaktív szűrés - márka alapú termékszűrés
+
+Aktív állapot kezelés - szűrőgombok vizuális visszajelzése
+
+Moduláris architektúra - külön JavaScript fájl a márkaspecifikus logikához
+
+Felhasználói élmény (UX) tervezési elvek
+Gyors márkaváltás - azonnali tartalomfrissítés
+
+Két szintű tartalomszervezés - márkaáttekintés + terméklista
+
+Intuitív navigáció - egyértelmű szűrőgombok
+
+Reszponzív design - optimális élmény minden eszközön
+
+Konzisztens viselkedés - egységes interakciós minta
+
+Üzleti célok és marketing érték
+Márkaérték kommunikáció - minőségi gyártók bemutatása
+
+Bizalomépítés - ismert és megbízható márkák hangsúlyozása
+
+Célzott vásárlás - márka preferencia alapján történő böngészés
+
+Cross-selling - kapcsolódó márkák és termékek bemutatása
+
+Versenyelőny - széles márkaportfólió demonstrálása
+
+Tartalomszervezési stratégiák
+Márkahierarchia - világos és logikus márkabemutató
+
+Termékkapcsolatok - márkák és termékeik közötti egyértelmű kapcsolat
+
+Minőségi kategorizálás - prémium márkák kiemelése
+
+Felhasználói preferenciák - gyakran keresett márkák előtérbe helyezése
+
+Vizuális és tartalmi jellemzők
+Professzionális megjelenés - márkák komoly és megbízható bemutatása
+
+Konzisztens branding - egységes márkamegjelenítés
+
+Információs hierarchia - fontos információk előtérbe helyezése
+
+Esztétikus elrendezés - kiegyensúlyozott design a funkcionalitással
+
+A Márkák oldal stratégiai fontosságú eleme a webáruháznak, hiszen közvetíti a vállalat partnerségi kapcsolatait és a kínált termékek minőségi színvonalát. A jól megtervezett márkabemutató nemcsak segíti a vásárlók döntéshozatalát, hanem erősíti a webáruház megbízhatóságának és szakértelmének érzékeltetését is
+
+
+szerviz.html - Dokumentációja
+
+Konzisztens fejléc és navigáció - Egységes weboldal struktúra
+
+"Szerviz" menüpont aktív állapotban
+
+Standard fejléc elemek megőrzése
+
+Oldal fejléc szekció - Professzionális bemutatkozás
+
+"Professzionális Autószerviz" főcím
+
+Minőségi és szakértői hangsúly: "Minőségi szervizelés és javítás szakértő munkatársainkkal"
+
+Szolgáltatás áttekintés - Három fő szerviz kategória
+
+Alap szerviz (🔧) - 25.000 Ft-tól
+
+Olajcsere és szűrők cseréje
+
+Fékrendszer ellenőrzés
+
+Futómű beállítás
+
+Általános műszaki ellenőrzés
+
+Nagy szerviz (⚙️) - 45.000 Ft-tól
+
+Műszaki vizsga előkészítés
+
+Teljes folyadékcsere
+
+Gyertyacsere és beállítás
+
+Fékrendszer felújítás
+
+Diagnosztika (🚗) - 15.000 Ft-tól
+
+Motorhiba diagnosztika
+
+Elektronikai rendszer ellenőrzés
+
+Futómű diagnosztika
+
+Teljesítményvizsgálat
+
+Időpontfoglalási rendszer - Interaktív űrlap
+
+Kötelező mezők: Név, E-mail, Telefon, Autó típusa, Szerviz típusa, Dátum
+
+Opcionális: Egyéb megjegyzés
+
+Szerviz típus választó: Alap szerviz, Nagy szerviz, Diagnosztika, Javítás, Egyéb
+
+Szerviz csomagok - Csomagárazás és értékközvetítés
+
+Bronz Csomag - 35.000 Ft
+
+Alap szolgáltatások + fényezésvédelem
+
+Ezüst Csomag (Legnépszerűbb) - 55.000 Ft
+
+Bronz csomag + légfilter csere, fűtés-hűtés ellenőrzés, futómű beállítás, ingyenes mosás
+
+Arany Csomag - 85.000 Ft
+
+Ezüst csomag + teljes fékszerviz, kipufogórendszer ellenőrzés, klimaszerviz, 1 év garancia
+
+Technikai megvalósítás és funkcionalitás
+Speciális JavaScript - script-szerviz.js az időpontfoglalási logikához
+
+Reszponzív design - szolgáltatás kártyák és csomag grid
+
+Űrlap validáció - kötelező mezők és dátum választó
+
+Árazási transzparencia - minden szolgáltatás és csomag ára egyértelműen feltüntetve
+
+Üzleti stratégia és értékközvetítés
+Szolgáltatás diversifikáció - alkatrészértékesítés + szerviz szolgáltatás
+
+Ártranszparencia - "tól" árak a személyre szabott kalkuláció lehetőségével
+
+Csomagértékesítés - tiered pricing modell a különböző igények kiszolgálására
+
+Megbízhatósági jelek - garanciák, professzionális kommunikáció
+
+Marketing és értékesítési elemek
+Ajánlott csomag - "Legnépszerűbb" badge a döntéstámogatáshoz
+
+Szolgáltatás ikonok - vizuális elemek a szolgáltatások azonosíthatóságához
+
+Ár-érték arány - progresszív csomagok az érték demonstrálására
+
+Call-to-action gombok - "Megrendelés" gombok a konverzió ösztönzésére
+
+Felhasználói élmény (UX) tervezési elvek
+Egyszerű navigáció - logikus szolgáltatás szerkezet
+
+Gyors időpontfoglalás - minimalizált űrlap kitöltési idő
+
+Átlátható árazás - nincs rejtett költség
+
+Bizalomépítés - részletes szolgáltatásleírások
+
+Reszponzív design - mobilbarát időpontfoglalás
+
+A Szerviz oldal stratégiai fontosságú a webáruház üzleti modelljében, hiszen kiterjeszti a vállalat szolgáltatási portfólióját a fizikai szervizelésre. A jól strukturált szolgáltatáskínálat és a felhasználóbarát időpontfoglalási rendszer lehetővé teszi az ügyfelek számára, hogy egy helyen intézzék mind az alkatrész vásárlást, mind a szervizelést, ezzel növelve az ügyfélélményt és a vállalat bevételi forrásait.
+
+
+kapcsolat.thml - Dokumentációja
+
+Konzisztens fejléc és navigáció - Egységes weboldal struktúra
+
+"Kapcsolat" menüpont aktív állapotban
+
+Standard fejléc elemek megőrzése
+
+Oldal fejléc szekció - Barátságos és meghívó bemutatkozás
+
+"Kapcsolat" főcím
+
+Bizalomgerjesztő üzenet: "Keress minket bizalommal! Szívesen segítünk minden kérdésedben."
+
+Kapcsolati információk szekció - Átfogó elérhetőségi adatok
+
+Címünk (📍)
+
+1117 Budapest, Alkotás utca 12.
+
+Magyarország
+
+Telefon (📞)
+
++36 1 234 5678
+
+H-P: 8:00-17:00
+
+E-mail (✉️)
+
+info@autoparts.hu
+
+ugyfelszolgalat@autoparts.hu
+
+Nyitvatartás (🕒)
+
+Hétfő-Péntek: 8:00-17:00
+
+Szombat: 9:00-13:00
+
+Vasárnap: Zárva
+
+Kapcsolati űrlap szekció - Interaktív üzenetküldési lehetőség
+
+Kötelező mezők: Név, E-mail, Tárgy, Üzenet
+
+Kétszálas form layout (Név + E-mail egymás mellett)
+
+"Üzenet küldése" call-to-action gomb
+
+Megközelíthetőség szekció - Részletes elhelyezkedési információk
+
+Térkép helyett - strukturált szöveges információ
+
+Közlekedési lehetőségek:
+
+Busz: 7, 7A, 107
+
+Villamos: 4, 6
+
+Metró: M4 - Újbuda-központ
+
+Parkolás: Ingyenes parkoló az épület mögött
+
+GYIK szekció - Gyakran Ismételt Kérdések
+
+Szállítási idő: Budapesten 24 óra, országosan 2-3 munkanap
+
+Fizetési módok: Átutalás, készpénz, bankkártya, utánvét
+
+Garancia: Minimum 1 év minden termékre
+
+Termékvisszaküldés: 14 napon belül eredeti állapotban
+
+Technikai megvalósítás és funkcionalitás
+Speciális JavaScript - script-kapcsolat.js az űrlapkezeléshez
+
+Reszponzív design - mobilbarát elrendezés
+
+Űrlap validáció - kötelező mezők ellenőrzése
+
+Strukturált adatok - jól olvasható információábrázolás
+
+Felhasználói élmény (UX) tervezési elvek
+Azonnali hozzáférés - minden kapcsolati információ egy helyen
+
+Intuitív navigáció - logikus információhierarchia
+
+Gyors üzenetküldés - minimalizált űrlap kitöltési idő
+
+Átlátható információk - jól strukturált adatok
+
+Mobilbarát design - optimális élmény minden eszközön
+
+Üzleti célok és kommunikációs stratégiák
+Bizalomépítés - részletes és pontos kapcsolati információk
+
+Hozzáférhetőség - több kommunikációs csatorna (telefon, email, űrlap)
+
+Proaktív problémamegoldás - GYIK szekció a gyakori kérdésekre
+
+Professzionális megjelenés - rendezett és hiteles információközvetítés
+
+Ügyfélközpontúság - barátságos és segítőkész hangvétel
+
+Tartalomszervezési jellemzők
+Hierarchikus információábrázolás - fontos információk előtérben
+
+Vizuális segítség - ikonok az információtípusok azonosításához
+
+Konzisztens formázás - egységes információmegjelenítés
+
+Gyakori kérdések előre megválaszolva - csökkenti a támogatási terhelést
+
+Többszörös kapcsolati mód - különböző preferenciák kiszolgálása
+
+A Kapcsolat oldal kulcsfontosságú eleme a webáruháznak, hiszen közvetíti a vállalat megbízhatóságát és hozzáférhetőségét. A jól megtervezett kapcsolati pontok és a részletes információk bizalmat keltenek a potenciális vásárlókban, miközben könnyű és gyors kommunikációt biztosítanak a meglévő ügyfelek számára. Az oldal nemcsak elérhetőségi információkat szolgáltat, hanem proaktívan megválaszolja a leggyakoribb ügyfélkérdéseket is, ezzel csökkentve a támogatási igényeket és javítva az általános ügyfélélményt.
+
