@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kapcsolat - Autóalkatrész Webáruház</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -13,15 +15,10 @@
                 <h1>AUTO<span>PARTS</span></h1>
                 <p>Minden, amire az autódnak szüksége van</p>
             </div>
-            <div class="header-info">
             <div class="user-actions">
-                <button id="cart-btn" class="btn btn-accent btn-sm">
-                    <span>🛒 Kosár (<span id="cart-count">0</span>)</span>
-                </button>
                 <button id="login-btn" class="btn btn-outline btn-sm">
                     <span id="login-btn-text">Bejelentkezés</span>
                 </button>
-            </div>
             </div>
         </div>
     </header>
@@ -31,11 +28,6 @@
             <ul class="main-menu">
                 <li><a href="index.html">Főoldal</a></li>
                 <li><a href="akciok.html">Akciók</a></li>
-                <li class="dropdown">
-                    <a href="alkatreszek.html">Alkatrészek ▾</a>
-                    <ul class="dropdown-menu" id="categories-menu"></ul>
-                </li>
-                <li><a href="markak.html">Márkák</a></li>
                 <li><a href="szerviz.html">Szerviz</a></li>
                 <li><a href="kapcsolat.html" class="active">Kapcsolat</a></li>
             </ul>
@@ -138,27 +130,7 @@
             </div>
         </section>
 
-        <section class="faq-section">
-            <h2>Gyakran Ismételt Kérdések</h2>
-            <div class="faq-grid">
-                <div class="faq-item">
-                    <h3>Mennyi idő a szállítás?</h3>
-                    <p>Budapesten belül 24 órán belül, országos szállítás 2-3 munkanap.</p>
-                </div>
-                <div class="faq-item">
-                    <h3>Milyen fizetési módokat fogadtok el?</h3>
-                    <p>Átutalás, készpénz, bankkártya és utánvét is lehetséges.</p>
-                </div>
-                <div class="faq-item">
-                    <h3>Van garancia a termékekre?</h3>
-                    <p>Igen, minden termékre minimum 1 év garanciát adunk.</p>
-                </div>
-                <div class="faq-item">
-                    <h3>Hogyan tudom visszaküldeni a terméket?</h3>
-                    <p>14 napon belül bármilyen terméket visszaküldhetsz, ha az eredeti állapotában van.</p>
-                </div>
-            </div>
-        </section>
+
     </main>
 
     <footer>
@@ -204,20 +176,7 @@
         </div>
     </footer>
 
-    <!-- Kosár modális ablak -->
-    <div id="cart-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Bevásárlókosár</h2>
-            <div id="cart-items"></div>
-            <div class="cart-total">
-                <p>Összesen: <span id="cart-total-price">0</span> Ft</p>
-                <button id="checkout-btn">Tovább a fizetéshez</button>
-            </div>
-        </div>
-    </div>
-
-        <!-- Bejelentkezési modális ablak -->
+    <!-- Bejelentkezési modális ablak -->
     <div id="login-modal" class="modal">
         <div class="modal-content">
             <span class="close" id="close-login">&times;</span>
@@ -226,7 +185,7 @@
                     <button class="auth-tab active" data-tab="login">Bejelentkezés</button>
                     <button class="auth-tab" data-tab="register">Regisztráció</button>
                 </div>
-                
+
                 <!-- Bejelentkezési űrlap -->
                 <form id="login-form" class="auth-form active">
                     <h2>Bejelentkezés</h2>
@@ -248,7 +207,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary btn-full">Bejelentkezés</button>
                 </form>
-                
+
                 <!-- Regisztrációs űrlap -->
                 <form id="register-form" class="auth-form">
                     <h2>Regisztráció</h2>
@@ -316,20 +275,23 @@
         <div class="user-menu-items">
             <a href="#" class="user-menu-item">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    <path
+                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                 </svg>
                 Profilom
             </a>
             <a href="#" class="user-menu-item">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z"/>
+                    <path
+                        d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z" />
                 </svg>
                 Rendeléseim
             </a>
             <div class="user-menu-divider"></div>
             <button id="logout-btn" class="user-menu-item logout">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                    <path
+                        d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
                 </svg>
                 Kijelentkezés
             </button>
@@ -341,4 +303,5 @@
     <script src="script.js"></script>
     <script src="simple-auth.js"></script>
 </body>
+
 </html>

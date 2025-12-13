@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Akciók - Autóalkatrész Webáruház</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
@@ -13,15 +13,10 @@
                 <h1>AUTO<span>PARTS</span></h1>
                 <p>Minden, amire az autódnak szüksége van</p>
             </div>
-            <div class="header-info">
             <div class="user-actions">
-                <button id="cart-btn" class="btn btn-accent btn-sm">
-                    <span>🛒 Kosár (<span id="cart-count">0</span>)</span>
-                </button>
                 <button id="login-btn" class="btn btn-outline btn-sm">
                     <span id="login-btn-text">Bejelentkezés</span>
                 </button>
-            </div>
             </div>
         </div>
     </header>
@@ -31,11 +26,6 @@
             <ul class="main-menu">
                 <li><a href="index.html">Főoldal</a></li>
                 <li><a href="akciok.html" class="active">Akciók</a></li>
-                <li class="dropdown">
-                    <a href="alkatreszek.html">Alkatrészek ▾</a>
-                    <ul class="dropdown-menu" id="categories-menu"></ul>
-                </li>
-                <li><a href="markak.html">Márkák</a></li>
                 <li><a href="szerviz.html">Szerviz</a></li>
                 <li><a href="kapcsolat.html">Kapcsolat</a></li>
             </ul>
@@ -48,38 +38,54 @@
 
     <main class="container">
         <section class="page-header">
-            <h1>Akciós Termékek</h1>
-            <p>Ne hagyd ki a legjobb ajánlatokat! Korlátozott mennyiségben.</p>
+            <h1>Akciós Szolgáltatásaink</h1>
+            <p>Ne hagyd ki a legjobb ajánlatokat! Korlátozott időtartamig.</p>
             <div class="sale-badge">AKCIÓS HÉT</div>
         </section>
 
         <section class="sale-categories">
             <div class="sale-category">
-                <h2><span class="discount-badge-large">-25%</span> Motor alkatrészek</h2>
+                <h2><span class="discount-badge-large">-25%</span>Motor alkatrészek</h2>
                 <div class="products-grid" id="motor-sale"></div>
+                <ul>
+                    <h4><li>Olajcsere csomag (olaj + szűrő ellenőrzés)</li></h4>
+                    <h4><li>Légszűrő és pollenszűrő csere</li></h4>
+                    <h4><li>Gyújtógyertyák ellenőrzése és cseréje</li></h4>
+                    <h4><li>Motor állapotfelmérés</li></h4>
+                    <h4><li>Alap karbantartási átvizsgálás</li></h4>
+                </ul>
             </div>
 
             <div class="sale-category">
-                <h2><span class="discount-badge-large">-30%</span> Fékrendszer</h2>
+                <h2><span class="discount-badge-large">-30%</span>Kipufogó rendszer</h2>
                 <div class="products-grid" id="fek-sale"></div>
+                <ul>
+                    <h4><li>Kipufogó rendszer átvizsgálás</li></h4>
+                    <h4><li>Katalizátor ellenőrzés</li></h4>
+                    <h4><li>Lambdaszonda vizsgálat</li></h4>
+                    <h4><li>Rögzítések és tömítések ellenőrzése</li></h4>
+                    <h4><li>Zajszint ellenőrzés</li></h4>
+                </ul>
             </div>
 
             <div class="sale-category">
-                <h2><span class="discount-badge-large">-20%</span> Kipufogó rendszer</h2>
+                <h2><span class="discount-badge-large">-20%</span>Szerviz csomagok</h2>
                 <div class="products-grid" id="kipufogo-sale"></div>
-            </div>
-
-            <div class="sale-category">
-                <h2><span class="discount-badge-large">-15%</span> Szerviz csomagok</h2>
-                <div class="products-grid" id="szerviz-sale"></div>
+                <ul>
+                    <h4><li>Alap szervizcsomag</li></h4>
+                    <h4><li>Időszakos karbantartási csomag</li></h4>
+                    <h4><li>Teljes állapotfelmérés</li></h4>
+                    <h4><li>Felkészítés műszaki vizsgára</li></h4>
+                    <h4><li>Szezonális átvizsgálás</li></h4>
+                </ul>
             </div>
         </section>
 
         <section class="special-offer">
             <div class="offer-banner">
                 <h3>✨ EXTRA AJÁNLAT ✨</h3>
-                <p>Vásárolj most 50.000 Ft felett és kapj egy INGYENES olajcserét!</p>
-                <small>Akció érvényes: 2023.11.01-2023.11.30</small>
+                <p>Foglolj valamely szervizünkben iőpontot és nyerj egy INGYENES olajcserét!</p>
+                <small>Akció érvényes: 2026.11.01-2026.11.30</small>
             </div>
         </section>
     </main>
@@ -127,58 +133,7 @@
         </div>
     </footer>
 
-
-<div id="cart-modal" class="modal cart-modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <div class="cart-header">
-            <h2>🛒 Bevásárlókosár</h2>
-        </div>
-        
-        <div class="cart-body">
-            <div id="cart-items" class="cart-items">
-            </div>
-            
-            <div id="cart-empty" class="cart-empty-state" style="display: none;">
-                <div class="cart-empty-icon">🛒</div>
-                <h3>A kosár üres</h3>
-                <p>Válassz ki néhány terméket a vásárláshoz</p>
-                <button class="btn btn-primary continue-shopping">
-                    🔍 Termékek böngészése
-                </button>
-            </div>
-        </div>
-        
-        <div class="cart-footer">
-            <div class="cart-summary">
-                <div class="summary-row">
-                    <span class="summary-label">Részösszeg:</span>
-                    <span class="summary-value" id="cart-subtotal">0 Ft</span>
-                </div>
-                <div class="summary-row">
-                    <span class="summary-label">Szállítás:</span>
-                    <span class="summary-value" id="cart-shipping">Ingyenes</span>
-                </div>
-                <div class="summary-row total">
-                    <span class="summary-label">Összesen:</span>
-                    <span class="summary-value" id="cart-total-price">0 Ft</span>
-                </div>
-            </div>
-            
-            <div class="cart-actions">
-                <button class="continue-shopping">
-                    ← Vásárlás folytatása
-                </button>
-                <button id="checkout-btn" class="checkout-btn" disabled>
-                    💳 Tovább a fizetéshez
-                    <span id="cart-total-amount">0 Ft</span>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Bejelentkezési modális ablak -->
+    <!-- Bejelentkezési modális ablak -->
     <div id="login-modal" class="modal">
         <div class="modal-content">
             <span class="close" id="close-login">&times;</span>

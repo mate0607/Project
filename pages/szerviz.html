@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Szerviz - Autóalkatrész Webáruház</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
@@ -13,15 +13,10 @@
                 <h1>AUTO<span>PARTS</span></h1>
                 <p>Minden, amire az autódnak szüksége van</p>
             </div>
-            <div class="header-info">
             <div class="user-actions">
-                <button id="cart-btn" class="btn btn-accent btn-sm">
-                    <span>🛒 Kosár (<span id="cart-count">0</span>)</span>
-                </button>
                 <button id="login-btn" class="btn btn-outline btn-sm">
                     <span id="login-btn-text">Bejelentkezés</span>
                 </button>
-            </div>
             </div>
         </div>
     </header>
@@ -31,11 +26,6 @@
             <ul class="main-menu">
                 <li><a href="index.html">Főoldal</a></li>
                 <li><a href="akciok.html">Akciók</a></li>
-                <li class="dropdown">
-                    <a href="alkatreszek.html">Alkatrészek ▾</a>
-                    <ul class="dropdown-menu" id="categories-menu"></ul>
-                </li>
-                <li><a href="markak.html">Márkák</a></li>
                 <li><a href="szerviz.html" class="active">Szerviz</a></li>
                 <li><a href="kapcsolat.html">Kapcsolat</a></li>
             </ul>
@@ -53,44 +43,47 @@
         </section>
 
         <section class="services-overview">
+            <div class="section-header">
+                <h2>Szervizeink</h2>
+            </div>
             <div class="services-grid">
                 <div class="service-card">
                     <div class="service-icon">🔧</div>
-                    <h3>Alap szerviz</h3>
-                    <p>Rendszeres karbantartás és ellenőrzés</p>
+                    <h3>CityCar Szerviz</h3>
+                    <p>Budapest, XIII. kerület – Váci út 120.</p>
                     <ul>
-                        <li>Olajcsere és szűrők cseréje</li>
-                        <li>Fékrendszer ellenőrzés</li>
-                        <li>Futómű beállítás</li>
-                        <li>Általános műszaki ellenőrzés</li>
+                        <li>Alap- és nagy szerviz</li>
+                        <li>Olajcsere, fék- és futómű javítás</li>
+                        <li>Műszaki vizsga előkészítés</li>
+                        <li>Gyors diagnosztikai átvizsgálás</li>
                     </ul>
-                    <div class="service-price">25.000 Ft-tól</div>
+                    <div class="service-price">+36 30 123 4567</div>
                 </div>
 
                 <div class="service-card">
                     <div class="service-icon">⚙️</div>
-                    <h3>Nagy szerviz</h3>
-                    <p>Átfogó karbantartás és javítás</p>
+                    <h3>ProAuto Javító</h3>
+                    <p>Budapest – Kassai út 45.</p>
                     <ul>
-                        <li>Műszaki vizsga előkészítés</li>
-                        <li>Teljes folyadékcsere</li>
-                        <li>Gyertyacsere és beállítás</li>
-                        <li>Fékrendszer felújítás</li>
+                        <li>Teljes körű autószerviz</li>
+                        <li>Motor- és elektronikai diagnosztika</li>
+                        <li>Futómű beállítás</li>
+                        <li>Klíma töltés és javítás</li>
                     </ul>
-                    <div class="service-price">45.000 Ft-tól</div>
+                    <div class="service-price">+36 20 987 6543</div>
                 </div>
 
                 <div class="service-card">
                     <div class="service-icon">🚗</div>
-                    <h3>Diagnosztika</h3>
-                    <p>Modern diagnosztikai eszközökkel</p>
+                    <h3>Fix&Go Autószerviz</h3>
+                    <p>Budapest – Kálvária sugárút 89.</p>
                     <ul>
-                        <li>Motorhiba diagnosztika</li>
-                        <li>Elektronikai rendszer ellenőrzés</li>
-                        <li>Futómű diagnosztika</li>
+                        <li>Gyorsszerviz és időszakos karbantartás</li>
+                        <li>Fék- és lengéscsillapító csere</li>
+                        <li>Hibakód olvasás</li>
                         <li>Teljesítményvizsgálat</li>
                     </ul>
-                    <div class="service-price">15.000 Ft-tól</div>
+                    <div class="service-price">+36 70 555 1122</div>
                 </div>
             </div>
         </section>
@@ -138,50 +131,6 @@
                 </form>
             </div>
         </section>
-
-        <section class="service-packages">
-            <h2>Szerviz Csomagok</h2>
-            <div class="packages-grid">
-                <div class="package-card">
-                    <h3>Bronz Csomag</h3>
-                    <div class="package-price">35.000 Ft</div>
-                    <ul>
-                        <li>Olajcsere és szűrők cseréje</li>
-                        <li>Fékrendszer ellenőrzés</li>
-                        <li>Fényezésvédelem</li>
-                        <li>Műszaki alapellátás</li>
-                    </ul>
-                    <button class="package-btn">Megrendelés</button>
-                </div>
-
-                <div class="package-card recommended">
-                    <div class="recommended-badge">Legnépszerűbb</div>
-                    <h3>Ezüst Csomag</h3>
-                    <div class="package-price">55.000 Ft</div>
-                    <ul>
-                        <li>Minden a Bronz csomagból</li>
-                        <li>Légfilter csere</li>
-                        <li>Fűtés- és hűtésrendszer ellenőrzés</li>
-                        <li>Futómű beállítás</li>
-                        <li>Ingyenes mosás</li>
-                    </ul>
-                    <button class="package-btn">Megrendelés</button>
-                </div>
-
-                <div class="package-card">
-                    <h3>Arany Csomag</h3>
-                    <div class="package-price">85.000 Ft</div>
-                    <ul>
-                        <li>Minden az Ezüst csomagból</li>
-                        <li>Teljes fékrendszer szerviz</li>
-                        <li>Kipufogórendszer ellenőrzés</li>
-                        <li>Klimaszerviz</li>
-                        <li>1 év garancia</li>
-                    </ul>
-                    <button class="package-btn">Megrendelés</button>
-                </div>
-            </div>
-        </section>
     </main>
 
     <footer>
@@ -227,18 +176,6 @@
         </div>
     </footer>
 
-    <!-- Kosár modális ablak -->
-    <div id="cart-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Bevásárlókosár</h2>
-            <div id="cart-items"></div>
-            <div class="cart-total">
-                <p>Összesen: <span id="cart-total-price">0</span> Ft</p>
-                <button id="checkout-btn">Tovább a fizetéshez</button>
-            </div>
-        </div>
-    </div>
         <!-- Bejelentkezési modális ablak -->
     <div id="login-modal" class="modal">
         <div class="modal-content">
