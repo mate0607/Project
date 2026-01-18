@@ -1,0 +1,555 @@
+// Kosár kezelése
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+// DOM elemek
+const cartBtn = document.getElementById('cart-btn');
+const cartModal = document.getElementById('cart-modal');
+const closeModal = document.querySelector('.close');
+const cartItems = document.getElementById('cart-items');
+const cartCount = document.getElementById('cart-count');
+const cartTotalPrice = document.getElementById('cart-total-price');
+const checkoutBtn = document.getElementById('checkout-btn');
+
+// Eseményfigyelők
+document.addEventListener('DOMContentLoaded', function() {
+    initAkciokPage();
+    
+    // Kosár gomb
+    cartBtn.addEventListener('click', function() {
+        cartModal.style.display = 'block';
+        updateCartDisplay();
+    });
+    
+    // Modális bezárása
+    closeModal.addEventListener('click', function() {
+        cartModal.style.display = 'none';
+    });
+    
+    // Modális bezárása kívülre kattintva
+    window.addEventListener('click', function(event) {
+        if (event.target === cartModal) {
+            cartModal.style.display = 'none';
+        }
+    });
+    
+    // Fizetés gomb
+    checkoutBtn.addEventListener('click', function() {
+        if (cart.length === 0) {
+            alert('A kosár üres!');
+            return;
+        }
+        alert('Köszönjük a vásárlást! Összesen: ' + calculateTotal() + ' Ft');
+        cart = [];
+        saveCart();
+        updateCartCount();
+        cartModal.style.display = 'none';
+    });
+});
+
+// Akciók oldal inicializálása
+function initAkciokPage() {
+    renderCategoriesMenu();
+    renderSaleProducts();
+    updateCartCount();
+}
+
+// Kategóriák menü megjelenítése
+function renderCategoriesMenu() {
+    const categoriesMenu = document.getElementById('categories-menu');
+    
+    categories.forEach(category => {
+        const menuItem = document.createElement('li');
+        menuItem.innerHTML = `<a href="alkatreszek.html" data-category="${category.name}">${category.name}</a>`;
+        categoriesMenu.appendChild(menuItem);
+    });
+}
+
+// Akciós termékek megjelenítése
+function renderSaleProducts() {
+    // Motor alkatrészek akció
+    const motorSale = document.getElementById('motor-sale');
+    const motorProducts = products.engine.slice(0, 4).map(product => ({
+        ...product,
+        originalPrice: Math.round(product.price * 1.25),
+        price: product.price
+    }));
+    
+    motorProducts.forEach(product => {
+        const productCard = createSaleProductCard(product);
+        motorSale.appendChild(productCard);
+    });
+    
+    // Fékrendszer akció
+    const fekSale = document.getElementById('fek-sale');
+    const fekProducts = products.brakes.slice(0, 4).map(product => ({
+        ...product,
+        originalPrice: Math.round(product.price * 1.30),
+        price: product.price
+    }));
+    
+    fekProducts.forEach(product => {
+        const productCard = createSaleProductCard(product);
+        fekSale.appendChild(productCard);
+    });
+    
+    // Kipufogó akció
+    const kipufogoSale = document.getElementById('kipufogo-sale');
+    const kipufogoProducts = products.exhausts.slice(0, 4).map(product => ({
+        ...product,
+        originalPrice: Math.round(product.price * 1.20),
+        price: product.price
+    }));
+    
+    kipufogoProducts.forEach(product => {
+        const productCard = createSaleProductCard(product);
+        kipufogoSale.appendChild(productCard);
+    });
+    
+    // Szerviz akció
+    const szervizSale = document.getElementById('szerviz-sale');
+    const szervizProducts = products.service.slice(0, 4).map(product => ({
+        ...product,
+        originalPrice: Math.round(product.price * 1.15),
+        price: product.price
+    }));
+    
+    szervizProducts.forEach(product => {
+        const productCard = createSaleProductCard(product);
+        szervizSale.appendChild(productCard);
+    });
+}
+
+// Akciós termékkártya létrehozása
+function createSaleProductCard(product) {
+    const productCard = document.createElement('div');
+    productCard.className = 'product-card sale-product';
+    
+    const discount = Math.round((1 - product.price / product.originalPrice) * 100);
+    
+    productCard.innerHTML = `
+        <div class="sale-ribbon">-${discount}%</div>
+        <div class="product-image">${product.icon}</div>
+        <div class="product-info">
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">
+                <span class="original-price">${product.originalPrice} Ft</span>
+                ${product.price} Ft
+            </div>
+            <div class="sale-countdown">⏰ Korlátozott mennyiség</div>
+            <button class="add-to-cart" data-id="${product.id}">Kosárba</button>
+        </div>
+    `;
+    
+    // Kosárba helyezés esemény
+    const addToCartBtn = productCard.querySelector('.add-to-cart');
+    addToCartBtn.addEventListener('click', function() {
+        addToCart(product);
+    });
+    
+    return productCard;
+}
+
+// Termék hozzáadása a kosárhoz
+function addToCart(product) {
+    const existingItem = cart.find(item => item.id === product.id);
+    
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: 1
+        });
+    }
+    
+    saveCart();
+    updateCartCount();
+    
+    // Értesítés
+    showNotification(`${product.name} hozzáadva a kosárhoz!`);
+}
+
+// Kosár mentése localStorage-ba
+function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+// Kosár szám frissítése
+function updateCartCount() {
+    const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+    cartCount.textContent = totalItems;
+}
+
+// Kosár megjelenítésének frissítése
+function updateCartDisplay() {
+    cartItems.innerHTML = '';
+    
+    if (cart.length === 0) {
+        cartItems.innerHTML = '<p>A kosár üres</p>';
+        cartTotalPrice.textContent = '0';
+        return;
+    }
+    
+    cart.forEach(item => {
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.innerHTML = `
+            <div class="cart-item-info">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-price">${item.price} Ft/db</div>
+            </div>
+            <div class="cart-item-controls">
+                <button class="quantity-btn minus" data-id="${item.id}">-</button>
+                <span class="cart-item-quantity">${item.quantity} db</span>
+                <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                <button class="remove-btn" data-id="${item.id}">🗑️</button>
+            </div>
+            <div class="cart-item-total">${item.quantity * item.price} Ft</div>
+        `;
+        cartItems.appendChild(cartItem);
+    });
+    
+    // Mennyiség gombok eseményei
+    document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = parseInt(this.getAttribute('data-id'));
+            updateCartItemQuantity(id, -1);
+        });
+    });
+    
+    document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = parseInt(this.getAttribute('data-id'));
+            updateCartItemQuantity(id, 1);
+        });
+    });
+    
+    // Törlés gombok eseményei
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = parseInt(this.getAttribute('data-id'));
+            removeFromCart(id);
+        });
+    });
+    
+    cartTotalPrice.textContent = calculateTotal();
+}
+
+// Kosár tétel mennyiségének frissítése
+function updateCartItemQuantity(productId, change) {
+    const item = cart.find(item => item.id === productId);
+    
+    if (item) {
+        item.quantity += change;
+        
+        if (item.quantity <= 0) {
+            removeFromCart(productId);
+        } else {
+            saveCart();
+            updateCartCount();
+            updateCartDisplay();
+        }
+    }
+}
+
+// Termék eltávolítása a kosárból
+function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    saveCart();
+    updateCartCount();
+    updateCartDisplay();
+}
+
+// Összesített ár számítása
+function calculateTotal() {
+    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+}
+
+// Értesítés megjelenítése
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: var(--success);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 4px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        z-index: 1000;
+        transition: transform 0.3s, opacity 0.3s;
+        transform: translateX(100%);
+        opacity: 0;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+        notification.style.opacity = '1';
+    }, 100);
+    
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
+
+// CSS bővítés a stílusokhoz
+const additionalCSS = `
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px 0;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    border-radius: 8px;
+    position: relative;
+}
+
+.page-header h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.page-header p {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-bottom: 15px;
+}
+
+.sale-badge {
+    display: inline-block;
+    background: #ff9ff3;
+    color: #2d3436;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.sale-categories {
+    margin-bottom: 50px;
+}
+
+.sale-category {
+    margin-bottom: 40px;
+    padding: 25px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.sale-category h2 {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--primary);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent);
+}
+
+.discount-badge-large {
+    background: var(--secondary);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.sale-product {
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.sale-product:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(255, 107, 107, 0.3);
+}
+
+.sale-ribbon {
+    position: absolute;
+    top: 10px;
+    right: -10px;
+    background: var(--secondary);
+    color: white;
+    padding: 5px 15px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.sale-ribbon::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    bottom: -10px;
+    border: 10px solid;
+    border-color: transparent var(--secondary) transparent transparent;
+    transform: rotate(45deg);
+}
+
+.sale-countdown {
+    font-size: 12px;
+    color: var(--secondary);
+    margin: 8px 0;
+    font-weight: bold;
+}
+
+.special-offer {
+    margin-bottom: 50px;
+}
+
+.offer-banner {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    border: 2px dashed var(--secondary);
+}
+
+.offer-banner h3 {
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.offer-banner p {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #2d3436;
+}
+
+.offer-banner small {
+    color: var(--gray);
+    font-style: italic;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.cart-item-price {
+    color: var(--gray);
+    font-size: 14px;
+}
+
+.cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantity-btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+.cart-item-total {
+    font-weight: bold;
+    min-width: 100px;
+    text-align: right;
+}
+
+.cart-total {
+    margin-top: 20px;
+    text-align: right;
+    font-weight: bold;
+    font-size: 18px;
+    padding-top: 20px;
+    border-top: 2px solid var(--primary);
+}
+
+#checkout-btn {
+    background-color: var(--success);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+#checkout-btn:hover {
+    background-color: #27ae60;
+}
+
+@media (max-width: 768px) {
+    .sale-category h2 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .cart-item-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .cart-item-total {
+        text-align: left;
+        width: 100%;
+    }
+}
+`;
+
+// CSS hozzáadása
+const style = document.createElement('style');
+style.textContent = additionalCSS;
+document.head.appendChild(style);
