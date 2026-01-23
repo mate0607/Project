@@ -11,6 +11,8 @@ import BookAppointment from "./pages/BookAppointment.jsx";
 import Booking from "./pages/Booking.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import KnowledgeHub from "./pages/KnowledgeHub.jsx";
+import ForSale from "./pages/ForSale.jsx";
+import SaleDetail from "./pages/SaleDetail.jsx";
 import Footer from "./components/Footer.jsx";
 import "./App.css";
 
@@ -21,94 +23,74 @@ function Nav() {
 
   return (
     <nav style={{ 
-      background: 'rgba(30, 41, 59, 0.8)',
-      backdropFilter: 'blur(10px)',
-      padding: '18px 30px',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
-      borderBottom: '1px solid rgba(148, 163, 184, 0.15)',
-      marginBottom: '30px'
+      background: 'linear-gradient(90deg, #1E293B 0%, #0F172A 50%, #1a1a3e 100%)',
+      backdropFilter: 'blur(20px)',
+      padding: '16px 40px',
+      boxShadow: '0 10px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+      borderBottom: '1px solid rgba(99, 102, 241, 0.25)',
+      marginBottom: '40px',
+      position: 'sticky',
+      top: 0,
+      zIndex: 999
     }}>
       <div style={{ 
-        maxWidth: '1200px',
+        maxWidth: '1400px',
         margin: '0 auto',
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        gap: '40px'
       }}>
         <Link to="/" style={{ 
           color: '#fff',
           textDecoration: 'none',
-          fontWeight: 700,
-          fontSize: '1.5rem',
-          background: 'linear-gradient(135deg, #818CF8 0%, #4F46E5 100%)',
+          fontWeight: 800,
+          fontSize: '1.6rem',
+          letterSpacing: '-1px',
+          background: 'linear-gradient(135deg, #818CF8 0%, #EC4899 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text'
+          backgroundClip: 'text',
+          flexShrink: 0
         }}>
           AutoNex
         </Link>
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+        <div style={{ 
+          display: 'flex', 
+          gap: '8px', 
+          alignItems: 'center',
+          flex: 1,
+          justifyContent: 'flex-end'
+        }}>
           {token ? (
             <>
-              <Link to="/dashboard" style={{ 
-                color: '#CBD5E1',
-                textDecoration: 'none',
-                fontWeight: 500,
-                padding: '8px 14px',
-                borderRadius: '6px',
-                transition: 'all 0.2s'
-              }}>
-                Dashboard
-              </Link>
-              <Link to="/book" style={{ 
-                color: '#CBD5E1',
-                textDecoration: 'none',
-                fontWeight: 500,
-                padding: '8px 14px',
-                borderRadius: '6px',
-                transition: 'all 0.2s'
-              }}>
-                Időpont foglalás
-              </Link>
-              <Link to="/knowledge-hub" style={{ 
-                color: '#CBD5E1',
-                textDecoration: 'none',
-                fontWeight: 500,
-                padding: '8px 14px',
-                borderRadius: '6px',
-                transition: 'all 0.2s'
-              }}>
-                Tudásbázis
-              </Link>
-              <Link to="/profile" style={{ 
-                color: '#CBD5E1',
-                textDecoration: 'none',
-                fontWeight: 500,
-                padding: '8px 14px',
-                borderRadius: '6px',
-                transition: 'all 0.2s'
-              }}>
-                Profil
-              </Link>
-              <a href="/locations" style={{ 
-                color: '#F59E0B',
-                textDecoration: 'none',
-                fontWeight: 500,
-                padding: '8px 14px',
-                borderRadius: '6px',
-                transition: 'all 0.2s'
-              }}>
-                Szervizpontok
-              </a>
+              <NavLink to="/dashboard">Dashboard</NavLink>
+              <NavLink to="/for-sale">Eladó Autók</NavLink>
+              <NavLink to="/book">Időpont</NavLink>
+              <NavLink to="/knowledge-hub">Tudásbázis</NavLink>
+              <NavLink to="/profile">Profil</NavLink>
+              <NavLink to="/locations" special>Szervizpontok</NavLink>
               <button
                 onClick={() => { clearToken(); nav("/login"); }}
                 style={{ 
-                  padding: '8px 16px',
+                  padding: '10px 18px',
                   fontSize: '14px',
+                  fontWeight: 600,
                   background: 'rgba(239, 68, 68, 0.2)',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  color: '#EF4444',
-                  boxShadow: 'none'
+                  border: '1.5px solid rgba(239, 68, 68, 0.5)',
+                  color: '#FF6B6B',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease',
+                  marginLeft: '8px'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'rgba(239, 68, 68, 0.3)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'rgba(239, 68, 68, 0.2)';
+                  e.target.style.boxShadow = 'none';
                 }}
               >
                 Kilépés
@@ -116,23 +98,75 @@ function Nav() {
             </>
           ) : (
             <>
-              <Link to="/login" style={{ 
-                color: '#CBD5E1',
-                fontWeight: 500,
-                padding: '8px 14px'
-              }}>
-                Belépés
-              </Link>
-              <Link to="/register">
-                <button style={{ padding: '8px 16px', fontSize: '14px' }}>
-                  Regisztráció
-                </button>
-              </Link>
+              <NavLink to="/login">Belépés</NavLink>
+              <button 
+                onClick={() => nav("/register")}
+                style={{ 
+                  padding: '10px 20px', 
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  background: 'linear-gradient(135deg, #818CF8 0%, #6366F1 100%)',
+                  border: 'none',
+                  color: '#fff',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease',
+                  boxShadow: '0 4px 15px rgba(129, 140, 248, 0.25)',
+                  marginLeft: '8px'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 6px 20px rgba(129, 140, 248, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 15px rgba(129, 140, 248, 0.25)';
+                }}
+              >
+                Regisztráció
+              </button>
             </>
           )}
         </div>
       </div>
     </nav>
+  );
+}
+
+function NavLink({ to, children, special }) {
+  const location = window.location.pathname;
+  const isActive = location === to;
+  
+  return (
+    <Link
+      to={to}
+      style={{
+        padding: '10px 16px',
+        textDecoration: 'none',
+        fontWeight: special ? 600 : 500,
+        fontSize: '14px',
+        color: special ? '#FBBF24' : (isActive ? '#818CF8' : '#CBD5E1'),
+        borderRadius: '8px',
+        background: isActive ? 'rgba(129, 140, 248, 0.15)' : (special ? 'rgba(251, 191, 36, 0.08)' : 'transparent'),
+        border: isActive ? '1px solid rgba(129, 140, 248, 0.4)' : (special ? '1px solid rgba(251, 191, 36, 0.2)' : '1px solid transparent'),
+        transition: 'all 0.25s ease',
+        cursor: 'pointer'
+      }}
+      onMouseEnter={(e) => {
+        if (!isActive) {
+          e.target.style.background = special ? 'rgba(251, 191, 36, 0.12)' : 'rgba(129, 140, 248, 0.1)';
+          e.target.style.color = special ? '#FCD34D' : '#818CF8';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isActive) {
+          e.target.style.background = special ? 'rgba(251, 191, 36, 0.08)' : 'transparent';
+          e.target.style.color = special ? '#FBBF24' : '#CBD5E1';
+        }
+      }}
+    >
+      {children}
+    </Link>
   );
 }
 
@@ -220,6 +254,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register onAuth={(t) => setToken(t)} />} />
           <Route path="/login" element={<Login onAuth={(t) => setToken(t)} />} />
+          <Route path="/for-sale" element={<ForSale />} />
+          <Route path="/sales/:saleId" element={<SaleDetail />} />
 
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/cars/new" element={<PrivateRoute><NewCar /></PrivateRoute>} />

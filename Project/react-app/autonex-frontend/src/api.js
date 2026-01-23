@@ -1,7 +1,7 @@
 import mockApi from "./mockApi";
 
 const API = "http://localhost:4000/api";
-const USE_MOCK = true; // Módosítsd false-ra ha van MySQL backend
+const USE_MOCK = false; // Módosítsd false-ra ha van MySQL backend
 
 export function getToken() {
   return localStorage.getItem("token");
@@ -58,4 +58,12 @@ export const api = {
   deleteCar: (carId) => request(`/cars/${carId}`, { method: "DELETE" }),
   updateCar: (carId, make_model, vin, year) =>
     request(`/cars/${carId}`, { method: "PUT", body: { make_model, vin, year } }),
+  listCarForSale: (car_id, price, description, condition, mileage) =>
+    request("/sales", { method: "POST", body: { car_id, price, description, condition, mileage } }),
+  getCarSaleStatus: (carId) => request(`/sales/${carId}`),
+  removeCarFromSale: (carId) => request(`/sales/${carId}`, { method: "DELETE" }),
+  getAllActiveSales: () => request("/sales/all/active"),
+  sendMessage: (sale_id, message) =>
+    request("/messages", { method: "POST", body: { sale_id, message } }),
+  getMessages: (saleId) => request(`/messages/${saleId}`),
 };

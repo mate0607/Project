@@ -275,5 +275,152 @@ app.get("/api/recommendations/:issueId", auth, async (req, res) => {
   res.json({ data: rows[0] });
 });
 
+// SALES - get all active sales (public)
+app.get("/api/sales/all/active", async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT s.id, s.car_id, s.price, s.description, s.car_condition, s.mileage, s.created_at,
+             c.make_model, c.vin, c.year, c.image_url,
+             u.name as seller_name
+      FROM sales s
+      JOIN cars c ON c.id = s.car_id
+      JOIN users u ON u.id = s.user_id
+      WHERE s.is_active = TRUE
+      ORDER BY s.created_at DESC
+    `);
+    res.json({ sales: rows });
+  } catch (err) {
+    console.error("Sales fetch error:", err);
+    res.status(500).json({ error: "DB error" });
+  }
+});
+
+// SALES - create (list car for sale)
+app.post("/api/sales", auth, async (req, res) => {
+  const { car_id, price, description, condition, mileage } = req.body || {};
+  
+  if (!car_id || !price) return res.status(400).json({ error: "Autó ID és ár kötelező." });
+
+  try {
+    // Check if car belongs to user
+    const [cars] = await pool.query("SELECT id FROM cars WHERE id = ? AND user_id = ?", [car_id, req.user.id]);
+    if (!cars.length) return res.status(403).json({ error: "Nincs jogosultság ehhez az autóhoz." });
+
+    // Check if already listed for sale
+    const [existing] = await pool.query("SELECT id FROM sales WHERE car_id = ? AND is_active = TRUE", [car_id]);
+    if (existing.length) return res.status(409).json({ error: "Ez az autó már fel van sorolva eladásra." });
+
+    const [result] = await pool.query(
+      "INSERT INTO sales (car_id, user_id, price, description, car_condition, mileage) VALUES (?, ?, ?, ?, ?, ?)",
+      [car_id, req.user.id, Number(price), description || null, condition || null, mileage || null]
+    );
+
+    res.status(201).json({ id: result.insertId, msg: "Autó eladásra felsorolva" });
+  } catch (err) {
+    console.error("Sales creation error:", err);
+    res.status(500).json({ error: "DB error" });
+  }
+});
+
+// SALES - get car sale status
+app.get("/api/sales/:carId", auth, async (req, res) => {
+  const carId = Number(req.params.carId);
+
+  try {
+    const [rows] = await pool.query(
+      "SELECT id, car_id, price, description, car_condition, mileage, is_active, created_at FROM sales WHERE car_id = ?",
+      [carId]
+    );
+
+    if (!rows.length) return res.json({ sale: null });
+    res.json({ sale: rows[0] });
+  } catch (err) {
+    console.error("Sales fetch error:", err);
+    res.status(500).json({ error: "DB error" });
+  }
+});
+
+// SALES - remove from sale
+app.delete("/api/sales/:carId", auth, async (req, res) => {
+  const carId = Number(req.params.carId);
+
+  try {
+    const [cars] = await pool.query("SELECT id FROM cars WHERE id = ? AND user_id = ?", [carId, req.user.id]);
+    if (!cars.length) return res.status(403).json({ error: "Nincs jogosultság." });
+
+    await pool.query("UPDATE sales SET is_active = FALSE WHERE car_id = ?", [carId]);
+    res.json({ msg: "Autó levéve az eladási listáról" });
+  } catch (err) {
+    console.error("Sales deletion error:", err);
+    res.status(500).json({ error: "DB error" });
+  }
+});
+
+// MESSAGES - send message
+app.post("/api/messages", auth, async (req, res) => {
+  const { sale_id, message } = req.body || {};
+  
+  if (!sale_id || !message) return res.status(400).json({ error: "Értékesítés ID és üzenet kötelező." });
+
+  try {
+    // Get the seller (receiver) from the sale
+    const [saleRows] = await pool.query("SELECT user_id FROM sales WHERE id = ?", [sale_id]);
+    if (!saleRows.length) return res.status(404).json({ error: "Az eladás nem található." });
+    
+    const receiver_id = saleRows[0].user_id;
+    
+    // Don't allow sending message to yourself
+    if (receiver_id === req.user.id) {
+      return res.status(400).json({ error: "Nem tudsz magadnak üzenni." });
+    }
+
+    const [result] = await pool.query(
+      "INSERT INTO messages (sale_id, sender_id, receiver_id, message) VALUES (?, ?, ?, ?)",
+      [sale_id, req.user.id, receiver_id, String(message).trim()]
+    );
+
+    res.status(201).json({ id: result.insertId, msg: "Üzenet elküldve" });
+  } catch (err) {
+    console.error("Message send error:", err);
+    res.status(500).json({ error: "DB error" });
+  }
+});
+
+// MESSAGES - get messages for a sale
+app.get("/api/messages/:saleId", auth, async (req, res) => {
+  const saleId = Number(req.params.saleId);
+
+  try {
+    // Check if user is the seller
+    const [saleRows] = await pool.query("SELECT user_id FROM sales WHERE id = ?", [saleId]);
+    if (!saleRows.length) return res.status(404).json({ error: "Az eladás nem található." });
+
+    const seller_id = saleRows[0].user_id;
+
+    const [messages] = await pool.query(
+      `SELECT m.id, m.message, m.sender_id, m.receiver_id, m.is_read, m.created_at,
+              u.name as sender_name
+       FROM messages m
+       JOIN users u ON u.id = m.sender_id
+       WHERE m.sale_id = ? AND (m.sender_id = ? OR m.receiver_id = ?)
+       ORDER BY m.created_at DESC`,
+      [saleId, req.user.id, req.user.id]
+    );
+
+    // Mark messages as read if user is the receiver
+    if (seller_id === req.user.id) {
+      await pool.query(
+        "UPDATE messages SET is_read = TRUE WHERE sale_id = ? AND receiver_id = ? AND sender_id != ?",
+        [saleId, req.user.id, req.user.id]
+      );
+    }
+
+    res.json({ messages });
+  } catch (err) {
+    console.error("Messages fetch error:", err);
+    res.status(500).json({ error: "DB error" });
+  }
+});
+
 const port = Number(process.env.PORT || 4000);
 app.listen(port, () => console.log(`Backend: http://localhost:${port}`));

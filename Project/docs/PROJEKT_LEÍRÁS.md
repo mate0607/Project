@@ -15,6 +15,7 @@ Jelenleg sok autótulajdonos szétszórva tartja az autóhoz kapcsolódó inform
 1. **Autótulajdonosok** - Központi helyre gyűjteni az autó-releváns adatokat, nyomonkövetni az esetleges problémákat, és egyszerűen szervizidőpontokat foglalni
 2. **Szervizpontok** - Ügyfélbázist kezelni, foglalásokat nyomonkövetni és szolgáltatások tájékoztatását nyújtani
 3. **Tudásmegosztás** - Egy átfogó tudásbázis (Knowledge Hub) ahol megismerhető a gyakori autóproblémák, karbantartási igények és megoldási lehetőségek
+4. **Autók Értékesítése** - Felhasználók könnyen eladhatják autójukat egy beépített márkahelyen, vevőkkel közvetlenül kommunikálhatnak
 
 ### 2.2 Célcsoportok
 - **Privát autótulajdonosok**: Akik szervezetten szeretnék kezelni autójuk szervízét
@@ -193,7 +194,7 @@ Body: { category, description, urgency }
 11. **fuel** (Üzemanyag rendszer)
 12. **steering** (Kormányzás)
 13. **battery** (Akkumulátor)
-14. **alternator** (Alternátor)
+14. **alternator** (Generátor)
 15. **starter** (Indítómotor)
 16. **lights** (Fények)
 17. **wipers** (Ablaktörlők)
@@ -415,6 +416,155 @@ Body: { status }
 
 ---
 
+## 4.7 Eladásra Bocsájtás & Hirdetések [NEW v2.0] ⭐
+
+### Autó Eladásra Bocsájtása
+```
+POST /api/sales
+Body: { car_id, price, description, car_condition, mileage }
+```
+
+**Paraméterek**:
+- `car_id` - Felhasználó saját autójának ID-je (FK)
+- `price` - Eladási ár (DECIMAL, >0)
+- `description` - Hirdetés szövege (TEXT, opcionális)
+- `car_condition` - Autó állapota (5 fokozat)
+- `mileage` - Futásteljesítmény (INT, opcionális)
+
+**Autó Állapot Kategóriák**:
+1. **Kiváló** - Újszerű, minimális használat
+2. **Jó** - Általános jó állapot, apróbb kopottas
+3. **Elfogadható** - Működik, látható használat
+4. **Javítást Igényel** - Működik, de szükséges karbantartás
+5. **Nem Tudható** - Leírás szerint
+
+**Validációk**:
+- Felhasználó csak saját autóját bocsájthatja eladásra
+- Price > 0 (érvényes ár)
+- Egy autó csak egy aktív hirdetés (car_id UNIQUE)
+- is_active automatikus TRUE-ra
+
+#### Aktív Hirdetések Böngészése
+```
+GET /api/sales/all/active
+```
+- **Nyilvános végpont** (nincs autentifikáció szükséges)
+- Összes is_active = TRUE hirdetés
+- Autó képe, ár, márka-modell, év, futásteljesítmény
+- Eladó neve és info
+- Legfrissebb hirdetések elsőnek
+
+**Response Formátum**:
+```json
+{
+  "id": 1,
+  "car_id": 5,
+  "user_id": 2,
+  "price": 3500000,
+  "description": "Szép autó, jó állapot",
+  "car_condition": "Jó",
+  "mileage": 145000,
+  "is_active": true,
+  "created_at": "2026-01-23T10:30:00Z",
+  "make_model": "Toyota Corolla",
+  "year": 2019,
+  "vin": "ABCD123456789EFG",
+  "image_url": "/uploads/cars/img_123.jpg",
+  "seller_name": "Karsai Márk"
+}
+```
+
+#### Hirdetés Részletei
+```
+GET /api/sales/:saleId
+```
+- Teljes autó információ
+- Eladó teljes neve
+- Akár több fotó (opcionális bővítés)
+- Forgalmi előzmények (opcionális bővítés)
+
+#### Hirdetés Törlése (Szedezésből levétel)
+```
+DELETE /api/sales/:carId
+```
+- Csak eladó törölheti saját hirdetéseit
+- is_active = FALSE (soft delete)
+- Autó marad az adatbázisban
+
+### 4.8 Üzenetrendszer - Vevő-Eladó Kommunikáció [NEW v2.0] ⭐
+
+#### Üzenet Küldése
+```
+POST /api/messages
+Body: { sale_id, message }
+```
+
+**Paraméterek**:
+- `sale_id` - Hirdetés ID-je (FK)
+- `message` - Üzenet szövege (TEXT, max 2000 char)
+
+**Automata Mezők**:
+- `sender_id` - Bejelentkezett felhasználó ID-je
+- `receiver_id` - Hirdetés eladójának ID-je (auto lekérés)
+- `is_read` - FALSE (alapértelmezés)
+- `created_at` - Automatikus timestamp
+
+**Validációk**:
+- Csak bejelentkezett felhasználók küldhetnek üzenetet
+- Vevő nem küldhet üzenetet saját magának (sender_id ≠ receiver_id)
+- Hirdetés léteznie kell (sale_id validáció)
+- Üzenet nem lehet üres
+
+#### Hirdetéshez Tartozó Üzenetek
+```
+GET /api/messages/:saleId
+```
+- Autentifikáció szükséges
+- Felhasználóhoz tartozó üzenetek (sender vagy receiver)
+- Üzenetek listája sorrendben (CREATE ASC)
+- Sender információ (neve, ID)
+- Timestamp megjelenítéshez
+
+**Response**:
+```json
+[
+  {
+    "id": 1,
+    "sale_id": 3,
+    "sender_id": 5,
+    "receiver_id": 2,
+    "sender_name": "Nagy János",
+    "message": "Még elérhető az autó?",
+    "is_read": true,
+    "created_at": "2026-01-23T14:30:00Z"
+  },
+  {
+    "id": 2,
+    "sale_id": 3,
+    "sender_id": 2,
+    "receiver_id": 5,
+    "sender_name": "Karsai Márk",
+    "message": "Igen, még nincs elkelt!",
+    "is_read": false,
+    "created_at": "2026-01-23T14:35:00Z"
+  }
+]
+```
+
+**Auto Olvasottság Jelzés**:
+- Hirdetés lekéréskor: `UPDATE messages SET is_read = TRUE WHERE receiver_id = user_id AND sale_id = X`
+- Kétirányú kommunikáció támogatása
+- Olvasattság nyomonkövetése (opcionális notifikáció)
+
+#### Üzenetrendszer Jellemzői
+- **Valós idejű**: Üzenetek azonnal megjelennek
+- **Egyszerű**: Nincs chatroom, csak szekvenciális üzenetek
+- **Biztonságos**: Csak a felek látják az üzeneteket
+- **Archivált**: Üzenet előzmények megmaradnak
+- **Egyedi vonala**: Hirdetésenként egy beszélgetés thread
+
+---
+
 ## 5. Felhasználói Interfész & Dizájn
 
 ### 5.1 Design Filozófia
@@ -547,6 +697,46 @@ CREATE TABLE appointments (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (car_id) REFERENCES cars(id)
+);
+```
+
+### Eladások Tábla [NEW v2.0]
+```sql
+CREATE TABLE sales (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  car_id INT NOT NULL UNIQUE,
+  user_id INT NOT NULL,
+  price DECIMAL(10, 2) NOT NULL,
+  description TEXT,
+  car_condition VARCHAR(50),
+  mileage INT,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (car_id) REFERENCES cars(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_is_active (is_active),
+  INDEX idx_created_at (created_at)
+);
+```
+
+### Üzenetek Tábla [NEW v2.0]
+```sql
+CREATE TABLE messages (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  sale_id INT NOT NULL,
+  sender_id INT NOT NULL,
+  receiver_id INT NOT NULL,
+  message TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (sale_id) REFERENCES sales(id) ON DELETE CASCADE,
+  FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_sale_id (sale_id),
+  INDEX idx_sender_id (sender_id),
+  INDEX idx_receiver_id (receiver_id),
+  INDEX idx_created_at (created_at)
 );
 ```
 
@@ -806,6 +996,103 @@ Response 404:
    - Költségbecslés
 ```
 
+### 8.5 Autó Eladásra Bocsájtás [NEW v2.0]
+```
+1. User autó részletei nézet
+2. "Eladásra bocsájtás" gomb megjelenik
+3. Form megnyílik:
+   - Ár (required)
+   - Autó állapota (5 fokozat)
+   - Futásteljesítmény (opcionális)
+   - Leírás (opcionális)
+
+4. Frontend Validáció:
+   - Ár > 0
+   - Állapot kiválasztott
+
+5. POST /api/sales
+   - Backend validáció
+   - Car_id UNIQUE ellenőrzés (duplikált hirdetés?)
+   - Hirdetés mentése (is_active = TRUE)
+
+6. Success üzenet
+   - Hirdetés aktív
+   - "Böngészje a hirdetéseket" gomb
+
+7. Hirdetés megjelenik:
+   - GET /api/sales/all/active
+   - ForSale oldalon grid-ben
+```
+
+### 8.6 Hirdetés Böngészése [NEW v2.0]
+```
+1. User "Eladásra" menüponton kattint
+2. ForSale.jsx oldal betölt
+3. GET /api/sales/all/active (nyilvános)
+4. Frontend:
+   - Grid layout (responsive)
+   - Autó kártya:
+     - Kép
+     - Márka/modell, év
+     - Ár (formázott)
+     - Futásteljesítmény
+     - "Részletek" gomb
+
+5. User "Részletek" gombra kattint
+6. SaleDetail oldal:
+   - /sales/:saleId route
+   - Teljes autó adatok
+   - Nagy fotó
+   - Eladó info
+
+7. Ha bejelentkezett:
+   - Üzenetírási form megjelenik
+   - Placeholder: "Írj egy üzenetet..."
+   - "Küldés" gomb
+
+8. Ha nincs bejelentkezve:
+   - "Belépés" gomb az üzenethez
+   - Átirányítás /login-ra
+```
+
+### 8.7 Üzenetváltás Eladóval [NEW v2.0]
+```
+1. User bejelentkezett, hirdetés oldal megnyitva
+2. Üzenetírási form látható
+3. User üzenetet ír (max 2000 char)
+4. "Küldés" gombra kattint
+
+5. Frontend Validáció:
+   - Üzenet nem üres
+   - Hirdetés ID érvényes
+
+6. POST /api/messages
+   - Backend validáció:
+     - Sender_id ≠ receiver_id (nem saját magának)
+     - Sale_id létezik
+     - User bejelentkezett
+   - Üzenet mentése
+
+7. Frontend:
+   - Success üzenet
+   - Üzenet megjelenik a listában
+   - Sender neve + üzenet + timestamp
+
+8. GET /api/messages/:saleId
+   - Összes üzenet betöltése
+   - Szekvenciális megjelenítés
+   - Auto mark as read (is_read = TRUE)
+
+9. Eladó:
+   - Saját hirdetéseinél üzeneteket lát
+   - Válaszolhat
+
+10. Mindkét fél:
+    - Teljes beszélgetés előzmények
+    - Vevő-eladó kommunikáció
+    - Offline is mentett
+```
+
 ---
 
 ## 9. Biztonsági Megoldások
@@ -824,16 +1111,20 @@ Response 404:
 - **Role-based**: User vs Admin
 - **Resource ownership**: User csak saját autókat/foglalásokat szerkesztheti
 - **Admin endpoints**: /appointments/admin csak admin-nak
+- **Sales ownership**: User csak saját autóit bocsáthatja eladásra
+- **Message privacy**: Üzenetek csak a felek között
 
 ### 9.4 API Biztonsság
 - **CORS**: Csak http://localhost:5173-ből
 - **JWT middleware**: Minden protected endpoint-en
 - **Input validáció**: Frontend + Backend
+- **SQL Injection protection**: Paraméteres queries
 
 ### 9.5 Adatbázis Biztonsága
 - **Prepared statements**: SQL injection elleni védelem
 - **Foreign keys**: Referenciális integritás
 - **Constraints**: NOT NULL, UNIQUE, DEFAULT
+- **Sales UNIQUE constraint**: car_id csak egy aktív hirdetésben
 
 ---
 
