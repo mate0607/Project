@@ -22,7 +22,7 @@ export const mockApi = {
           saveMockData();
           resolve({ token: "mock_token_" + newUser.id, user: newUser });
         }
-      }, 500); // 500ms delay szimuláláshoz
+      }, ); 
     });
   },
 
