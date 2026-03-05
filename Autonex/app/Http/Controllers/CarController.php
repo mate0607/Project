@@ -8,12 +8,31 @@ use App\Http\Requests\UpdateCarRequest;
 
 class CarController extends Controller
 {
+    private function isAdmin(): bool
+    {
+        return auth()->check() && auth()->user()->role === 'admin';
+    }
+
+    private function ensureCarOwnership(Car $car): void
+    {
+        if (!$this->isAdmin() && $car->user_id !== auth()->id()) {
+            abort(403);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $cars = Car::all();
+        $query = Car::query();
+
+        if (!$this->isAdmin()) {
+            $query->where('user_id', auth()->id());
+        }
+
+        $cars = $query->latest()->get();
+
         return view('cars.index', compact('cars'));
     }
 
@@ -50,6 +69,8 @@ class CarController extends Controller
      */
     public function show(Car $car)
     {
+        $this->ensureCarOwnership($car);
+
         return view('cars.show', compact('car'));
     }
 
@@ -58,6 +79,8 @@ class CarController extends Controller
      */
     public function edit(Car $car)
     {
+        $this->ensureCarOwnership($car);
+
         return view('cars.edit', compact('car'));
     }
 
@@ -66,6 +89,8 @@ class CarController extends Controller
      */
     public function update(UpdateCarRequest $request, Car $car)
     {
+        $this->ensureCarOwnership($car);
+
         $car->update($request->validated());
 
         return redirect()->route('cars.index')
@@ -77,6 +102,8 @@ class CarController extends Controller
      */
     public function destroy(Car $car)
     {
+        $this->ensureCarOwnership($car);
+
         $car->delete();
 
         return redirect()->route('cars.index')

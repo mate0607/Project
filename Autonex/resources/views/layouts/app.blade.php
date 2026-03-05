@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autonex</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    @stack('styles')
 </head>
 <body>
     <nav class="navbar">
@@ -19,12 +20,15 @@
                     <a href="{{ route('cars.index') }}">Autók kezelése</a>
                     <a href="{{ route('issues.index') }}">Hibák</a>
                     <a href="{{ route('sales.index') }}">Eladások</a>
-                    <a href="{{ route('appointments.index') }}">Időpontok kezelése</a>
+                    <a href="{{ route('admin.appointments.index') }}">Időpontok kezelése</a>
                 @endif
 
                 @if(auth()->check() && auth()->user()->role === 'user')
                     <a href="{{ route('user.dashboard') }}">Dashboard</a>
-                    <a href="{{ route('appointments.create') }}">Időpont foglalás</a>
+                    <a href="{{ route('cars.index') }}">Saját autóim</a>
+                    <a href="{{ route('issues.index') }}">Saját hibáim</a>
+                    <a href="{{ route('appointments.index') }}">Időpontjaim</a>
+                    <a href="{{ route('sales.index') }}">Market</a>
                 @endif
             </div>
 
@@ -44,9 +48,13 @@
         </div>
     </nav>
 
-    <div class="main-container">
+    <main class="main-container">
         @yield('content')
-    </div>
+    </main>
+
+    @hasSection('page_footer')
+        @yield('page_footer')
+    @endif
 
     <script>
         const toggle = document.querySelector('.menu-toggle');

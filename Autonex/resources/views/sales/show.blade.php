@@ -8,7 +8,9 @@
         <h1 class="page-title">Eladás #{{ $sale->id }}</h1>
     </div>
     <div class="form-actions" style="margin-top: 0;">
-        <a href="{{ route('sales.edit', $sale) }}" class="btn sale-btn-main">Szerkesztés</a>
+        @if(auth()->check() && auth()->user()->role === 'admin')
+            <a href="{{ route('sales.edit', $sale) }}" class="btn sale-btn-main">Szerkesztés</a>
+        @endif
         <a href="{{ route('sales.index') }}" class="btn btn-muted">Vissza</a>
     </div>
 </section>

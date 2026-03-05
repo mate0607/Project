@@ -17,8 +17,9 @@ class Appointment extends Model
         'car_id',
         'date',
         'time',
-        'service',
+        'description',
         'status',
+        'service',
     ];
 
     public function user()

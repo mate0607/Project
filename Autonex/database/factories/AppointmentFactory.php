@@ -23,13 +23,8 @@ class AppointmentFactory extends Factory
             'car_id' => Car::factory(),
             'date' => fake()->dateTimeBetween('+1 days', '+1 month')->format('Y-m-d'),
             'time' => fake()->time('H:i:s'),
-            'service' => fake()->randomElement([
-                'Oil change',
-                'Brake inspection',
-                'Engine diagnostics',
-                'Tire replacement',
-            ]),
-            'status' => fake()->randomElement(['pending', 'confirmed', 'completed']),
+            'description' => fake()->optional()->sentence(),
+            'status' => fake()->randomElement(['pending', 'confirmed', 'in_progress', 'completed', 'cancelled']),
         ];
     }
 }

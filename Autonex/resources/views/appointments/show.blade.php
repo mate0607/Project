@@ -29,8 +29,12 @@
         <span class="detail-value">{{ $appointment->time }}</span>
     </div>
     <div class="detail-row">
-        <span class="detail-label">Szolgáltatás</span>
-        <span class="detail-value">{{ $appointment->service }}</span>
+        <span class="detail-label">Szerviz</span>
+        <span class="detail-value">{{ $appointment->service ?: 'Nincs megadva' }}</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Megjegyzés</span>
+        <span class="detail-value">{{ $appointment->description ?: 'Nincs megjegyzés' }}</span>
     </div>
     <div class="detail-row">
         <span class="detail-label">Státusz</span>

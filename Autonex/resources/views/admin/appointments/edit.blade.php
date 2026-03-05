@@ -2,12 +2,18 @@
 
 @section('content')
 
-<h1 class="page-title">Időpont szerkesztése</h1>
+<div class="page-head">
+    <h1 class="page-title">Időpont szerkesztése (Admin)</h1>
+    <a href="{{ route('admin.appointments.index') }}" class="btn btn-muted">Vissza</a>
+</div>
 
-<div class="card app-form-card">
-    <form method="POST" action="{{ route('appointments.update', $appointment) }}">
+<div class="card app-form-card" style="margin-top: 16px;">
+    <form method="POST" action="{{ route('admin.appointments.update', $appointment) }}">
         @csrf
         @method('PUT')
+
+        <label>Felhasználó</label>
+        <input type="text" value="{{ $appointment->user?->name ?? '—' }}" disabled>
 
         <label for="car_id">Autó</label>
         <select id="car_id" name="car_id" class="app-select">
@@ -33,33 +39,27 @@
             <p class="field-error">{{ $message }}</p>
         @enderror
 
-        <label for="service">Szerviz típusa</label>
-        <input id="service" type="text" name="service" value="{{ old('service', $appointment->service) }}" placeholder="Pl.: olajcsere, fékellenőrzés (opcionális)">
-        @error('service')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
-
         <label for="description">Megjegyzés</label>
-        <textarea id="description" name="description" rows="4" class="app-textarea">{{ old('description', $appointment->description) }}</textarea>
+        <textarea id="description" name="description" rows="4" placeholder="Megjegyzés (opcionális)">{{ old('description', $appointment->description) }}</textarea>
         @error('description')
             <p class="field-error">{{ $message }}</p>
         @enderror
 
         <label for="status">Státusz</label>
         <select id="status" name="status" class="app-select">
-            <option value="pending" {{ old('status', $appointment->status) === 'pending' ? 'selected' : '' }}>Pending</option>
-            <option value="confirmed" {{ old('status', $appointment->status) === 'confirmed' ? 'selected' : '' }}>Confirmed</option>
-            <option value="in_progress" {{ old('status', $appointment->status) === 'in_progress' ? 'selected' : '' }}>In progress</option>
-            <option value="completed" {{ old('status', $appointment->status) === 'completed' ? 'selected' : '' }}>Completed</option>
-            <option value="cancelled" {{ old('status', $appointment->status) === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+            @foreach(['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'] as $status)
+                <option value="{{ $status }}" {{ old('status', $appointment->status) === $status ? 'selected' : '' }}>
+                    {{ strtoupper($status) }}
+                </option>
+            @endforeach
         </select>
         @error('status')
             <p class="field-error">{{ $message }}</p>
         @enderror
 
         <div class="form-actions">
-            <button type="submit" class="btn app-btn-main">Frissítés</button>
-            <a href="{{ route('appointments.show', $appointment) }}" class="btn btn-muted">Mégse</a>
+            <button type="submit" class="btn app-btn-main">Mentés</button>
+            <a href="{{ route('admin.appointments.index') }}" class="btn btn-muted">Mégse</a>
         </div>
     </form>
 </div>

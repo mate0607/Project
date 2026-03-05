@@ -4,11 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Car;
-use App\Http\Requests\StoreAppointmentRequest;
-use App\Http\Requests\UpdateAppointmentRequest;
+use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
+    private function isAdmin(): bool
+    {
+        return auth()->check() && auth()->user()->role === 'admin';
+    }
+
+    private function ensureAppointmentOwnership(Appointment $appointment): void
+    {
+        if (!$this->isAdmin() && $appointment->user_id !== auth()->id()) {
+            abort(403);
+        }
+    }
+
+    private function userCarsQuery()
+    {
+        $query = Car::orderBy('make_model');
+
+        if (!$this->isAdmin()) {
+            $query->where('user_id', auth()->id());
+        }
+
+        return $query;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -16,7 +38,7 @@ class AppointmentController extends Controller
     {
         $query = Appointment::with(['car', 'user'])->latest();
 
-        if (auth()->user()->role !== 'admin') {
+        if (!$this->isAdmin()) {
             $query->where('user_id', auth()->id());
         }
 
@@ -30,7 +52,7 @@ class AppointmentController extends Controller
      */
     public function create()
     {
-        $cars = Car::orderBy('make_model')->get();
+        $cars = $this->userCarsQuery()->get();
 
         return view('appointments.create', compact('cars'));
     }
@@ -38,7 +60,7 @@ class AppointmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAppointmentRequest $request)
+    public function store(Request $request)
     {
         $userId = auth()->id();
 
@@ -46,9 +68,41 @@ class AppointmentController extends Controller
             return redirect()->route('login');
         }
 
+        $validated = $request->validate([
+            'car_id' => ['required', 'integer', 'exists:cars,id'],
+            'date' => ['required', 'date'],
+            'time' => ['required', 'date_format:H:i'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'service' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        if (!$this->isAdmin()) {
+            $ownsCar = Car::where('id', $validated['car_id'])
+                ->where('user_id', $userId)
+                ->exists();
+
+            if (!$ownsCar) {
+                abort(403);
+            }
+        }
+
+        $exists = Appointment::where('date', $validated['date'])
+            ->where('time', $validated['time'])
+            ->where('status', 'confirmed')
+            ->exists();
+
+        if ($exists) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'time' => 'Erre az időpontra már van megerősített foglalás',
+                ]);
+        }
+
         Appointment::create([
-            ...$request->validated(),
+            ...$validated,
             'user_id' => $userId,
+            'status' => 'pending',
         ]);
 
         return redirect()->route('appointments.index')
@@ -60,44 +114,11 @@ class AppointmentController extends Controller
      */
     public function show(Appointment $appointment)
     {
-        if (auth()->user()->role !== 'admin' && $appointment->user_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->ensureAppointmentOwnership($appointment);
 
         $appointment->load(['car', 'user']);
 
         return view('appointments.show', compact('appointment'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Appointment $appointment)
-    {
-        $cars = Car::orderBy('make_model')->get();
-
-        return view('appointments.edit', compact('appointment', 'cars'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateAppointmentRequest $request, Appointment $appointment)
-    {
-        $appointment->update($request->validated());
-
-        return redirect()->route('appointments.index')
-            ->with('success', 'Időpont sikeresen frissítve!');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Appointment $appointment)
-    {
-        $appointment->delete();
-
-        return redirect()->route('appointments.index')
-            ->with('success', 'Időpont törölve!');
-    }
 }

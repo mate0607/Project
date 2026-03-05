@@ -1,39 +1,179 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}">
+@endpush
+
 @section('content')
 
-<section class="hero">
-    <div>
-        <h1 class="page-title">Admin Dashboard</h1>
-        <p class="page-subtitle">Rendszer statisztikák és admin vezérlés.</p>
-    </div>
+<section class="admin-dashboard">
+    <header class="ad-hero">
+        <h1>Rendszer áttekintés</h1>
+    </header>
+
+    <section class="ad-stats-grid">
+        <article class="ad-stat-card">
+            <span class="ad-stat-label">Autók száma</span>
+            <strong class="ad-stat-value">{{ $stats['cars'] }}</strong>
+        </article>
+
+        <article class="ad-stat-card">
+            <span class="ad-stat-label">Felhasználók száma</span>
+            <strong class="ad-stat-value">{{ $stats['users'] }}</strong>
+        </article>
+
+        <article class="ad-stat-card">
+            <span class="ad-stat-label">Hibák száma</span>
+            <strong class="ad-stat-value">{{ $stats['issues'] }}</strong>
+        </article>
+
+        <article class="ad-stat-card">
+            <span class="ad-stat-label">Időpontok száma</span>
+            <strong class="ad-stat-value">{{ $stats['appointments'] }}</strong>
+        </article>
+
+        <article class="ad-stat-card">
+            <span class="ad-stat-label">Mai időpontok</span>
+            <strong class="ad-stat-value">{{ $stats['todayAppointments'] }}</strong>
+        </article>
+
+        <article class="ad-stat-card">
+            <span class="ad-stat-label">Pending időpontok</span>
+            <strong class="ad-stat-value">{{ $stats['pendingAppointments'] }}</strong>
+        </article>
+
+        <article class="ad-stat-card">
+            <span class="ad-stat-label">Confirmed időpontok</span>
+            <strong class="ad-stat-value">{{ $stats['confirmedAppointments'] }}</strong>
+        </article>
+
+        <article class="ad-stat-card">
+            <span class="ad-stat-label">Függő hibajegyek</span>
+            <strong class="ad-stat-value">{{ $stats['pendingIssues'] }}</strong>
+        </article>
+
+        <article class="ad-stat-card">
+            <span class="ad-stat-label">Befejezett szervizek</span>
+            <strong class="ad-stat-value">{{ $stats['completedServices'] }}</strong>
+        </article>
+    </section>
+
+    <section class="ad-grid-2col">
+        <article class="ad-card">
+            <h2>Legutóbbi aktivitások</h2>
+            <div class="ad-activity-list">
+                @foreach($recentActivities as $activity)
+                    <div class="ad-activity-item">
+                        <span class="ad-activity-dot"></span>
+                        <div>
+                            <p>{{ $activity['label'] }}</p>
+                            <small>
+                                {{ $activity['item'] ? optional($activity['item']->{$activity['dateField']})->format('Y-m-d H:i') : 'Nincs adat' }}
+                            </small>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </article>
+
+        <article class="ad-card">
+            <h2>Gyors műveletek</h2>
+            <div class="ad-actions">
+                <a href="{{ route('cars.create') }}" class="ad-btn">Új autó hozzáadása</a>
+                <a href="{{ route('issues.create') }}" class="ad-btn">Új hibajegy</a>
+                <a href="{{ route('appointments.create') }}" class="ad-btn">Új időpont</a>
+            </div>
+        </article>
+    </section>
+
+    <section class="ad-grid-2col">
+        <article class="ad-card">
+            <h2>Időpontok havi statisztikája</h2>
+            <div class="ad-chart-wrap">
+                <canvas id="adminMonthlyChart" aria-label="Admin havi időpont statisztika" role="img"></canvas>
+            </div>
+        </article>
+
+        <article class="ad-card">
+            <h2>Közelgő időpontok</h2>
+            <div class="ad-table-wrap">
+                <table class="ad-table">
+                    <thead>
+                        <tr>
+                            <th>Autó</th>
+                            <th>Felhasználó</th>
+                            <th>Dátum</th>
+                            <th>Idő</th>
+                            <th>Státusz</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($upcomingAppointments as $appointment)
+                            <tr>
+                                <td>{{ $appointment->car?->make_model ?? '—' }}</td>
+                                <td>{{ $appointment->user?->name ?? '—' }}</td>
+                                <td>{{ $appointment->date }}</td>
+                                <td>{{ $appointment->time }}</td>
+                                <td>
+                                    <span class="ad-badge ad-badge-{{ $appointment->status }}">{{ strtoupper($appointment->status) }}</span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="ad-empty">Nincs közelgő időpont.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </section>
 </section>
 
-<div class="stat-grid">
-    <div class="stat-card">
-        <h3>Autók</h3>
-        <p>{{ $stats['cars'] }}</p>
-    </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    (function () {
+        const chartEl = document.getElementById('adminMonthlyChart');
 
-    <div class="stat-card">
-        <h3>Hibák</h3>
-        <p>{{ $stats['issues'] }}</p>
-    </div>
+        if (!chartEl || typeof Chart === 'undefined') {
+            return;
+        }
 
-    <div class="stat-card">
-        <h3>Időpontok</h3>
-        <p>{{ $stats['appointments'] }}</p>
-    </div>
-</div>
-
-<div class="card" style="margin-top:20px;">
-    <h3 style="margin-bottom: 10px;">Admin gyors műveletek</h3>
-    <div class="action-row">
-        <a href="{{ route('cars.index') }}" class="btn-small">Autók kezelése</a>
-        <a href="{{ route('issues.index') }}" class="btn-small">Hibák kezelése</a>
-        <a href="{{ route('sales.index') }}" class="btn-small">Eladások kezelése</a>
-        <a href="{{ route('appointments.index') }}" class="btn-small">Időpontok kezelése</a>
-    </div>
-</div>
+        new Chart(chartEl, {
+            type: 'bar',
+            data: {
+                labels: @json($monthlyLabels),
+                datasets: [{
+                    label: 'Időpontok',
+                    data: @json($monthlyCounts),
+                    backgroundColor: 'rgba(96, 165, 250, 0.45)',
+                    borderColor: '#60a5fa',
+                    borderWidth: 1,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(148, 163, 184, 0.12)' },
+                        ticks: { color: '#bfdbfe' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(148, 163, 184, 0.12)' },
+                        ticks: { color: '#bfdbfe', stepSize: 1 }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#dbeafe' }
+                    }
+                }
+            }
+        });
+    })();
+</script>
 
 @endsection

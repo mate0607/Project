@@ -8,7 +8,9 @@
         <h1 class="page-title">Eladások</h1>
         <p class="page-subtitle">Áttekinthető ajánlatlista, állapot és részletek egy oldalon.</p>
     </div>
-    <a href="{{ route('sales.create') }}" class="btn sale-btn-main">+ Új eladás</a>
+    @if(auth()->check() && auth()->user()->role === 'admin')
+        <a href="{{ route('sales.create') }}" class="btn sale-btn-main">+ Új eladás</a>
+    @endif
 </section>
 
 <section class="sales-layout">
@@ -46,13 +48,15 @@
 
                 <div class="sale-row-actions">
                     <a href="{{ route('sales.show', $sale) }}" class="btn-small sale-btn">Megnyit</a>
-                    <a href="{{ route('sales.edit', $sale) }}" class="btn-small sale-btn">Szerkeszt</a>
+                    @if(auth()->check() && auth()->user()->role === 'admin')
+                        <a href="{{ route('sales.edit', $sale) }}" class="btn-small sale-btn">Szerkeszt</a>
 
-                    <form action="{{ route('sales.destroy', $sale) }}" method="POST" class="inline-form">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-small sale-btn-delete">Törlés</button>
-                    </form>
+                        <form action="{{ route('sales.destroy', $sale) }}" method="POST" class="inline-form">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn-small sale-btn-delete">Törlés</button>
+                        </form>
+                    @endif
                 </div>
             </article>
         @empty

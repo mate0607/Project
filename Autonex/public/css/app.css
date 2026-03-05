@@ -599,9 +599,28 @@ input:focus {
     transition: border-color 0.22s ease, box-shadow 0.22s ease;
 }
 
-.app-select:focus {
+.app-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(216, 180, 254, 0.35);
+    background: rgba(15, 23, 42, 0.58);
+    color: #fff;
+    outline: none;
+    resize: vertical;
+    transition: border-color 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease;
+}
+
+.app-textarea::placeholder {
+    color: rgba(226, 232, 240, 0.62);
+}
+
+.app-select:focus,
+.app-textarea:focus {
     border-color: rgba(251, 146, 60, 0.9);
     box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.18);
+    background: rgba(30, 41, 59, 0.7);
 }
 
 .app-status {
@@ -629,6 +648,18 @@ input:focus {
     color: #bbf7d0;
     background: rgba(22, 163, 74, 0.2);
     border: 1px solid rgba(134, 239, 172, 0.4);
+}
+
+.app-status-in_progress {
+    color: #c4b5fd;
+    background: rgba(109, 40, 217, 0.2);
+    border: 1px solid rgba(196, 181, 253, 0.4);
+}
+
+.app-status-cancelled {
+    color: #fecaca;
+    background: rgba(220, 38, 38, 0.2);
+    border: 1px solid rgba(252, 165, 165, 0.4);
 }
 
 .sales-hero {

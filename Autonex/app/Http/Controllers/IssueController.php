@@ -9,12 +9,49 @@ use App\Http\Requests\UpdateIssueRequest;
 
 class IssueController extends Controller
 {
+    private function isAdmin(): bool
+    {
+        return auth()->check() && auth()->user()->role === 'admin';
+    }
+
+    private function userCarsQuery()
+    {
+        $query = Car::orderBy('make_model');
+
+        if (!$this->isAdmin()) {
+            $query->where('user_id', auth()->id());
+        }
+
+        return $query;
+    }
+
+    private function ensureIssueOwnership(Issue $issue): void
+    {
+        if ($this->isAdmin()) {
+            return;
+        }
+
+        $ownsIssue = $issue->car()->where('user_id', auth()->id())->exists();
+
+        if (!$ownsIssue) {
+            abort(403);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $issues = Issue::with('car')->latest()->get();
+        $query = Issue::with('car')->latest();
+
+        if (!$this->isAdmin()) {
+            $query->whereHas('car', function ($carQuery) {
+                $carQuery->where('user_id', auth()->id());
+            });
+        }
+
+        $issues = $query->get();
 
         return view('issues.index', compact('issues'));
     }
@@ -24,7 +61,7 @@ class IssueController extends Controller
      */
     public function create()
     {
-        $cars = Car::orderBy('make_model')->get();
+        $cars = $this->userCarsQuery()->get();
 
         return view('issues.create', compact('cars'));
     }
@@ -34,7 +71,19 @@ class IssueController extends Controller
      */
     public function store(StoreIssueRequest $request)
     {
-        Issue::create($request->validated());
+        $validated = $request->validated();
+
+        if (!$this->isAdmin()) {
+            $ownsCar = Car::where('id', $validated['car_id'])
+                ->where('user_id', auth()->id())
+                ->exists();
+
+            if (!$ownsCar) {
+                abort(403);
+            }
+        }
+
+        Issue::create($validated);
 
         return redirect()->route('issues.index')
             ->with('success', 'Hiba sikeresen létrehozva!');
@@ -45,6 +94,8 @@ class IssueController extends Controller
      */
     public function show(Issue $issue)
     {
+        $this->ensureIssueOwnership($issue);
+
         $issue->load('car');
 
         return view('issues.show', compact('issue'));
@@ -55,7 +106,9 @@ class IssueController extends Controller
      */
     public function edit(Issue $issue)
     {
-        $cars = Car::orderBy('make_model')->get();
+        $this->ensureIssueOwnership($issue);
+
+        $cars = $this->userCarsQuery()->get();
 
         return view('issues.edit', compact('issue', 'cars'));
     }
@@ -65,7 +118,21 @@ class IssueController extends Controller
      */
     public function update(UpdateIssueRequest $request, Issue $issue)
     {
-        $issue->update($request->validated());
+        $this->ensureIssueOwnership($issue);
+
+        $validated = $request->validated();
+
+        if (!$this->isAdmin()) {
+            $ownsCar = Car::where('id', $validated['car_id'])
+                ->where('user_id', auth()->id())
+                ->exists();
+
+            if (!$ownsCar) {
+                abort(403);
+            }
+        }
+
+        $issue->update($validated);
 
         return redirect()->route('issues.index')
             ->with('success', 'Hiba sikeresen frissítve!');
@@ -76,6 +143,8 @@ class IssueController extends Controller
      */
     public function destroy(Issue $issue)
     {
+        $this->ensureIssueOwnership($issue);
+
         $issue->delete();
 
         return redirect()->route('issues.index')

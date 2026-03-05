@@ -33,19 +33,15 @@
             <p class="field-error">{{ $message }}</p>
         @enderror
 
-        <label for="service">Szolgáltatás</label>
-        <input id="service" type="text" name="service" value="{{ old('service') }}" placeholder="pl. Oil change">
+        <label for="service">Szerviz típusa</label>
+        <input id="service" type="text" name="service" value="{{ old('service') }}" placeholder="Pl.: olajcsere, fékellenőrzés (opcionális)">
         @error('service')
             <p class="field-error">{{ $message }}</p>
         @enderror
 
-        <label for="status">Státusz</label>
-        <select id="status" name="status" class="app-select">
-            <option value="pending" {{ old('status', 'pending') === 'pending' ? 'selected' : '' }}>Pending</option>
-            <option value="confirmed" {{ old('status') === 'confirmed' ? 'selected' : '' }}>Confirmed</option>
-            <option value="completed" {{ old('status') === 'completed' ? 'selected' : '' }}>Completed</option>
-        </select>
-        @error('status')
+        <label for="description">Megjegyzés</label>
+        <textarea id="description" name="description" rows="4" class="app-textarea" placeholder="Írj megjegyzést az időponthoz (opcionális)">{{ old('description') }}</textarea>
+        @error('description')
             <p class="field-error">{{ $message }}</p>
         @enderror
 

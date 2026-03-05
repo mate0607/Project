@@ -25,8 +25,9 @@ class UpdateAppointmentRequest extends FormRequest
             'car_id' => ['required', 'integer', 'exists:cars,id'],
             'date' => ['required', 'date'],
             'time' => ['required', 'date_format:H:i'],
-            'service' => ['required', 'string', 'max:255'],
-            'status' => ['required', 'in:pending,confirmed,completed'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'service' => ['nullable', 'string', 'max:255'],
+            'status' => ['required', 'in:pending,confirmed,in_progress,completed,cancelled'],
         ];
     }
 }
