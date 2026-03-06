@@ -1,28 +1,38 @@
 body {
-    background:
-        radial-gradient(1200px 520px at 0% 0%, rgba(59, 130, 246, 0.18), transparent 45%),
-        radial-gradient(900px 440px at 100% 0%, rgba(99, 102, 241, 0.15), transparent 55%),
-        linear-gradient(140deg, #070d1a 0%, #050913 60%, #04070f 100%);
+    background: #EAF2FF;
+    color: #1F2937;
+}
+
+.navbar {
+    background: #3B4A63;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.nav-links a,
+.logo,
+.nav-user,
+.nav-logout {
+    color: #F8FBFF;
 }
 
 .admin-dashboard {
     max-width: 1320px;
     margin: 14px auto 30px;
     display: grid;
-    gap: 16px;
+    gap: 18px;
 }
 
 .ad-hero {
-    padding: 14px 18px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    background: rgba(13, 18, 36, 0.58);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28);
+    padding: 18px 22px;
+    border: 1px solid #D6E4FF;
+    border-radius: 14px;
+    background: #F6F9FF;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
 .ad-hero h1 {
     margin: 0;
-    color: #edf4ff;
+    color: #1F2937;
     font-size: clamp(24px, 3.3vw, 32px);
 }
 
@@ -34,36 +44,52 @@ body {
 
 .ad-stat-card,
 .ad-card {
-    border: 1px solid rgba(255, 255, 255, 0.11);
-    border-radius: 12px;
-    background: rgba(13, 18, 36, 0.58);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28);
+    border: 1px solid #D6E4FF;
+    border-radius: 14px;
+    background: #F6F9FF;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .ad-stat-card:hover,
 .ad-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(96, 165, 250, 0.35);
-    box-shadow: 0 16px 28px rgba(37, 99, 235, 0.18);
+    transform: translateY(-2px);
+    border-color: rgba(79, 124, 247, 0.45);
+    box-shadow: 0 10px 24px rgba(79, 124, 247, 0.16);
 }
 
 .ad-stat-card {
-    padding: 14px;
+    min-height: 124px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .ad-stat-label {
-    display: block;
-    color: #9fb3d8;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748B;
     font-size: 13px;
+}
+
+.ad-stat-label::before {
+    content: '';
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #4F7CF7, #6B8CFF);
+    box-shadow: 0 0 0 4px rgba(79, 124, 247, 0.15);
 }
 
 .ad-stat-value {
     margin-top: 8px;
     display: block;
-    color: #f1f6ff;
-    font-size: 28px;
+    color: #1F2937;
+    font-size: clamp(28px, 3.1vw, 34px);
     font-weight: 800;
+    line-height: 1.1;
 }
 
 .ad-grid-2col {
@@ -73,12 +99,12 @@ body {
 }
 
 .ad-card {
-    padding: 16px;
+    padding: 20px;
 }
 
 .ad-card h2 {
     margin: 0 0 12px;
-    color: #e7efff;
+    color: #1F2937;
     font-size: 18px;
 }
 
@@ -91,10 +117,17 @@ body {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid #D6E4FF;
     border-radius: 10px;
-    background: rgba(17, 25, 47, 0.72);
-    padding: 10px;
+    background: #EEF4FF;
+    padding: 12px;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.ad-activity-item:hover {
+    background: #E6EEFF;
+    border-color: rgba(79, 124, 247, 0.32);
+    transform: translateX(2px);
 }
 
 .ad-activity-dot {
@@ -102,16 +135,16 @@ body {
     height: 10px;
     border-radius: 999px;
     margin-top: 6px;
-    background: linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #4F7CF7 0%, #6B8CFF 100%);
 }
 
 .ad-activity-item p {
     margin: 0;
-    color: #dbe7ff;
+    color: #1F2937;
 }
 
 .ad-activity-item small {
-    color: #93a7cb;
+    color: #64748B;
 }
 
 .ad-actions {
@@ -122,26 +155,27 @@ body {
 
 .ad-btn {
     text-decoration: none;
-    color: #f8fbff;
+    color: #FFFFFF;
     font-weight: 700;
-    border-radius: 12px;
-    padding: 10px 13px;
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    box-shadow: 0 8px 16px rgba(37, 99, 235, 0.28);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 10px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg,#4F7CF7,#6B8CFF);
+    box-shadow: 0 6px 14px rgba(79, 124, 247, 0.28);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 .ad-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 20px rgba(37, 99, 235, 0.34);
+    transform: translateY(-1px);
+    filter: brightness(0.95);
+    box-shadow: 0 8px 18px rgba(79,124,247,0.35);
 }
 
 .ad-chart-wrap {
     height: 280px;
     border-radius: 10px;
-    padding: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(17, 25, 47, 0.72);
+    padding: 12px;
+    border: 1px solid #D6E4FF;
+    background: #EEF4FF;
 }
 
 .ad-table-wrap {
@@ -156,21 +190,21 @@ body {
 
 .ad-table th,
 .ad-table td {
-    padding: 10px;
+    padding: 11px;
     text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    color: #dbe8ff;
+    border-bottom: 1px solid #D6E4FF;
+    color: #1F2937;
 }
 
 .ad-table th {
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #9fb3d8;
+    color: #64748B;
 }
 
 .ad-table tr:hover td {
-    background: rgba(59, 130, 246, 0.08);
+    background: #E9F1FF;
 }
 
 .ad-badge {
@@ -182,32 +216,32 @@ body {
 }
 
 .ad-badge-pending {
-    background: rgba(251, 191, 36, 0.18);
-    color: #fcd34d;
+    background: #FEF3C7;
+    color: #92400E;
 }
 
 .ad-badge-confirmed {
-    background: rgba(56, 189, 248, 0.18);
-    color: #7dd3fc;
+    background: #DBEAFE;
+    color: #1D4ED8;
 }
 
 .ad-badge-completed {
-    background: rgba(74, 222, 128, 0.2);
-    color: #86efac;
+    background: #DCFCE7;
+    color: #166534;
 }
 
 .ad-badge-in_progress {
-    background: rgba(139, 92, 246, 0.2);
-    color: #c4b5fd;
+    background: #EDE9FE;
+    color: #5B21B6;
 }
 
 .ad-badge-cancelled {
-    background: rgba(248, 113, 113, 0.2);
-    color: #fecaca;
+    background: #FEE2E2;
+    color: #991B1B;
 }
 
 .ad-empty {
-    color: #9fb3d8;
+    color: #64748B;
     text-align: center;
 }
 

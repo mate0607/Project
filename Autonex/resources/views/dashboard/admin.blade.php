@@ -146,8 +146,8 @@
                 datasets: [{
                     label: 'Időpontok',
                     data: @json($monthlyCounts),
-                    backgroundColor: 'rgba(96, 165, 250, 0.45)',
-                    borderColor: '#60a5fa',
+                    backgroundColor: 'rgba(79, 124, 247, 0.28)',
+                    borderColor: '#4F7CF7',
                     borderWidth: 1,
                     borderRadius: 8
                 }]
@@ -157,18 +157,18 @@
                 maintainAspectRatio: false,
                 scales: {
                     x: {
-                        grid: { color: 'rgba(148, 163, 184, 0.12)' },
-                        ticks: { color: '#bfdbfe' }
+                        grid: { color: 'rgba(107, 140, 255, 0.2)' },
+                        ticks: { color: '#64748B' }
                     },
                     y: {
                         beginAtZero: true,
-                        grid: { color: 'rgba(148, 163, 184, 0.12)' },
-                        ticks: { color: '#bfdbfe', stepSize: 1 }
+                        grid: { color: 'rgba(107, 140, 255, 0.2)' },
+                        ticks: { color: '#64748B', stepSize: 1 }
                     }
                 },
                 plugins: {
                     legend: {
-                        labels: { color: '#dbeafe' }
+                        labels: { color: '#1F2937' }
                     }
                 }
             }

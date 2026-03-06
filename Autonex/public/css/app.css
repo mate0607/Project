@@ -879,6 +879,272 @@ input:focus {
     }
 }
 
+:root {
+    --primary: #4ED7F1;
+    --secondary: #6FE6FC;
+    --light: #A8F1FF;
+    --accent: #FFFA8D;
+    --background: #eaf9fd;
+    --card-bg: #ffffff;
+    --text-main: #1f2937;
+    --text-muted: #4b5563;
+    --border-soft: #e5f6fb;
+}
+
+body {
+    background: linear-gradient(180deg, #eaf9fd, #dff6fc);
+    color: var(--text-main);
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.navbar {
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.logo,
+.nav-links a,
+.nav-user,
+.nav-logout {
+    color: #ffffff;
+}
+
+.nav-links a:hover {
+    opacity: 0.85;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.nav-auth {
+    border-left: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.nav-user {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.38);
+}
+
+.nav-logout {
+    background: rgba(31, 41, 55, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.nav-logout:hover {
+    background: rgba(31, 41, 55, 0.28);
+}
+
+h1,
+.page-title {
+    color: #0f172a;
+}
+
+.page-subtitle,
+.empty-state,
+.ad-empty,
+.ud-empty,
+small {
+    color: var(--text-muted);
+}
+
+.card,
+.stat-card,
+.ad-card,
+.ad-stat-card,
+.ad-hero,
+.ud-hero,
+.ud-stat-card,
+.ud-next-card,
+.ud-actions,
+.ud-table-card,
+.ud-car-preview,
+.ud-timeline-card,
+.ud-notifications-card,
+.ud-chart-card,
+.ud-empty-card,
+.cars-side-panel,
+.sales-summary,
+.sale-row,
+.sales-main,
+.app-card,
+.issue-card,
+.car-card,
+.app-form-card,
+.issue-form-card,
+.car-form-card,
+.sale-form-card,
+.detail-card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.card:hover,
+.stat-card:hover,
+.ad-card:hover,
+.ad-stat-card:hover,
+.ud-stat-card:hover,
+.sale-row:hover,
+.app-card:hover,
+.issue-card:hover,
+.car-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #ffffff, #f5fcff);
+    border-left: 5px solid var(--primary);
+}
+
+.stat-card h3,
+.ad-stat-label,
+.ud-stat-label,
+.detail-label,
+.table th,
+.ad-table th {
+    color: var(--text-muted);
+}
+
+.stat-card .value,
+.ad-stat-value,
+.ud-stat-value,
+.cars-side-metric strong,
+.sales-metric strong {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.btn-primary,
+.btn,
+.btn-small,
+.ad-btn,
+.ud-action-btn,
+.car-btn-main,
+.issue-btn-main,
+.app-btn-main,
+.sale-btn-main,
+.car-btn,
+.issue-btn,
+.app-btn,
+.sale-btn {
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-weight: 500;
+}
+
+.btn-primary:hover,
+.btn:hover,
+.btn-small:hover,
+.ad-btn:hover,
+.ud-action-btn:hover,
+.car-btn-main:hover,
+.issue-btn-main:hover,
+.app-btn-main:hover,
+.sale-btn-main:hover,
+.car-btn:hover,
+.issue-btn:hover,
+.app-btn:hover,
+.sale-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-warning,
+.sale-chip,
+.app-status-pending,
+.ad-badge-pending {
+    background: var(--accent);
+    color: #333;
+}
+
+.list-item,
+.ad-activity-item,
+.ud-notification-item {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5f6fb;
+    padding: 18px;
+    margin-bottom: 14px;
+    transition: all 0.2s;
+}
+
+.list-item:hover,
+.ad-activity-item:hover,
+.ud-notification-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.side-panel,
+.cars-side-panel,
+.sales-summary,
+.ud-site-footer-inner {
+    background: #f5fcff;
+    border-radius: 14px;
+    border: 1px solid #e0f5fb;
+    padding: 18px;
+}
+
+.table,
+.ad-table,
+.ud-table {
+    background: white;
+}
+
+.table th,
+.table td,
+.ad-table th,
+.ad-table td,
+.ud-table th,
+.ud-table td {
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--text-main);
+}
+
+.table tr:hover td,
+.ad-table tr:hover td,
+.ud-table tr:hover td {
+    background: #f2fbff;
+}
+
+.app-status-confirmed,
+.ad-badge-confirmed,
+.ud-badge-confirmed {
+    background: rgba(78, 215, 241, 0.22);
+    color: #117f94;
+    border: 1px solid rgba(78, 215, 241, 0.35);
+}
+
+.app-status-completed,
+.ad-badge-completed,
+.ud-badge-completed {
+    background: rgba(111, 230, 252, 0.24);
+    color: #0f7c93;
+    border: 1px solid rgba(111, 230, 252, 0.35);
+}
+
+.app-status-cancelled,
+.ad-badge-cancelled,
+.ud-badge-cancelled {
+    background: rgba(239, 68, 68, 0.12);
+    color: #b42323;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.app-status-in_progress,
+.ad-badge-in_progress,
+.ud-badge-in_progress {
+    background: rgba(168, 241, 255, 0.32);
+    color: #186f85;
+    border: 1px solid rgba(168, 241, 255, 0.4);
+}
+
 .cars-hero {
     margin-bottom: 10px;
 }
