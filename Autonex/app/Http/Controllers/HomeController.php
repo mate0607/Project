@@ -13,6 +13,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
+        // A Home endpoint csak bejelentkezett felhasznalonak ervenyes.
         $this->middleware('auth');
     }
 
@@ -23,6 +24,7 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // Szerepkor alapu atiranyitas: admin mas dashboardot kap, mint a normal user.
         if (auth()->user()->role === 'admin') {
             return redirect('/admin-dashboard');
         }

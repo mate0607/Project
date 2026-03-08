@@ -1145,6 +1145,262 @@ small {
     border: 1px solid rgba(168, 241, 255, 0.4);
 }
 
+/* Global dark theme override */
+:root {
+    --bg-main: #0b1220;
+    --bg-soft: #121c2f;
+    --card-dark: #141f35;
+    --card-dark-soft: #1a2842;
+    --text-main-dark: #e5ecff;
+    --text-muted-dark: #9fb0cf;
+    --border-dark: rgba(159, 176, 207, 0.28);
+    --primary-dark: #4ED7F1;
+    --secondary-dark: #6FE6FC;
+    --accent-dark: #FFFA8D;
+}
+
+body {
+    background:
+        radial-gradient(900px 500px at 0% 0%, rgba(78, 215, 241, 0.12), transparent 48%),
+        radial-gradient(700px 420px at 100% 0%, rgba(111, 230, 252, 0.1), transparent 55%),
+        linear-gradient(160deg, #0b1220 0%, #101a2d 55%, #0c1527 100%);
+    color: var(--text-main-dark);
+}
+
+.navbar {
+    background: linear-gradient(90deg, #12233d, #183154);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.logo,
+.nav-links a,
+.nav-user,
+.nav-logout {
+    color: #e8f0ff;
+}
+
+.nav-links a:hover {
+    background: rgba(78, 215, 241, 0.2);
+    color: #ffffff;
+    opacity: 1;
+}
+
+.nav-auth {
+    border-left: 1px solid rgba(159, 176, 207, 0.38);
+}
+
+.nav-user {
+    background: rgba(78, 215, 241, 0.18);
+    border-color: rgba(111, 230, 252, 0.35);
+}
+
+.nav-logout {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(252, 165, 165, 0.4);
+}
+
+.nav-logout:hover {
+    background: rgba(239, 68, 68, 0.34);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.page-title,
+.detail-value {
+    color: var(--text-main-dark);
+}
+
+.page-subtitle,
+.detail-label,
+.empty-state,
+.ad-empty,
+.ud-empty,
+small,
+label {
+    color: var(--text-muted-dark);
+}
+
+.card,
+.stat-card,
+.ad-card,
+.ad-stat-card,
+.ad-hero,
+.ud-hero,
+.ud-stat-card,
+.ud-next-card,
+.ud-actions,
+.ud-table-card,
+.ud-car-preview,
+.ud-timeline-card,
+.ud-notifications-card,
+.ud-chart-card,
+.ud-empty-card,
+.cars-side-panel,
+.sales-summary,
+.sale-row,
+.app-card,
+.issue-card,
+.car-card,
+.app-form-card,
+.issue-form-card,
+.car-form-card,
+.sale-form-card,
+.detail-card,
+.ud-site-footer-inner,
+.ad-activity-item,
+.ud-notification-item {
+    background: linear-gradient(150deg, var(--card-dark), var(--card-dark-soft));
+    border: 1px solid var(--border-dark);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+
+.card:hover,
+.stat-card:hover,
+.ad-card:hover,
+.ad-stat-card:hover,
+.ud-stat-card:hover,
+.sale-row:hover,
+.app-card:hover,
+.issue-card:hover,
+.car-card:hover,
+.ad-activity-item:hover,
+.ud-notification-item:hover {
+    box-shadow: 0 14px 28px rgba(78, 215, 241, 0.16);
+}
+
+.stat-card,
+.ad-stat-card,
+.ud-stat-card {
+    border-left: 4px solid var(--primary-dark);
+}
+
+.stat-card h3,
+.ad-stat-label,
+.ud-stat-label,
+.table th,
+.ad-table th,
+.ud-table th {
+    color: var(--text-muted-dark);
+}
+
+.stat-card .value,
+.ad-stat-value,
+.ud-stat-value,
+.cars-side-metric strong,
+.sales-metric strong {
+    color: var(--primary-dark);
+}
+
+.btn-primary,
+.btn,
+.btn-small,
+.ad-btn,
+.ud-action-btn,
+.car-btn-main,
+.issue-btn-main,
+.app-btn-main,
+.sale-btn-main,
+.car-btn,
+.issue-btn,
+.app-btn,
+.sale-btn {
+    background: linear-gradient(90deg, var(--primary-dark), var(--secondary-dark));
+    color: #06101f;
+    border: 1px solid rgba(168, 241, 255, 0.42);
+    box-shadow: 0 8px 16px rgba(78, 215, 241, 0.24);
+}
+
+.btn-primary:hover,
+.btn:hover,
+.btn-small:hover,
+.ad-btn:hover,
+.ud-action-btn:hover,
+.car-btn-main:hover,
+.issue-btn-main:hover,
+.app-btn-main:hover,
+.sale-btn-main:hover,
+.car-btn:hover,
+.issue-btn:hover,
+.app-btn:hover,
+.sale-btn:hover {
+    filter: brightness(0.97);
+    box-shadow: 0 10px 20px rgba(78, 215, 241, 0.28);
+}
+
+.btn-muted {
+    background: rgba(159, 176, 207, 0.16);
+    color: #dce6ff;
+    border: 1px solid rgba(159, 176, 207, 0.32);
+}
+
+.btn-muted:hover {
+    background: rgba(159, 176, 207, 0.24);
+}
+
+.btn-warning,
+.sale-chip,
+.app-status-pending,
+.ad-badge-pending,
+.ud-badge-pending {
+    background: rgba(255, 250, 141, 0.2);
+    color: #fff9bf;
+    border: 1px solid rgba(255, 250, 141, 0.35);
+}
+
+.table,
+.ad-table,
+.ud-table {
+    background: transparent;
+}
+
+.table th,
+.table td,
+.ad-table th,
+.ad-table td,
+.ud-table th,
+.ud-table td {
+    border-bottom: 1px solid rgba(159, 176, 207, 0.24);
+    color: var(--text-main-dark);
+}
+
+.table tr:hover td,
+.ad-table tr:hover td,
+.ud-table tr:hover td {
+    background: rgba(78, 215, 241, 0.08);
+}
+
+input,
+select,
+textarea,
+.app-select,
+.sale-select,
+.sale-textarea,
+.app-textarea {
+    background: rgba(15, 23, 42, 0.72);
+    color: #e5ecff;
+    border: 1px solid rgba(159, 176, 207, 0.3);
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.app-select:focus,
+.sale-select:focus,
+.sale-textarea:focus,
+.app-textarea:focus {
+    border-color: var(--primary-dark);
+    box-shadow: 0 0 0 3px rgba(78, 215, 241, 0.2);
+}
+
+::placeholder {
+    color: #9fb0cf;
+}
+
 .cars-hero {
     margin-bottom: 10px;
 }

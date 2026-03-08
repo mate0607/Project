@@ -1,14 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+:root{
+ --bg: #F4F6F8;
+ --card: #FFFFFF;
+
+ --primary: #3B82F6;
+ --primary-hover: #2563EB;
+
+ --text: #1F2937;
+ --text-muted: #6B7280;
+
+ --border: #E5E7EB;
+
+ --navbar: #1E293B;
+}
+
 .admin-theme {
-    background: #EAF6F8;
-    color: #1F2937;
+    background: var(--bg);
+    color: var(--text);
     font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 .admin-theme .navbar {
-    background: #26CCC2;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--navbar);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow: 0 2px 12px rgba(15, 23, 42, 0.1);
 }
 
@@ -20,26 +35,26 @@
 }
 
 .admin-theme .nav-links a:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.12);
     color: #ffffff;
 }
 
 .admin-theme .nav-auth {
-    border-left: 1px solid rgba(255, 255, 255, 0.35);
+    border-left: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .admin-theme .nav-user {
-    background: rgba(255, 255, 255, 0.22);
-    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 .admin-theme .nav-logout {
-    background: rgba(31, 41, 55, 0.15);
-    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(31, 41, 55, 0.25);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .admin-theme .nav-logout:hover {
-    background: rgba(31, 41, 55, 0.25);
+    background: rgba(31, 41, 55, 0.35);
 }
 
 .admin-theme .main-container {
@@ -53,7 +68,7 @@
 .admin-theme h4,
 .admin-theme h5,
 .admin-theme h6 {
-    color: #1F2937;
+    color: var(--text);
 }
 
 .admin-theme .page-subtitle,
@@ -61,7 +76,7 @@
 .admin-theme .empty-state,
 .admin-theme .ad-empty,
 .admin-theme small {
-    color: #6B7280;
+    color: var(--text-muted);
 }
 
 .admin-theme .card,
@@ -76,8 +91,8 @@
 .admin-theme .app-form-card,
 .admin-theme .form-card,
 .admin-theme .detail-card {
-    background: #FFFFFF;
-    border: 1px solid #D9EEF0;
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 14px;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -95,8 +110,8 @@
 .admin-theme .form-card:hover,
 .admin-theme .detail-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(38, 204, 194, 0.45);
-    box-shadow: 0 10px 22px rgba(38, 204, 194, 0.18);
+    border-color: var(--primary);
+    box-shadow: 0 10px 24px rgba(59,130,246,0.18);
 }
 
 .admin-theme .ad-stat-value,
@@ -104,7 +119,7 @@
 .admin-theme .ad-metric-value,
 .admin-theme .cars-side-metric strong,
 .admin-theme .sales-metric strong {
-    color: #26CCC2;
+    color: var(--primary);
     font-weight: 800;
 }
 
@@ -115,12 +130,12 @@
 .admin-theme .issue-btn-main,
 .admin-theme .car-btn-main,
 .admin-theme .sale-btn-main {
-    background: linear-gradient(135deg, #26CCC2, #6B8CFF);
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
     color: #ffffff;
     border-radius: 10px;
     padding: 10px 16px;
     border: 1px solid transparent;
-    box-shadow: 0 4px 12px rgba(38, 204, 194, 0.22);
+    box-shadow: 0 4px 12px rgba(59,130,246,0.22);
     transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
@@ -133,18 +148,18 @@
 .admin-theme .sale-btn-main:hover {
     transform: translateY(-1px);
     filter: brightness(0.94);
-    box-shadow: 0 8px 18px rgba(32, 181, 172, 0.28);
+    box-shadow: 0 8px 18px rgba(59,130,246,0.28);
 }
 
 .admin-theme .btn-muted {
-    background: #F8FEFF;
-    color: #1F2937;
-    border: 1px solid #D9EEF0;
+    background: #F8FAFC;
+    color: var(--text);
+    border: 1px solid var(--border);
     box-shadow: none;
 }
 
 .admin-theme .btn-muted:hover {
-    background: #EEF9FA;
+    background: #F1F5F9;
 }
 
 .admin-theme .ad-activity-item,
@@ -154,18 +169,18 @@
 .admin-theme .issue-row,
 .admin-theme .sale-row,
 .admin-theme .app-status-wrap {
-    background: #F8FEFF;
-    border: 1px solid #D9EEF0;
+    background: #F9FAFB;
+    border: 1px solid var(--border);
     border-radius: 12px;
 }
 
 .admin-theme .ad-activity-dot {
-    background: linear-gradient(135deg, #26CCC2 0%, #6AECE1 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, #60A5FA 100%);
 }
 
 .admin-theme .table,
 .admin-theme .ad-table {
-    background: #FFFFFF;
+    background: var(--card);
     border-radius: 12px;
 }
 
@@ -173,19 +188,19 @@
 .admin-theme .table td,
 .admin-theme .ad-table th,
 .admin-theme .ad-table td {
-    border-bottom: 1px solid #D9EEF0;
-    color: #1F2937;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
 }
 
 .admin-theme .table th,
 .admin-theme .ad-table th {
-    color: #6B7280;
+    color: var(--text-muted);
     font-weight: 600;
 }
 
 .admin-theme .table tr:hover td,
 .admin-theme .ad-table tr:hover td {
-    background: #F3FDFF;
+    background: #F3F4F6;
 }
 
 .admin-theme input,
@@ -196,8 +211,8 @@
 .admin-theme .sale-textarea,
 .admin-theme .app-textarea {
     background: #FFFFFF;
-    color: #1F2937;
-    border: 1px solid #D9EEF0;
+    color: var(--text);
+    border: 1px solid var(--border);
 }
 
 .admin-theme input:focus,
@@ -207,8 +222,8 @@
 .admin-theme .sale-select:focus,
 .admin-theme .sale-textarea:focus,
 .admin-theme .app-textarea:focus {
-    border-color: #26CCC2;
-    box-shadow: 0 0 0 3px rgba(38, 204, 194, 0.2);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
 }
 
 .admin-theme .field-error {
@@ -217,30 +232,30 @@
 
 .admin-theme .ad-badge-confirmed,
 .admin-theme .app-status-confirmed {
-    background: rgba(79, 124, 247, 0.15);
-    color: #355fd4;
-    border: 1px solid rgba(79, 124, 247, 0.3);
+    background: rgba(59,130,246,0.15);
+    color: #1D4ED8;
+    border: 1px solid rgba(59,130,246,0.3);
 }
 
 .admin-theme .ad-badge-pending,
 .admin-theme .app-status-pending {
-    background: rgba(255, 183, 108, 0.2);
-    color: #9a5d1f;
-    border: 1px solid rgba(255, 183, 108, 0.35);
+    background: rgba(251,191,36,0.2);
+    color: #92400E;
+    border: 1px solid rgba(251,191,36,0.35);
 }
 
 .admin-theme .ad-badge-completed,
 .admin-theme .app-status-completed {
-    background: rgba(106, 236, 225, 0.22);
-    color: #1b8b83;
-    border: 1px solid rgba(38, 204, 194, 0.3);
+    background: rgba(34,197,94,0.18);
+    color: #166534;
+    border: 1px solid rgba(34,197,94,0.3);
 }
 
 .admin-theme .ad-badge-cancelled,
 .admin-theme .app-status-cancelled {
-    background: rgba(241, 181, 181, 0.2);
-    color: #9c3b3b;
-    border: 1px solid rgba(228, 136, 136, 0.3);
+    background: rgba(239,68,68,0.18);
+    color: #991B1B;
+    border: 1px solid rgba(239,68,68,0.3);
 }
 
 @media (max-width: 900px) {
@@ -257,4 +272,29 @@
     .admin-theme .sale-btn-main {
         padding: 9px 14px;
     }
+}
+
+
+
+.feature-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:16px;
+margin-top:10px;
+}
+
+.feature{
+background:#F9FAFB;
+padding:16px;
+border-radius:10px;
+border:1px solid var(--border);
+}
+
+.feature h4{
+margin-bottom:6px;
+}
+
+.feature p{
+color:var(--text-muted);
+font-size:14px;
 }

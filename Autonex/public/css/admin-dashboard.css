@@ -1,18 +1,8 @@
 body {
-    background: #EAF2FF;
-    color: #1F2937;
-}
-
-.navbar {
-    background: #3B4A63;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.nav-links a,
-.logo,
-.nav-user,
-.nav-logout {
-    color: #F8FBFF;
+    background:
+        radial-gradient(900px 460px at 0% 0%, rgba(78, 215, 241, 0.12), transparent 50%),
+        linear-gradient(160deg, #0b1220 0%, #101a2d 55%, #0c1527 100%);
+    color: #e5ecff;
 }
 
 .admin-dashboard {
@@ -22,17 +12,23 @@ body {
     gap: 18px;
 }
 
+.ad-hero,
+.ad-stat-card,
+.ad-card {
+    border: 1px solid rgba(159, 176, 207, 0.28);
+    border-radius: 14px;
+    background: linear-gradient(150deg, #141f35, #1a2842);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
 .ad-hero {
     padding: 18px 22px;
-    border: 1px solid #D6E4FF;
-    border-radius: 14px;
-    background: #F6F9FF;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
 .ad-hero h1 {
     margin: 0;
-    color: #1F2937;
+    color: #e5ecff;
     font-size: clamp(24px, 3.3vw, 32px);
 }
 
@@ -42,20 +38,11 @@ body {
     gap: 12px;
 }
 
-.ad-stat-card,
-.ad-card {
-    border: 1px solid #D6E4FF;
-    border-radius: 14px;
-    background: #F6F9FF;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
 .ad-stat-card:hover,
 .ad-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(79, 124, 247, 0.45);
-    box-shadow: 0 10px 24px rgba(79, 124, 247, 0.16);
+    border-color: rgba(78, 215, 241, 0.38);
+    box-shadow: 0 14px 28px rgba(78, 215, 241, 0.16);
 }
 
 .ad-stat-card {
@@ -70,7 +57,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: #64748B;
+    color: #9fb0cf;
     font-size: 13px;
 }
 
@@ -79,14 +66,14 @@ body {
     width: 9px;
     height: 9px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #4F7CF7, #6B8CFF);
-    box-shadow: 0 0 0 4px rgba(79, 124, 247, 0.15);
+    background: linear-gradient(135deg, #4ED7F1, #6FE6FC);
+    box-shadow: 0 0 0 4px rgba(78, 215, 241, 0.18);
 }
 
 .ad-stat-value {
     margin-top: 8px;
     display: block;
-    color: #1F2937;
+    color: #4ED7F1;
     font-size: clamp(28px, 3.1vw, 34px);
     font-weight: 800;
     line-height: 1.1;
@@ -104,7 +91,7 @@ body {
 
 .ad-card h2 {
     margin: 0 0 12px;
-    color: #1F2937;
+    color: #e5ecff;
     font-size: 18px;
 }
 
@@ -117,16 +104,16 @@ body {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    border: 1px solid #D6E4FF;
+    border: 1px solid rgba(159, 176, 207, 0.24);
     border-radius: 10px;
-    background: #EEF4FF;
+    background: rgba(78, 215, 241, 0.08);
     padding: 12px;
     transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .ad-activity-item:hover {
-    background: #E6EEFF;
-    border-color: rgba(79, 124, 247, 0.32);
+    background: rgba(78, 215, 241, 0.14);
+    border-color: rgba(78, 215, 241, 0.32);
     transform: translateX(2px);
 }
 
@@ -135,16 +122,16 @@ body {
     height: 10px;
     border-radius: 999px;
     margin-top: 6px;
-    background: linear-gradient(135deg, #4F7CF7 0%, #6B8CFF 100%);
+    background: linear-gradient(135deg, #4ED7F1 0%, #6FE6FC 100%);
 }
 
 .ad-activity-item p {
     margin: 0;
-    color: #1F2937;
+    color: #e5ecff;
 }
 
 .ad-activity-item small {
-    color: #64748B;
+    color: #9fb0cf;
 }
 
 .ad-actions {
@@ -155,27 +142,27 @@ body {
 
 .ad-btn {
     text-decoration: none;
-    color: #FFFFFF;
+    color: #06101f;
     font-weight: 700;
     border-radius: 10px;
     padding: 10px 16px;
-    background: linear-gradient(135deg,#4F7CF7,#6B8CFF);
-    box-shadow: 0 6px 14px rgba(79, 124, 247, 0.28);
+    background: linear-gradient(135deg, #4ED7F1, #6FE6FC);
+    box-shadow: 0 8px 16px rgba(78, 215, 241, 0.24);
     transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 .ad-btn:hover {
     transform: translateY(-1px);
     filter: brightness(0.95);
-    box-shadow: 0 8px 18px rgba(79,124,247,0.35);
+    box-shadow: 0 10px 20px rgba(78, 215, 241, 0.3);
 }
 
 .ad-chart-wrap {
     height: 280px;
     border-radius: 10px;
     padding: 12px;
-    border: 1px solid #D6E4FF;
-    background: #EEF4FF;
+    border: 1px solid rgba(159, 176, 207, 0.24);
+    background: rgba(78, 215, 241, 0.06);
 }
 
 .ad-table-wrap {
@@ -192,19 +179,19 @@ body {
 .ad-table td {
     padding: 11px;
     text-align: left;
-    border-bottom: 1px solid #D6E4FF;
-    color: #1F2937;
+    border-bottom: 1px solid rgba(159, 176, 207, 0.24);
+    color: #e5ecff;
 }
 
 .ad-table th {
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #64748B;
+    color: #9fb0cf;
 }
 
 .ad-table tr:hover td {
-    background: #E9F1FF;
+    background: rgba(78, 215, 241, 0.08);
 }
 
 .ad-badge {
@@ -216,32 +203,32 @@ body {
 }
 
 .ad-badge-pending {
-    background: #FEF3C7;
-    color: #92400E;
+    background: rgba(255, 250, 141, 0.2);
+    color: #fff9bf;
 }
 
 .ad-badge-confirmed {
-    background: #DBEAFE;
-    color: #1D4ED8;
+    background: rgba(78, 215, 241, 0.22);
+    color: #b9f6ff;
 }
 
 .ad-badge-completed {
-    background: #DCFCE7;
-    color: #166534;
+    background: rgba(111, 230, 252, 0.24);
+    color: #d3fbff;
 }
 
 .ad-badge-in_progress {
-    background: #EDE9FE;
-    color: #5B21B6;
+    background: rgba(168, 241, 255, 0.22);
+    color: #dcfbff;
 }
 
 .ad-badge-cancelled {
-    background: #FEE2E2;
-    color: #991B1B;
+    background: rgba(239, 68, 68, 0.2);
+    color: #fecaca;
 }
 
 .ad-empty {
-    color: #64748B;
+    color: #9fb0cf;
     text-align: center;
 }
 

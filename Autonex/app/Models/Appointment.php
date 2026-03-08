@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Appointment extends Model
 {
     /** @use HasFactory<\Database\Factories\AppointmentFactory> */
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
+    // Tomegesen kitoltheto attribitumok a create/update folyamatokhoz.
     protected $fillable = [
         'user_id',
         'car_id',
@@ -22,11 +22,20 @@ class Appointment extends Model
         'service',
     ];
 
+    // Datum es kulcs mezok egyseges tipizalasa az alkalmazas tobbi reszehez.
+    protected $casts = [
+        'user_id' => 'integer',
+        'car_id' => 'integer',
+        'date' => 'date:Y-m-d',
+    ];
+
+    // Foglalo felhasznalo kapcsolata.
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    // A foglalashoz tartozo auto kapcsolata.
     public function car()
     {
         return $this->belongsTo(Car::class);

@@ -10,6 +10,15 @@ use App\Http\Requests\UpdateSaleRequest;
 
 class SaleController extends Controller
 {
+    // Egy helyen tartjuk a create/edit nezethez szukseges valaszthato adatokat.
+    private function getFormDependencies(): array
+    {
+        return [
+            'cars' => Car::orderBy('make_model')->get(),
+            'users' => User::orderBy('name')->get(),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -25,10 +34,9 @@ class SaleController extends Controller
      */
     public function create()
     {
-        $cars = Car::orderBy('make_model')->get();
-        $users = User::orderBy('name')->get();
+        $dependencies = $this->getFormDependencies();
 
-        return view('sales.create', compact('cars', 'users'));
+        return view('sales.create', $dependencies);
     }
 
     /**
@@ -66,10 +74,10 @@ class SaleController extends Controller
      */
     public function edit(Sale $sale)
     {
-        $cars = Car::orderBy('make_model')->get();
-        $users = User::orderBy('name')->get();
+        $dependencies = $this->getFormDependencies();
+        $dependencies['sale'] = $sale;
 
-        return view('sales.edit', compact('sale', 'cars', 'users'));
+        return view('sales.edit', $dependencies);
     }
 
     /**

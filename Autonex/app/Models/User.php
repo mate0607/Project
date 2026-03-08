@@ -3,7 +3,6 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Appointment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -48,8 +47,15 @@ class User extends Authenticatable
         ];
     }
 
+    // A felhasznalo altal letrehozott idopont-foglalasok.
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    // A felhasznalo tulajdonaban levo autok.
+    public function cars()
+    {
+        return $this->hasMany(Car::class);
     }
 }

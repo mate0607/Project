@@ -1,200 +1,427 @@
-:root {
-    --bg: #0b1220;
-    --bg-soft: #111b2f;
-    --card: rgba(255, 255, 255, 0.08);
-    --text: #f8fafc;
-    --muted: #cbd5e1;
-    --primary: #3b82f6;
-    --primary-strong: #2563eb;
-    --border: rgba(255, 255, 255, 0.18);
+.main-container {
+    max-width: 1240px;
 }
 
-* {
-    box-sizing: border-box;
+/* Oldalhatter es lebego dísz-elemek. */
+.welcome-long {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-bottom: 70px;
 }
 
-body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: 'Instrument Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    color: var(--text);
-    background: radial-gradient(circle at 20% 20%, #1d2f53 0%, var(--bg) 42%, #080d18 100%);
+.ambient-glow {
+    position: fixed;
+    border-radius: 999px;
+    pointer-events: none;
+    filter: blur(12px);
+    z-index: -2;
 }
 
-.page-bg {
+.glow-left {
+    width: 420px;
+    height: 420px;
+    left: -120px;
+    top: 100px;
+    background: radial-gradient(circle, rgba(78, 215, 241, 0.3), rgba(78, 215, 241, 0));
+    animation: driftA 14s ease-in-out infinite;
+}
+
+.glow-right {
+    width: 520px;
+    height: 520px;
+    right: -180px;
+    top: 30%;
+    background: radial-gradient(circle, rgba(111, 230, 252, 0.22), rgba(111, 230, 252, 0));
+    animation: driftB 16s ease-in-out infinite;
+}
+
+.ambient-grid {
     position: fixed;
     inset: 0;
-    pointer-events: none;
-    background:
-        radial-gradient(40rem 40rem at 80% 0%, rgba(37, 99, 235, 0.28), transparent 70%),
-        radial-gradient(30rem 30rem at 0% 80%, rgba(59, 130, 246, 0.2), transparent 70%);
+    background-image:
+        linear-gradient(rgba(159, 176, 207, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(159, 176, 207, 0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(circle at center, black, transparent 80%);
+    z-index: -3;
 }
 
-.topbar {
-    position: relative;
-    z-index: 2;
-    max-width: 1140px;
-    margin: 0 auto;
-    padding: 1.25rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* Szekció-szintű alapok. */
+.wl-section {
+    margin-top: 18px;
 }
 
-.brand {
-    color: var(--text);
-    text-decoration: none;
-    font-size: 1.125rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+.wl-hero,
+.wl-stat-card,
+.wl-feature-card,
+.wl-system-card,
+.wl-step-card,
+.wl-cta,
+.wl-preview-card {
+    border: 1px solid rgba(159, 176, 207, 0.3);
+    background: linear-gradient(145deg, rgba(20, 31, 53, 0.92), rgba(26, 40, 66, 0.92));
+    border-radius: 16px;
+    box-shadow: 0 16px 34px rgba(5, 10, 22, 0.32);
 }
 
-.auth-nav {
-    display: flex;
-    gap: 0.6rem;
-    align-items: center;
-}
-
-.hero-wrap {
-    position: relative;
-    z-index: 1;
-    max-width: 1140px;
-    margin: 0 auto;
-    padding: 2.2rem 1rem 3rem;
+.wl-hero {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 1rem;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 16px;
+    padding: clamp(22px, 3.2vw, 34px);
 }
 
-.hero-card,
-.stats-grid {
-    backdrop-filter: blur(8px);
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), var(--card));
-    border: 1px solid var(--border);
-    border-radius: 1rem;
+/* Hero blokk (szoveg + preview). */
+
+.wl-kicker {
+    margin: 0 0 8px;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: #9ceeff;
 }
 
-.hero-card {
-    padding: clamp(1.4rem, 2.4vw, 2rem);
-}
-
-.badge {
-    margin: 0 0 0.8rem;
-    display: inline-flex;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 0.35rem 0.75rem;
-    font-size: 0.78rem;
-    color: var(--muted);
-}
-
-h1 {
+.wl-hero h1 {
     margin: 0;
-    font-size: clamp(1.7rem, 4vw, 2.8rem);
-    line-height: 1.15;
+    font-size: clamp(36px, 5vw, 62px);
+    line-height: 1.03;
+    color: #ecf6ff;
+    max-width: 14ch;
 }
 
-.subtitle {
-    margin: 1rem 0 1.3rem;
-    max-width: 60ch;
-    color: var(--muted);
-    line-height: 1.65;
+.wl-hero p {
+    margin: 14px 0 0;
+    color: #9fb0cf;
+    line-height: 1.7;
+    max-width: 58ch;
 }
 
-.hero-actions {
+.wl-actions {
+    margin-top: 18px;
     display: flex;
-    gap: 0.75rem;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
-.btn {
-    text-decoration: none;
-    border-radius: 0.75rem;
-    padding: 0.65rem 1rem;
-    font-weight: 600;
-    transition: 0.2s ease;
-    border: 1px solid transparent;
-    display: inline-flex;
-    align-items: center;
+.wl-actions-center {
     justify-content: center;
 }
 
-.btn-primary {
-    background: linear-gradient(120deg, var(--primary), var(--primary-strong));
-    color: #fff;
+/* CTA gombok. */
+.wl-btn {
+    text-decoration: none;
+    border-radius: 12px;
+    padding: 11px 16px;
+    font-weight: 700;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
 }
 
-.btn-primary:hover {
-    filter: brightness(1.06);
+.wl-btn-main {
+    background: linear-gradient(135deg, #4ed7f1, #6fe6fc);
+    color: #06101f;
+    box-shadow: 0 10px 20px rgba(78, 215, 241, 0.25);
 }
 
-.btn-outline {
-    color: var(--text);
-    border-color: var(--border);
-    background: rgba(255, 255, 255, 0.04);
+.wl-btn-main:hover {
+    transform: translateY(-1px);
+    filter: brightness(0.98);
 }
 
-.btn-outline:hover,
-.btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.1);
+.wl-btn-soft {
+    color: #dff2ff;
+    background: rgba(159, 176, 207, 0.16);
+    border: 1px solid rgba(159, 176, 207, 0.28);
 }
 
-.btn-ghost {
-    color: var(--text);
-    background: transparent;
-    border-color: transparent;
+.wl-btn-soft:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(8, 18, 36, 0.24);
 }
 
-.stats-grid {
-    padding: 0.9rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.8rem;
+.wl-preview-card {
+    min-height: 260px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
 }
 
-.stat-item {
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    padding: 0.85rem;
-    background: rgba(255, 255, 255, 0.04);
-}
+/* Preview mini panel elemek. */
 
-.stat-item h3 {
-    margin: 0 0 0.35rem;
-    font-size: 1rem;
-}
-
-.stat-item p {
+.wl-preview-card h3 {
     margin: 0;
-    color: var(--muted);
-    font-size: 0.9rem;
-    line-height: 1.5;
+    color: #ebf5ff;
 }
 
-@media (max-width: 900px) {
-    .hero-wrap {
-        grid-template-columns: 1fr;
+.wl-preview-card p {
+    margin: 8px 0 0;
+    color: #9fb0cf;
+}
+
+.wl-preview-ping {
+    width: 160px;
+    height: 160px;
+    border-radius: 999px;
+    border: 1px solid rgba(111, 230, 252, 0.32);
+    animation: pulse 3.8s ease-out infinite;
+    position: absolute;
+    right: -28px;
+    top: -20px;
+}
+
+.wl-preview-lines {
+    margin-top: 22px;
+    display: grid;
+    gap: 10px;
+}
+
+.wl-preview-lines span {
+    height: 10px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgba(78, 215, 241, 0.55), rgba(111, 230, 252, 0.18));
+}
+
+.wl-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+/* Statisztika kártyák. */
+
+.wl-stat-card {
+    padding: 18px;
+}
+
+.wl-stat-card small {
+    color: #9fb0cf;
+    font-size: 13px;
+}
+
+.wl-stat-card strong {
+    display: block;
+    margin-top: 8px;
+    color: #4ed7f1;
+    font-size: clamp(30px, 3.2vw, 38px);
+    line-height: 1.08;
+}
+
+.wl-head p {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 12px;
+    color: #9ceeff;
+}
+
+.wl-head h2 {
+    margin: 7px 0 0;
+    color: #eaf4ff;
+    font-size: clamp(26px, 3vw, 36px);
+}
+
+.wl-features-grid {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+/* Feature kártya rács. */
+
+.wl-feature-card {
+    padding: 18px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.wl-feature-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(111, 230, 252, 0.42);
+}
+
+.wl-feature-card h3 {
+    margin: 0;
+    color: #ebf5ff;
+    font-size: 18px;
+}
+
+.wl-feature-card p {
+    margin: 8px 0 0;
+    color: #9fb0cf;
+    line-height: 1.6;
+}
+
+.wl-system-card {
+    margin-top: 12px;
+    padding: 18px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 0.8fr;
+    gap: 12px;
+}
+
+/* Rendszer előnézet (chart/feed/ministats). */
+
+.wl-system-chart,
+.wl-system-feed,
+.wl-system-mini-stats {
+    border: 1px solid rgba(159, 176, 207, 0.22);
+    border-radius: 12px;
+    padding: 14px;
+    background: rgba(15, 23, 42, 0.5);
+}
+
+.wl-system-card h4 {
+    margin: 0;
+    color: #eaf4ff;
+}
+
+.wl-bars {
+    margin-top: 14px;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 120px;
+}
+
+.wl-bars span {
+    flex: 1;
+    height: var(--h);
+    border-radius: 10px 10px 4px 4px;
+    background: linear-gradient(180deg, #4ed7f1, rgba(78, 215, 241, 0.22));
+}
+
+.wl-system-feed ul {
+    margin: 12px 0 0;
+    padding-left: 18px;
+    color: #9fb0cf;
+    line-height: 1.8;
+}
+
+.wl-system-mini-stats p {
+    margin: 12px 0 0;
+    color: #9fb0cf;
+}
+
+.wl-system-mini-stats strong {
+    color: #eaf4ff;
+}
+
+.wl-steps {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+/* How-it-works lépések. */
+
+.wl-step-card {
+    padding: 18px;
+}
+
+.wl-step-card span {
+    display: inline-grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(78, 215, 241, 0.2);
+    color: #9ceeff;
+    font-weight: 700;
+}
+
+.wl-step-card h3 {
+    margin: 10px 0 0;
+    color: #eaf4ff;
+}
+
+.wl-step-card p {
+    margin: 8px 0 0;
+    color: #9fb0cf;
+    line-height: 1.6;
+}
+
+.wl-cta {
+    text-align: center;
+    padding: clamp(24px, 4vw, 42px);
+}
+
+.wl-cta h2 {
+    margin: 0;
+    color: #ecf6ff;
+    font-size: clamp(30px, 4vw, 44px);
+}
+
+.wl-cta p {
+    margin: 10px auto 0;
+    color: #9fb0cf;
+    max-width: 56ch;
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(22px) scale(0.985);
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+    transition-delay: var(--d, 0s);
+    will-change: opacity, transform;
+}
+
+/* Scroll reveal animációk. */
+
+.reveal.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.82);
+        opacity: 0.92;
+    }
+    100% {
+        transform: scale(1.35);
+        opacity: 0;
     }
 }
 
-@media (max-width: 600px) {
-    .topbar {
+@keyframes driftA {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(-18px, 12px, 0); }
+}
+
+@keyframes driftB {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(16px, -16px, 0); }
+}
+
+@media (max-width: 1080px) {
+    .wl-hero,
+    .wl-system-card,
+    .wl-features-grid,
+    .wl-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .wl-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Mobil finomhangolások. */
+@media (max-width: 640px) {
+    .wl-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .wl-actions {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 0.7rem;
     }
 
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .auth-nav {
+    .wl-btn {
         width: 100%;
-        flex-wrap: wrap;
-    }
-
-    .auth-nav .btn {
-        flex: 1;
-        min-width: 7rem;
+        justify-content: center;
+        display: inline-flex;
     }
 }

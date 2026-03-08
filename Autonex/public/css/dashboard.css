@@ -1,8 +1,8 @@
 body {
     background:
-        radial-gradient(circle at 15% 20%, rgba(37, 99, 235, 0.28), transparent 30%),
-        radial-gradient(circle at 80% 0%, rgba(30, 64, 175, 0.25), transparent 35%),
-        linear-gradient(140deg, #04070f 0%, #0a1224 55%, #071126 100%);
+        radial-gradient(circle at 15% 20%, rgba(78, 215, 241, 0.18), transparent 32%),
+        radial-gradient(circle at 80% 0%, rgba(111, 230, 252, 0.14), transparent 38%),
+        linear-gradient(160deg, #0b1220 0%, #101a2d 55%, #0c1527 100%);
     min-height: 100vh;
 }
 
@@ -23,9 +23,9 @@ body {
 .ud-chart-card,
 .ud-empty-card,
 .ud-table-card {
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(13, 18, 36, 0.58);
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(159, 176, 207, 0.28);
+    background: linear-gradient(150deg, #141f35, #1a2842);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 16px;
@@ -48,13 +48,13 @@ body {
 
 .ud-hero h1 {
     margin: 0;
-    color: #eaf2ff;
+    color: #e5ecff;
     font-size: clamp(30px, 4vw, 42px);
 }
 
 .ud-hero p {
     margin: 10px 0 0;
-    color: #b8c8e8;
+    color: #9fb0cf;
     max-width: 540px;
 }
 
@@ -90,7 +90,7 @@ body {
 
 .ud-kicker {
     margin: 0 0 6px;
-    color: #93c5fd;
+    color: #6FE6FC;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     font-size: 11px;
@@ -110,8 +110,8 @@ body {
 
 .ud-stat-card:hover {
     transform: translateY(-6px);
-    border-color: rgba(96, 165, 250, 0.45);
-    box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.2), 0 20px 32px rgba(30, 64, 175, 0.22);
+    border-color: rgba(78, 215, 241, 0.38);
+    box-shadow: 0 0 0 1px rgba(78, 215, 241, 0.18), 0 20px 32px rgba(78, 215, 241, 0.16);
 }
 
 .ud-stat-icon {
@@ -120,7 +120,7 @@ body {
     display: grid;
     place-items: center;
     border-radius: 12px;
-    background: rgba(59, 130, 246, 0.2);
+    background: rgba(78, 215, 241, 0.18);
     margin-bottom: 14px;
 }
 
@@ -133,12 +133,12 @@ body {
     font-size: clamp(28px, 3vw, 34px);
     font-weight: 800;
     line-height: 1;
-    color: #eff6ff;
+    color: #4ED7F1;
 }
 
 .ud-stat-label {
     margin-top: 8px;
-    color: #b8c8e8;
+    color: #9fb0cf;
     font-size: 14px;
 }
 
@@ -367,7 +367,7 @@ body {
 .ud-table-head h2,
 .ud-actions h2 {
     margin: 0;
-    color: #e9f1ff;
+    color: #e5ecff;
     font-size: 20px;
 }
 
@@ -378,21 +378,21 @@ body {
 }
 
 .ud-next-item {
-    background: rgba(19, 31, 61, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(78, 215, 241, 0.08);
+    border: 1px solid rgba(159, 176, 207, 0.24);
     border-radius: 12px;
     padding: 12px;
 }
 
 .ud-next-item span {
     display: block;
-    color: #93a8ce;
+    color: #9fb0cf;
     font-size: 12px;
     margin-bottom: 4px;
 }
 
 .ud-next-item strong {
-    color: #edf4ff;
+    color: #e5ecff;
 }
 
 .ud-badge {
@@ -444,16 +444,17 @@ body {
 }
 
 .ud-action-btn-primary {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    background: linear-gradient(135deg, #4ED7F1 0%, #6FE6FC 100%);
+    color: #06101f;
 }
 
 .ud-action-btn-primary:hover {
-    box-shadow: 0 14px 24px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 14px 24px rgba(78, 215, 241, 0.34);
 }
 
 .ud-action-btn-soft {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    border: 1px solid rgba(148, 163, 184, 0.32);
+    background: linear-gradient(135deg, #22344f 0%, #2f4666 100%);
+    border: 1px solid rgba(159, 176, 207, 0.32);
 }
 
 .ud-action-btn-soft:hover {
@@ -461,7 +462,7 @@ body {
 }
 
 .ud-action-btn-violet {
-    background: linear-gradient(135deg, #7e22ce 0%, #5b21b6 100%);
+    background: linear-gradient(135deg, #3aa8c6 0%, #358fb3 100%);
 }
 
 .ud-action-btn-violet:hover {
@@ -469,7 +470,8 @@ body {
 }
 
 .ud-action-btn-cyan {
-    background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+    background: linear-gradient(135deg, #6FE6FC 0%, #4ED7F1 100%);
+    color: #06101f;
 }
 
 .ud-action-btn-cyan:hover {
@@ -489,20 +491,20 @@ body {
 .ud-table th,
 .ud-table td {
     padding: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(159, 176, 207, 0.24);
     text-align: left;
-    color: #dbe8ff;
+    color: #e5ecff;
 }
 
 .ud-table th {
-    color: #b8c8e8;
+    color: #9fb0cf;
     font-size: 13px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
 
 .ud-table tr:hover td {
-    background: rgba(59, 130, 246, 0.08);
+    background: rgba(78, 215, 241, 0.08);
 }
 
 .ud-table-btn {
@@ -510,9 +512,9 @@ body {
     align-items: center;
     justify-content: center;
     padding: 8px 11px;
-    background: rgba(30, 64, 175, 0.45);
-    border: 1px solid rgba(147, 197, 253, 0.35);
-    color: #dbeafe;
+    background: rgba(78, 215, 241, 0.2);
+    border: 1px solid rgba(111, 230, 252, 0.35);
+    color: #dff8ff;
 }
 
 .ud-table-btn:hover {
@@ -521,7 +523,7 @@ body {
 }
 
 .ud-empty {
-    color: #a9bddf;
+    color: #9fb0cf;
     text-align: center;
     margin: 8px 0;
 }

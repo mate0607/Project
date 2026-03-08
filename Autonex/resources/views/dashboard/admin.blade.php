@@ -6,6 +6,7 @@
 
 @section('content')
 
+{{-- Admin dashboard: rendszer-szintu mutatok es operativ attekintes --}}
 <section class="admin-dashboard">
     <header class="ad-hero">
         <h1>Rendszer áttekintés</h1>
@@ -62,6 +63,7 @@
         <article class="ad-card">
             <h2>Legutóbbi aktivitások</h2>
             <div class="ad-activity-list">
+                {{-- Az activity elemeket a controller eloallitott strukturaja hajtja meg. --}}
                 @foreach($recentActivities as $activity)
                     <div class="ad-activity-item">
                         <span class="ad-activity-dot"></span>
@@ -133,6 +135,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     (function () {
+        // A chart inicializalas csak akkor fusson, ha a canvas es a Chart library is elerheto.
         const chartEl = document.getElementById('adminMonthlyChart');
 
         if (!chartEl || typeof Chart === 'undefined') {

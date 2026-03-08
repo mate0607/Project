@@ -8,14 +8,22 @@ use App\Http\Requests\UpdateCarRequest;
 
 class CarController extends Controller
 {
+    // Ellenorzi, hogy a jelenlegi felhasznalo admin-e.
     private function isAdmin(): bool
     {
         return auth()->check() && auth()->user()->role === 'admin';
     }
 
+    // Egy helyen kezeljuk az aktualis user azonosito lekereset.
+    private function currentUserId(): ?int
+    {
+        return auth()->id();
+    }
+
+    // Nem admin felhasznalo csak a sajat autojan vegezhet muveletet.
     private function ensureCarOwnership(Car $car): void
     {
-        if (!$this->isAdmin() && $car->user_id !== auth()->id()) {
+        if (!$this->isAdmin() && $car->user_id !== $this->currentUserId()) {
             abort(403);
         }
     }
@@ -28,7 +36,7 @@ class CarController extends Controller
         $query = Car::query();
 
         if (!$this->isAdmin()) {
-            $query->where('user_id', auth()->id());
+            $query->where('user_id', $this->currentUserId());
         }
 
         $cars = $query->latest()->get();
@@ -49,7 +57,7 @@ class CarController extends Controller
      */
     public function store(StoreCarRequest $request)
     {
-        $userId = auth()->id();
+        $userId = $this->currentUserId();
 
         if (!$userId) {
             return redirect()->route('login');

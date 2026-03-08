@@ -9,11 +9,13 @@ use App\Http\Requests\UpdateIssueRequest;
 
 class IssueController extends Controller
 {
+    // Ellenorzi, hogy a felhasznalo admin jogosultsaggal rendelkezik-e.
     private function isAdmin(): bool
     {
         return auth()->check() && auth()->user()->role === 'admin';
     }
 
+    // A sajat auto listat adja vissza; adminnal teljes lista, usernel szurt lista.
     private function userCarsQuery()
     {
         $query = Car::orderBy('make_model');
@@ -25,6 +27,23 @@ class IssueController extends Controller
         return $query;
     }
 
+    // Karbantarthatosag miatt kulon metodusban kezeljuk az auto tulajdonjog-ellenorzest.
+    private function ensureCarOwnershipById(int $carId): void
+    {
+        if ($this->isAdmin()) {
+            return;
+        }
+
+        $ownsCar = Car::where('id', $carId)
+            ->where('user_id', auth()->id())
+            ->exists();
+
+        if (!$ownsCar) {
+            abort(403);
+        }
+    }
+
+    // A hiba megtekintese/szerkesztese csak a tulajdonosnak vagy adminnak engedelyezett.
     private function ensureIssueOwnership(Issue $issue): void
     {
         if ($this->isAdmin()) {
@@ -73,15 +92,7 @@ class IssueController extends Controller
     {
         $validated = $request->validated();
 
-        if (!$this->isAdmin()) {
-            $ownsCar = Car::where('id', $validated['car_id'])
-                ->where('user_id', auth()->id())
-                ->exists();
-
-            if (!$ownsCar) {
-                abort(403);
-            }
-        }
+        $this->ensureCarOwnershipById((int) $validated['car_id']);
 
         Issue::create($validated);
 
@@ -122,15 +133,7 @@ class IssueController extends Controller
 
         $validated = $request->validated();
 
-        if (!$this->isAdmin()) {
-            $ownsCar = Car::where('id', $validated['car_id'])
-                ->where('user_id', auth()->id())
-                ->exists();
-
-            if (!$ownsCar) {
-                abort(403);
-            }
-        }
+        $this->ensureCarOwnershipById((int) $validated['car_id']);
 
         $issue->update($validated);
 

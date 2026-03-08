@@ -10,8 +10,12 @@ use Illuminate\Http\Request;
 
 class AppointmentManagementController extends Controller
 {
+    // Az admin gyors statusz-modositasnal engedett ertekek listaja.
+    private const QUICK_UPDATE_STATUSES = 'confirmed,cancelled,completed';
+
     public function index()
     {
+        // Az index oldalon egyszerre kell a listazott adathalmaz es a fejléc statisztika is.
         $appointments = Appointment::with(['user', 'car'])
             ->latest()
             ->get();
@@ -54,7 +58,7 @@ class AppointmentManagementController extends Controller
     public function updateStatus(Request $request, Appointment $appointment)
     {
         $validated = $request->validate([
-            'status' => ['required', 'in:confirmed,cancelled,completed'],
+            'status' => ['required', 'in:' . self::QUICK_UPDATE_STATUSES],
         ]);
 
         if (
@@ -76,6 +80,7 @@ class AppointmentManagementController extends Controller
 
     private function hasConfirmedConflict(string $date, string $time, ?int $ignoreId = null): bool
     {
+        // Utközésnek tekintjuk, ha ugyanarra a datumra+idore mar van megerositett foglalas.
         return Appointment::query()
             ->where('date', $date)
             ->where('time', $time)

@@ -8,6 +8,13 @@
     @stack('styles')
 </head>
 <body>
+    @php
+        // A navbar tobb ponton hasznalja az auth adatokat, ezert egy helyen taroljuk.
+        $currentUser = auth()->user();
+        $isAdmin = $currentUser && $currentUser->role === 'admin';
+        $isStandardUser = $currentUser && $currentUser->role === 'user';
+    @endphp
+
     <nav class="navbar">
         <a href="{{ url('/') }}" class="logo">Autonex</a>
 
@@ -15,7 +22,8 @@
 
         <div class="nav-links" id="main-nav">
             <div class="nav-main-links">
-                @if(auth()->check() && auth()->user()->role === 'admin')
+                {{-- Admin navigacio: teljes menedzsment modulok --}}
+                @if($isAdmin)
                     <a href="{{ route('admin.dashboard') }}">Dashboard</a>
                     <a href="{{ route('cars.index') }}">Autók kezelése</a>
                     <a href="{{ route('issues.index') }}">Hibák</a>
@@ -23,7 +31,8 @@
                     <a href="{{ route('admin.appointments.index') }}">Időpontok kezelése</a>
                 @endif
 
-                @if(auth()->check() && auth()->user()->role === 'user')
+                {{-- Felhasznaloi navigacio: sajat adatokra fokuszalo menupontok --}}
+                @if($isStandardUser)
                     <a href="{{ route('user.dashboard') }}">Dashboard</a>
                     <a href="{{ route('cars.index') }}">Saját autóim</a>
                     <a href="{{ route('issues.index') }}">Saját hibáim</a>
@@ -33,8 +42,8 @@
             </div>
 
             <div class="nav-auth">
-                @auth
-                    <span class="nav-user">{{ auth()->user()->name }}</span>
+                @if($currentUser)
+                    <span class="nav-user">{{ $currentUser->name }}</span>
 
                     <form action="{{ route('logout') }}" method="POST" class="logout-form">
                         @csrf
@@ -57,11 +66,14 @@
     @endif
 
     <script>
-        const toggle = document.querySelector('.menu-toggle');
-        const nav = document.querySelector('#main-nav');
+        // Mobilnezetben egyszeru menu nyitas-zaras kezeles.
+        const menuToggleButton = document.querySelector('.menu-toggle');
+        const mainNavigation = document.querySelector('#main-nav');
 
-        if (toggle && nav) {
-            toggle.addEventListener('click', () => nav.classList.toggle('open'));
+        if (menuToggleButton && mainNavigation) {
+            menuToggleButton.addEventListener('click', () => {
+                mainNavigation.classList.toggle('open');
+            });
         }
     </script>
 </body>

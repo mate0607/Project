@@ -8,6 +8,7 @@
 @section('content')
 
 @php
+    // UI-demonstracios adatok: ezek jelenleg statikus preview elemek a dashboard kartyakhoz.
     $latestCarPreview = [
         'name' => 'BMW 320d Touring',
         'plate' => 'ABC-123',
@@ -256,6 +257,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     (function () {
+        // Az aktivitasi chart csak akkor inicializalodik, ha biztosan rendelkezesre all a cel elem.
         const chartElement = document.getElementById('activityChart');
 
         if (!chartElement || typeof Chart === 'undefined') {

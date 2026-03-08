@@ -9,4 +9,6 @@ class Message extends Model
 {
     /** @use HasFactory<\Database\Factories\MessageFactory> */
     use HasFactory;
+
+    // Jelenleg ez a modell placeholder szerepet tolt be, a mezok kesobb bovithetoek.
 }
