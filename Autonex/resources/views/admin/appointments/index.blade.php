@@ -2,6 +2,15 @@
 
 @section('content')
 
+@php
+    $stageLabels = [
+        'received' => 'Átvéve',
+        'inspected' => 'Átvizsgálva',
+        'in_progress' => 'Szerelés alatt',
+        'ready' => 'Kész, elvihető',
+    ];
+@endphp
+
 <div class="page-head">
     <h1 class="page-title">Időpont kezelés</h1>
 </div>
@@ -33,6 +42,7 @@
                     <th>Dátum</th>
                     <th>Idő</th>
                     <th>Státusz</th>
+                    <th>Szerviz állapot</th>
                     <th>Műveletek</th>
                 </tr>
             </thead>
@@ -45,6 +55,15 @@
                         <td>{{ $appointment->time }}</td>
                         <td>
                             <span class="app-status app-status-{{ $appointment->status }}">{{ strtoupper($appointment->status) }}</span>
+                        </td>
+                        <td>
+                            @if($appointment->service_stage)
+                                <span class="app-status" style="background: rgba(59,130,246,0.18); color: #93c5fd; border-color: rgba(59,130,246,0.4);">
+                                    {{ $stageLabels[$appointment->service_stage] ?? $appointment->service_stage }}
+                                </span>
+                            @else
+                                —
+                            @endif
                         </td>
                         <td class="table-actions">
                             <a href="{{ route('admin.appointments.edit', $appointment) }}" class="btn-small app-btn">Szerkesztés</a>
@@ -63,7 +82,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="empty-state">Nincs még rögzített időpont.</td>
+                        <td colspan="7" class="empty-state">Nincs még rögzített időpont.</td>
                     </tr>
                 @endforelse
             </tbody>

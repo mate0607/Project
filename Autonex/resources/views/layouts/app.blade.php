@@ -26,16 +26,15 @@
                 @if($isAdmin)
                     <a href="{{ route('admin.dashboard') }}">Dashboard</a>
                     <a href="{{ route('cars.index') }}">Autók kezelése</a>
-                    <a href="{{ route('issues.index') }}">Hibák</a>
                     <a href="{{ route('sales.index') }}">Eladások</a>
                     <a href="{{ route('admin.appointments.index') }}">Időpontok kezelése</a>
+                    <a href="{{ route('admin.notifications.index') }}">Ügyfél értesítés</a>
                 @endif
 
                 {{-- Felhasznaloi navigacio: sajat adatokra fokuszalo menupontok --}}
                 @if($isStandardUser)
                     <a href="{{ route('user.dashboard') }}">Dashboard</a>
                     <a href="{{ route('cars.index') }}">Saját autóim</a>
-                    <a href="{{ route('issues.index') }}">Saját hibáim</a>
                     <a href="{{ route('appointments.index') }}">Időpontjaim</a>
                     <a href="{{ route('sales.index') }}">Market</a>
                 @endif

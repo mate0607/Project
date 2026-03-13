@@ -8,8 +8,19 @@
 </section>
 
 <div class="card sale-form-card">
-    <form method="POST" action="{{ route('sales.store') }}">
+    <form method="POST" action="{{ route('sales.store') }}" enctype="multipart/form-data">
         @csrf
+
+        @if($errors->any())
+            <div style="background:#3b1111;border:1px solid #e74c3c;border-radius:8px;padding:12px 16px;margin-bottom:16px;color:#f87171;">
+                <strong>Hiba:</strong>
+                <ul style="margin:6px 0 0 16px;">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <div class="sales-form-grid">
             <div>
@@ -77,6 +88,15 @@
                 @enderror
             </div>
         </div>
+
+        <label for="images">Képek az autóról (max 10)</label>
+        <input id="images" type="file" name="images[]" multiple accept="image/jpeg,image/png,image/jpg,image/webp">
+        @error('images')
+            <p class="field-error">{{ $message }}</p>
+        @enderror
+        @error('images.*')
+            <p class="field-error">{{ $message }}</p>
+        @enderror
 
         <label for="description">Leírás</label>
         <textarea id="description" name="description" rows="5" class="sale-textarea" placeholder="Részletezd az autó állapotát, extráit...">{{ old('description') }}</textarea>

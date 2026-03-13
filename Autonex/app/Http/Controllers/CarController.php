@@ -33,7 +33,7 @@ class CarController extends Controller
      */
     public function index()
     {
-        $query = Car::query();
+        $query = Car::with('appointments');
 
         if (!$this->isAdmin()) {
             $query->where('user_id', $this->currentUserId());

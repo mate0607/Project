@@ -29,6 +29,8 @@ class StoreSaleRequest extends FormRequest
             'car_condition' => ['nullable', 'string', 'max:255'],
             'mileage' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['nullable', 'boolean'],
+            'images' => ['nullable', 'array', 'max:10'],
+            'images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
         ];
     }
 }

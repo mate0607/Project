@@ -82,7 +82,6 @@
             <h2>Gyors műveletek</h2>
             <div class="ad-actions">
                 <a href="{{ route('cars.create') }}" class="ad-btn">Új autó hozzáadása</a>
-                <a href="{{ route('issues.create') }}" class="ad-btn">Új hibajegy</a>
                 <a href="{{ route('appointments.create') }}" class="ad-btn">Új időpont</a>
             </div>
         </article>

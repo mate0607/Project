@@ -7,37 +7,47 @@
 @section('content')
 
 @php
-    // Az idopontokat datum+ido alapjan kezeljuk esemenykent.
     $now = now();
 
-    // A date cast miatt erkezhet teljes datetime is, ezert itt mindig tiszta Y-m-d + H:i:s formatot allitunk elo.
     $toDateTime = function ($appointment) {
         $datePart = $appointment->date instanceof \Carbon\CarbonInterface
             ? $appointment->date->toDateString()
             : \Carbon\Carbon::parse((string) $appointment->date)->toDateString();
-
         $timePart = \Carbon\Carbon::parse((string) $appointment->time)->format('H:i:s');
-
         return \Carbon\Carbon::parse($datePart . ' ' . $timePart);
     };
 
-    $formatDate = fn ($appointment) => $toDateTime($appointment)->format('Y.m.d');
-    $formatTime = fn ($appointment) => $toDateTime($appointment)->format('H:i');
+    $formatDate = fn ($a) => $toDateTime($a)->format('Y.m.d');
+    $formatTime = fn ($a) => $toDateTime($a)->format('H:i');
 
-    $upcomingAppointments = $appointments
-        ->filter(fn ($appointment) => $toDateTime($appointment)->greaterThanOrEqualTo($now))
-        ->sortBy(fn ($appointment) => $toDateTime($appointment)->timestamp);
+    $nextAppointment = $appointments
+        ->filter(fn ($a) => $toDateTime($a)->greaterThanOrEqualTo($now) && !in_array($a->status, ['cancelled', 'completed']))
+        ->sortBy(fn ($a) => $toDateTime($a)->timestamp)
+        ->first();
 
-    $pastAppointments = $appointments
-        ->filter(fn ($appointment) => $toDateTime($appointment)->lessThan($now))
-        ->sortByDesc(fn ($appointment) => $toDateTime($appointment)->timestamp);
+    $sorted = $appointments->sortByDesc(fn ($a) => $toDateTime($a)->timestamp);
+
+    $statusLabels = [
+        'pending' => 'Függőben',
+        'confirmed' => 'Megerősítve',
+        'in_progress' => 'Folyamatban',
+        'completed' => 'Befejezve',
+        'cancelled' => 'Törölve',
+    ];
+
+    $stageLabels = [
+        'received' => 'Átvéve',
+        'inspected' => 'Átvizsgálva',
+        'in_progress' => 'Szerelés alatt',
+        'ready' => 'Kész, elvihető',
+    ];
 @endphp
 
 <section class="apps-shell apps-page-enter">
     <header class="apps-hero">
         <div>
             <h1 class="page-title">Időpontjaim</h1>
-            <p class="page-subtitle">Kezeld a közelgő és korábbi szerviz időpontokat egy eseményközpontú, áttekinthető nézetben.</p>
+            <p class="page-subtitle">Szerviz időpontjaid és azok aktuális állapota egy helyen.</p>
         </div>
 
         <a href="{{ route('appointments.create') }}" class="btn apps-book-btn">
@@ -50,80 +60,67 @@
         </a>
     </header>
 
-    <section class="apps-stats" aria-label="Időpont statisztikák">
-        <article><p>Közelgő</p><strong>{{ $upcomingAppointments->count() }}</strong></article>
-        <article><p>Korábbi</p><strong>{{ $pastAppointments->count() }}</strong></article>
-        <article><p>Összes</p><strong>{{ $appointments->count() }}</strong></article>
-    </section>
+    {{-- Legközelebbi időpont kiemelt kártya --}}
+    @if($nextAppointment)
+        <a href="{{ route('appointments.show', $nextAppointment) }}" class="svc-next-card">
+            <div class="svc-next-label">Legközelebbi időpont</div>
+            <div class="svc-next-main">
+                <h2>{{ $nextAppointment->car?->make_model ?? 'Nincs autó' }}</h2>
+                <p>{{ $nextAppointment->service ?: 'Általános szerviz' }}</p>
+            </div>
+            <div class="svc-next-meta">
+                <span>{{ $formatDate($nextAppointment) }}</span>
+                <span>{{ $formatTime($nextAppointment) }}</span>
+                <span class="svc-badge svc-badge-{{ $nextAppointment->status }}">{{ $statusLabels[$nextAppointment->status] ?? strtoupper($nextAppointment->status) }}</span>
+            </div>
+            @if($nextAppointment->service_stage)
+                <div class="svc-next-stage">
+                    <span>Szerviz állapot:</span>
+                    <strong>{{ $stageLabels[$nextAppointment->service_stage] ?? $nextAppointment->service_stage }}</strong>
+                </div>
+            @endif
+        </a>
+    @endif
 
-    <section class="apps-columns">
-        <article class="apps-panel apps-upcoming">
-            <header class="apps-panel-head">
-                <h2>Közelgő időpontok</h2>
-                <span>{{ $upcomingAppointments->count() }}</span>
-            </header>
-
-            <div class="apps-timeline" aria-label="Közelgő események">
-                @forelse($upcomingAppointments as $appointment)
-                    <article class="apps-event-card">
-                        <div class="apps-event-dot" aria-hidden="true"></div>
-                        <div class="apps-event-main">
-                            <div class="apps-event-head">
-                                <h3>{{ $appointment->service ?: 'Általános szerviz' }}</h3>
-                                <span class="app-status app-status-{{ $appointment->status }}">{{ strtoupper($appointment->status) }}</span>
-                            </div>
-
-                            <p class="apps-event-car">{{ $appointment->car?->make_model ?? 'Nincs autó' }}</p>
-
-                            <div class="apps-event-meta">
-                                <span>{{ $formatDate($appointment) }}</span>
-                                <span>{{ $formatTime($appointment) }}</span>
-                            </div>
-
-                            @if(!empty($appointment->description))
-                                <p class="apps-event-desc">{{ \Illuminate\Support\Str::limit($appointment->description, 120) }}</p>
+    {{-- Összes szerviz táblázat --}}
+    <div class="svc-table-wrap">
+        <table class="svc-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Autó</th>
+                    <th>Dátum</th>
+                    <th>Időpont</th>
+                    <th>Szerviz</th>
+                    <th>Státusz</th>
+                    <th>Szerviz állapot</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($sorted as $appointment)
+                    <tr class="svc-table-row" onclick="window.location='{{ route('appointments.show', $appointment) }}'">
+                        <td><span class="svc-id">#{{ $appointment->id }}</span></td>
+                        <td>{{ $appointment->car?->make_model ?? '—' }}</td>
+                        <td>{{ $formatDate($appointment) }}</td>
+                        <td>{{ $formatTime($appointment) }}</td>
+                        <td>{{ $appointment->service ?: 'Általános' }}</td>
+                        <td><span class="svc-badge svc-badge-{{ $appointment->status }}">{{ $statusLabels[$appointment->status] ?? strtoupper($appointment->status) }}</span></td>
+                        <td>
+                            @if($appointment->service_stage)
+                                <span class="svc-stage-chip">{{ $stageLabels[$appointment->service_stage] ?? $appointment->service_stage }}</span>
+                            @else
+                                <span class="svc-stage-chip svc-stage-none">—</span>
                             @endif
-
-                            <div class="apps-event-actions">
-                                <a href="{{ route('appointments.show', $appointment) }}" class="apps-link-btn">Megnyit</a>
-                            </div>
-                        </div>
-                    </article>
+                        </td>
+                    </tr>
                 @empty
-                    <div class="apps-empty">
-                        <p>Nincs közelgő időpont.</p>
-                    </div>
+                    <tr>
+                        <td colspan="7" class="svc-empty">Nincs még rögzített időpont.</td>
+                    </tr>
                 @endforelse
-            </div>
-        </article>
-
-        <article class="apps-panel apps-past">
-            <header class="apps-panel-head">
-                <h2>Korábbi időpontok</h2>
-                <span>{{ $pastAppointments->count() }}</span>
-            </header>
-
-            <div class="apps-past-list" aria-label="Korábbi események">
-                @forelse($pastAppointments as $appointment)
-                    <article class="apps-past-card">
-                        <div>
-                            <h3>{{ $appointment->service ?: 'Általános szerviz' }}</h3>
-                            <p>{{ $appointment->car?->make_model ?? 'Nincs autó' }}</p>
-                        </div>
-                        <div class="apps-past-meta">
-                            <span>{{ $formatDate($appointment) }}</span>
-                            <span>{{ $formatTime($appointment) }}</span>
-                        </div>
-                        <a href="{{ route('appointments.show', $appointment) }}" class="apps-link-btn">Megnyit</a>
-                    </article>
-                @empty
-                    <div class="apps-empty">
-                        <p>Nincs korábbi időpont.</p>
-                    </div>
-                @endforelse
-            </div>
-        </article>
-    </section>
+            </tbody>
+        </table>
+    </div>
 </section>
 
 @endsection

@@ -63,6 +63,7 @@
 
     <section class="wl-section reveal" style="--d: 0.06s;">
         <header class="wl-head">
+            <p>3. SZEKCIÓ</p>
             <h2>Funkciók</h2>
         </header>
         <div class="wl-features-grid">
@@ -77,6 +78,7 @@
 
     <section class="wl-section reveal" style="--d: 0.08s;">
         <header class="wl-head">
+            <p>4. SZEKCIÓ</p>
             <h2>Rendszer előnézet</h2>
         </header>
         <div class="wl-system-card reveal" style="--d: 0.1s;">
@@ -110,6 +112,7 @@
 
     <section class="wl-section reveal" style="--d: 0.1s;">
         <header class="wl-head">
+            <p>5. SZEKCIÓ</p>
             <h2>Hogyan működik</h2>
         </header>
         <div class="wl-steps">

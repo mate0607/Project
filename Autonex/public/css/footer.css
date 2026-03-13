@@ -18,6 +18,7 @@ body {
     background: #0b1220;
     border-top: 1px solid rgba(148, 163, 184, 0.28);
     border-radius: 0;
+    padding: 30px;
 }
 
 .ud-site-footer-inner {

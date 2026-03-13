@@ -7,29 +7,7 @@
 
 @section('content')
 
-@php
-    // UI-demonstracios adatok: ezek jelenleg statikus preview elemek a dashboard kartyakhoz.
-    $latestCarPreview = [
-        'name' => 'BMW 320d Touring',
-        'plate' => 'ABC-123',
-        'last_service' => '2026-01-14',
-    ];
 
-    $serviceSteps = [
-        'Időpont foglalva',
-        'Elfogadva',
-        'Szerviz alatt',
-        'Kész',
-    ];
-
-    $activeServiceStep = 2;
-
-    $notifications = [
-        ['icon' => '📅', 'text' => 'Időpont megerősítve'],
-        ['icon' => '🛠️', 'text' => 'Hibajegy frissítve'],
-        ['icon' => '✅', 'text' => 'Szerviz elkészült'],
-    ];
-@endphp
 
 <section class="user-dashboard">
     <header class="ud-hero fade-in">
@@ -47,15 +25,15 @@
         <div class="ud-hero-glow" aria-hidden="true"></div>
     </header>
 
-    <section class="ud-stats-grid">
+    <section class="ud-stats-grid" style="grid-template-columns: repeat(2, 1fr);">
         <article class="ud-stat-card fade-in delay-1">
             <div class="ud-stat-icon" aria-hidden="true">
                 <svg class="ud-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 16H9m10 0h2m-2 0a2 2 0 1 0 2 2m-2-2a2 2 0 1 1-2 2M5 16H3m2 0a2 2 0 1 1-2 2m2-2a2 2 0 1 0 2 2m12-2v-4a2 2 0 0 0-1.1-1.79l-2.57-1.28A2 2 0 0 0 14.45 9H9.55a2 2 0 0 0-.89.21L6.1 10.5A2 2 0 0 0 5 12.29V16"/>
+                    <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-3 3-3-3z"/>
                 </svg>
             </div>
-            <div class="ud-stat-value">{{ $carsCount }}</div>
-            <div class="ud-stat-label">Autóim száma</div>
+            <div class="ud-stat-value">{{ $inServiceCount }}</div>
+            <div class="ud-stat-label">Szervizben lévő autóim</div>
         </article>
 
         <article class="ud-stat-card fade-in delay-2">
@@ -65,62 +43,9 @@
                     <rect x="3" y="4" width="18" height="18" rx="2"/>
                 </svg>
             </div>
-            <div class="ud-stat-value">{{ $appointmentsCount }}</div>
-            <div class="ud-stat-label">Időpontjaim száma</div>
+            <div class="ud-stat-value">{{ $upcomingAppointmentsCount }}</div>
+            <div class="ud-stat-label">Közelgő időpontjaim</div>
         </article>
-
-        <article class="ud-stat-card fade-in delay-3">
-            <div class="ud-stat-icon" aria-hidden="true">
-                <svg class="ud-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-3 3-3-3z"/>
-                </svg>
-            </div>
-            <div class="ud-stat-value">{{ $issuesCount }}</div>
-            <div class="ud-stat-label">Hibajegyeim száma</div>
-        </article>
-
-        <article class="ud-stat-card fade-in delay-4">
-            <div class="ud-stat-icon" aria-hidden="true">
-                <svg class="ud-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="m9 12 2 2 4-4"/>
-                </svg>
-            </div>
-            <div class="ud-stat-value">{{ $servicesCount }}</div>
-            <div class="ud-stat-label">Szervizek száma</div>
-        </article>
-    </section>
-
-    <section class="ud-car-preview fade-in delay-2">
-        <div class="ud-car-preview-main">
-            <div class="ud-car-preview-head">
-                <span class="ud-car-preview-icon" aria-hidden="true">
-                    <svg class="ud-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 16H9m10 0h2m-2 0a2 2 0 1 0 2 2m-2-2a2 2 0 1 1-2 2M5 16H3m2 0a2 2 0 1 1-2 2m2-2a2 2 0 1 0 2 2m12-2v-4a2 2 0 0 0-1.1-1.79l-2.57-1.28A2 2 0 0 0 14.45 9H9.55a2 2 0 0 0-.89.21L6.1 10.5A2 2 0 0 0 5 12.29V16"/>
-                    </svg>
-                </span>
-                <h2>Legutóbb használt autóm</h2>
-            </div>
-
-            <div class="ud-car-preview-grid">
-                <div>
-                    <small>Autó neve</small>
-                    <strong>{{ $latestCarPreview['name'] }}</strong>
-                </div>
-                <div>
-                    <small>Rendszám</small>
-                    <strong>{{ $latestCarPreview['plate'] }}</strong>
-                </div>
-                <div>
-                    <small>Utolsó szerviz dátuma</small>
-                    <strong>{{ $latestCarPreview['last_service'] }}</strong>
-                </div>
-            </div>
-        </div>
-
-        <div class="ud-car-preview-action">
-            <a href="{{ route('cars.index') }}" class="ud-action-btn ud-action-btn-primary">Autó megnyitása</a>
-        </div>
     </section>
 
     <section class="ud-next-card fade-in delay-2">
@@ -152,56 +77,26 @@
         @endif
     </section>
 
-    <section class="ud-timeline-card fade-in delay-3">
-        <div class="ud-timeline-head">
-            <h2>Szerviz állapot</h2>
-        </div>
-
-        <div class="ud-timeline" role="list">
-            @foreach($serviceSteps as $index => $step)
-                <div class="ud-timeline-step {{ $index <= $activeServiceStep ? 'is-done' : '' }} {{ $index === $activeServiceStep ? 'is-active' : '' }}" role="listitem">
-                    <span class="ud-timeline-dot"></span>
-                    <span class="ud-timeline-label">{{ $step }}</span>
-                </div>
-            @endforeach
-        </div>
-    </section>
-
-    <section class="ud-actions fade-in delay-3">
-        <h2>Gyors műveletek</h2>
-        <div class="ud-actions-row">
-            <a href="{{ route('appointments.create') }}" class="ud-action-btn ud-action-btn-primary">Új időpont</a>
-            <a href="{{ route('issues.create') }}" class="ud-action-btn ud-action-btn-violet">Új hibajegy</a>
-            <a href="{{ route('cars.create') }}" class="ud-action-btn ud-action-btn-cyan">Új autó</a>
-        </div>
-    </section>
-
     <section class="ud-notifications-card fade-in delay-3">
         <div class="ud-table-head">
             <h2>Értesítések</h2>
         </div>
 
-        @if(count($notifications) > 0)
+        @if($adminNotifications->count() > 0)
             <div class="ud-notifications-list">
-                @foreach($notifications as $notification)
+                @foreach($adminNotifications as $notification)
                     <div class="ud-notification-item">
-                        <span class="ud-notification-icon" aria-hidden="true">{{ $notification['icon'] }}</span>
-                        <span class="ud-notification-text">{{ $notification['text'] }}</span>
+                        <span class="ud-notification-icon" aria-hidden="true">🔔</span>
+                        <div>
+                            <strong>{{ $notification->title }}</strong>
+                            <span class="ud-notification-text">{{ $notification->message }}</span>
+                        </div>
                     </div>
                 @endforeach
             </div>
         @else
             <p class="ud-empty">Még nincs értesítésed</p>
         @endif
-    </section>
-
-    <section class="ud-chart-card fade-in delay-4">
-        <div class="ud-table-head">
-            <h2>Aktivitás</h2>
-        </div>
-        <div class="ud-chart-wrap">
-            <canvas id="activityChart" aria-label="Havi aktivitás" role="img"></canvas>
-        </div>
     </section>
 
     @if($appointments->count() === 0)
@@ -254,56 +149,6 @@
 
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    (function () {
-        // Az aktivitasi chart csak akkor inicializalodik, ha biztosan rendelkezesre all a cel elem.
-        const chartElement = document.getElementById('activityChart');
-
-        if (!chartElement || typeof Chart === 'undefined') {
-            return;
-        }
-
-        new Chart(chartElement, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Máj', 'Jún'],
-                datasets: [{
-                    label: 'Időpontok',
-                    data: [2, 3, 4, 3, 5, 6],
-                    borderColor: '#60a5fa',
-                    backgroundColor: 'rgba(59, 130, 246, 0.22)',
-                    fill: true,
-                    tension: 0.35,
-                    pointRadius: 3,
-                    pointHoverRadius: 5,
-                    pointBackgroundColor: '#93c5fd'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        grid: { color: 'rgba(148, 163, 184, 0.14)' },
-                        ticks: { color: '#bfd4ff' }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: 'rgba(148, 163, 184, 0.14)' },
-                        ticks: { color: '#bfd4ff', stepSize: 1 }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        labels: { color: '#dbeafe' }
-                    }
-                }
-            }
-        });
-    })();
-</script>
-
 @endsection
 
 @section('page_footer')
@@ -317,7 +162,6 @@
         <nav class="ud-footer-links" aria-label="Footer navigáció">
             <a href="{{ route('user.dashboard') }}">Dashboard</a>
             <a href="{{ route('cars.index') }}">Autóim</a>
-            <a href="{{ route('issues.index') }}">Hibajegyek</a>
             <a href="{{ route('appointments.index') }}">Időpontok</a>
         </nav>
 

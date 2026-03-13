@@ -20,6 +20,12 @@ class Appointment extends Model
         'description',
         'status',
         'service',
+        'service_stage',
+        'mechanic_name',
+        'total_cost',
+        'service_report',
+        'issues_found',
+        'critical_warning',
     ];
 
     // Datum es kulcs mezok egyseges tipizalasa az alkalmazas tobbi reszehez.
@@ -39,5 +45,10 @@ class Appointment extends Model
     public function car()
     {
         return $this->belongsTo(Car::class);
+    }
+
+    public function servicePhotos()
+    {
+        return $this->hasMany(ServicePhoto::class);
     }
 }

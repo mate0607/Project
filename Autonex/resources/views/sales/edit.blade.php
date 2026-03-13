@@ -8,7 +8,7 @@
 </section>
 
 <div class="card sale-form-card">
-    <form method="POST" action="{{ route('sales.update', $sale) }}">
+    <form method="POST" action="{{ route('sales.update', $sale) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -76,6 +76,29 @@
                 @enderror
             </div>
         </div>
+
+        <label>Képek az autóról</label>
+        @if($sale->images->count())
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+                @foreach($sale->images as $img)
+                    <div style="position:relative;display:inline-block;">
+                        <img src="{{ asset('storage/' . $img->path) }}" alt="Kép" style="max-height:120px;border-radius:8px;">
+                        <form action="{{ route('sales.images.destroy', [$sale, $img]) }}" method="POST" style="position:absolute;top:4px;right:4px;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="background:#e74c3c;color:#fff;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px;line-height:24px;padding:0;" title="Kép törlése">&times;</button>
+                        </form>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+        <input type="file" name="images[]" multiple accept="image/jpeg,image/png,image/jpg,image/webp">
+        @error('images')
+            <p class="field-error">{{ $message }}</p>
+        @enderror
+        @error('images.*')
+            <p class="field-error">{{ $message }}</p>
+        @enderror
 
         <label for="description">Leírás</label>
         <textarea id="description" name="description" rows="5" class="sale-textarea">{{ old('description', $sale->description) }}</textarea>

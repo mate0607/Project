@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminNotification;
 use App\Models\Appointment;
 use App\Models\Car;
 use App\Models\Issue;
@@ -74,7 +75,13 @@ class DashboardController extends Controller
     private function upcomingAppointments(): Collection
     {
         return Appointment::with(['car', 'user'])
-            ->whereRaw('TIMESTAMP(`date`, `time`) >= ?', [$this->currentTimestamp()])
+            ->where(function ($query) {
+                $query->where('date', '>', now()->toDateString())
+                      ->orWhere(function ($q) {
+                          $q->where('date', now()->toDateString())
+                            ->where('time', '>=', now()->format('H:i:s'));
+                      });
+            })
             ->orderBy('date')
             ->orderBy('time')
             ->limit(8)
@@ -117,29 +124,36 @@ class DashboardController extends Controller
             ->latest()
             ->get();
 
-        $carsCount = Car::where('user_id', $userId)->count();
+        $inServiceCount = Appointment::where('user_id', $userId)
+            ->where('status', 'in_progress')
+            ->distinct('car_id')
+            ->count('car_id');
 
-        $appointmentsCount = Appointment::where('user_id', $userId)->count();
-
-        $issuesCount = $this->userIssuesQuery($userId)->count();
-
-        $servicesCount = Appointment::where('user_id', $userId)
-            ->where('status', 'completed')
+        $upcomingAppointmentsCount = Appointment::where('user_id', $userId)
+            ->where('date', '>=', now()->toDateString())
             ->count();
+
+        $notificationsCount = AdminNotification::where(function ($q) use ($userId) {
+            $q->where('user_id', $userId)->orWhereNull('user_id');
+        })->count();
+
+        $adminNotifications = AdminNotification::where(function ($q) use ($userId) {
+            $q->where('user_id', $userId)->orWhereNull('user_id');
+        })->latest()->limit(10)->get();
 
         $nextAppointment = Appointment::with('car')
             ->where('user_id', $userId)
-            ->whereRaw('TIMESTAMP(`date`, `time`) >= ?', [$this->currentTimestamp()])
+            ->where('date', '>=', now()->toDateString())
             ->orderBy('date')
             ->orderBy('time')
             ->first();
 
         return view('dashboard.user', compact(
             'appointments',
-            'carsCount',
-            'appointmentsCount',
-            'issuesCount',
-            'servicesCount',
+            'inServiceCount',
+            'upcomingAppointmentsCount',
+            'notificationsCount',
+            'adminNotifications',
             'nextAppointment'
         ));
     }

@@ -21,6 +21,7 @@ class Sale extends Model
         'car_condition',
         'mileage',
         'is_active',
+        'image',
     ];
 
     // Tipuskonverziok az egyseges, kiszamithato kezeleshez.
@@ -49,5 +50,10 @@ class Sale extends Model
     public function seller()
     {
         return $this->belongsTo(User::class, 'seller_id');
+    }
+
+    public function images()
+    {
+        return $this->hasMany(SaleImage::class)->orderBy('sort_order');
     }
 }

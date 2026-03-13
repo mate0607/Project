@@ -28,6 +28,14 @@ class UpdateAppointmentRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:1000'],
             'service' => ['nullable', 'string', 'max:255'],
             'status' => ['required', 'in:pending,confirmed,in_progress,completed,cancelled'],
+            'service_stage' => ['nullable', 'in:received,inspected,in_progress,ready'],
+            'mechanic_name' => ['nullable', 'string', 'max:255'],
+            'total_cost' => ['nullable', 'numeric', 'min:0'],
+            'service_report' => ['nullable', 'string', 'max:5000'],
+            'issues_found' => ['nullable', 'string', 'max:5000'],
+            'critical_warning' => ['nullable', 'string', 'max:5000'],
+            'photo' => ['nullable', 'image', 'max:5120'],
+            'photo_title' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

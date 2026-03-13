@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateAppointmentRequest;
 use App\Models\Appointment;
 use App\Models\Car;
+use App\Models\ServicePhoto;
 use Illuminate\Http\Request;
 
 class AppointmentManagementController extends Controller
@@ -15,7 +16,6 @@ class AppointmentManagementController extends Controller
 
     public function index()
     {
-        // Az index oldalon egyszerre kell a listazott adathalmaz es a fejléc statisztika is.
         $appointments = Appointment::with(['user', 'car'])
             ->latest()
             ->get();
@@ -28,7 +28,7 @@ class AppointmentManagementController extends Controller
 
     public function edit(Appointment $appointment)
     {
-        $appointment->load(['user', 'car']);
+        $appointment->load(['user', 'car', 'servicePhotos']);
         $cars = Car::orderBy('make_model')->get();
 
         return view('admin.appointments.edit', compact('appointment', 'cars'));
@@ -49,7 +49,26 @@ class AppointmentManagementController extends Controller
                 ]);
         }
 
+        // Ha a service_stage üres string, null-ra állítjuk.
+        if (empty($validated['service_stage'])) {
+            $validated['service_stage'] = null;
+        }
+
+        // Fotó feltöltés kezelése.
+        $photoFile = $request->file('photo');
+        $photoTitle = $validated['photo_title'] ?? null;
+        unset($validated['photo'], $validated['photo_title']);
+
         $appointment->update($validated);
+
+        if ($photoFile) {
+            $path = $photoFile->store('service-photos', 'public');
+            ServicePhoto::create([
+                'appointment_id' => $appointment->id,
+                'title' => $photoTitle ?: 'Szerviz fotó',
+                'path' => $path,
+            ]);
+        }
 
         return redirect()->route('admin.appointments.index')
             ->with('success', 'Időpont sikeresen frissítve.');
@@ -78,9 +97,20 @@ class AppointmentManagementController extends Controller
             ->with('success', 'Státusz sikeresen módosítva.');
     }
 
+    public function destroyPhoto(ServicePhoto $photo)
+    {
+        $storagePath = storage_path('app/public/' . $photo->path);
+        if (file_exists($storagePath)) {
+            unlink($storagePath);
+        }
+
+        $photo->delete();
+
+        return back()->with('success', 'Fotó törölve.');
+    }
+
     private function hasConfirmedConflict(string $date, string $time, ?int $ignoreId = null): bool
     {
-        // Utközésnek tekintjuk, ha ugyanarra a datumra+idore mar van megerositett foglalas.
         return Appointment::query()
             ->where('date', $date)
             ->where('time', $time)

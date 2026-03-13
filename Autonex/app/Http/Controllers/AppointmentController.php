@@ -154,7 +154,7 @@ class AppointmentController extends Controller
     {
         $this->ensureAppointmentOwnership($appointment);
 
-        $appointment->load(['car', 'user']);
+        $appointment->load(['car', 'user', 'servicePhotos']);
 
         return view('appointments.show', compact('appointment'));
     }

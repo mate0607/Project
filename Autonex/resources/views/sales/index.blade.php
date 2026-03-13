@@ -11,8 +11,6 @@
     $salesCollection = collect($sales);
     $isAdmin = auth()->check() && auth()->user()->role === 'admin';
 
-    $featuredSales = $salesCollection->where('is_active', true)->sortByDesc('price')->take(3);
-    $recentSales = $salesCollection->sortByDesc('created_at')->take(4);
     $allSales = $salesCollection->sortByDesc('created_at');
 
     // A kliensoldali kereseshez egyseges, kisbetus szovegmezot epitunk.
@@ -63,76 +61,6 @@
         </div>
     </section>
 
-    <section class="market-stats" aria-label="Market összegzés">
-        <article><p>Aktív ajánlatok</p><strong>{{ $salesCollection->where('is_active', true)->count() }}</strong></article>
-        <article><p>Összes listing</p><strong>{{ $salesCollection->count() }}</strong></article>
-        <article><p>Top ár</p><strong>{{ number_format((float) ($salesCollection->max('price') ?? 0), 0, ',', ' ') }} Ft</strong></article>
-    </section>
-
-    @if($featuredSales->count() > 0)
-        <section class="market-section">
-            <div class="market-section-head">
-                <h2>Kiemelt ajánlatok</h2>
-                <p>Magasabb értékű, aktív listingek.</p>
-            </div>
-
-            <div class="market-grid market-grid-featured">
-                @foreach($featuredSales as $sale)
-                    <article class="market-card market-card-featured" data-market-item data-status="{{ $sale->is_active ? 'active' : 'inactive' }}" data-condition="{{ mb_strtolower((string) ($sale->car_condition ?? '')) }}" data-price="{{ (float) $sale->price }}" data-search="{{ $searchableText($sale) }}">
-                        <div class="market-card-media" aria-hidden="true">
-                            <span class="market-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h2m-1-4 1 4-1 4h-1M3 16h2m0 0h4m-4 0a2 2 0 1 1-2 2 2 2 0 0 1 2-2Zm14 0a2 2 0 1 1-2 2 2 2 0 0 1 2-2ZM5 16l1.3-5.1A2 2 0 0 1 8.24 9.4h6.52a2 2 0 0 1 1.94 1.5L18 16"></path></svg>
-                            </span>
-                        </div>
-
-                        <div class="market-card-body">
-                            <h3>{{ $sale->car?->make_model ?? 'Ismeretlen autó' }}</h3>
-                            <p>{{ \Illuminate\Support\Str::limit($sale->description ?: 'Nincs leírás megadva.', 120) }}</p>
-                            <div class="market-card-tags">
-                                <span class="market-tag">{{ $sale->car_condition ?? 'Állapot: n/a' }}</span>
-                                <span class="market-tag {{ $sale->is_active ? 'is-active' : 'is-inactive' }}">{{ $sale->is_active ? 'Aktív' : 'Inaktív' }}</span>
-                            </div>
-                        </div>
-
-                        <div class="market-card-foot">
-                            <strong>{{ number_format((float) $sale->price, 0, ',', ' ') }} Ft</strong>
-                            <div class="market-card-actions">
-                                <a href="{{ route('sales.show', $sale) }}" class="market-btn-soft">Megnyit</a>
-                                @if($isAdmin)
-                                    <a href="{{ route('sales.edit', $sale) }}" class="market-btn-soft">Szerkeszt</a>
-                                @endif
-                            </div>
-                        </div>
-                    </article>
-                @endforeach
-            </div>
-        </section>
-    @endif
-
-    @if($recentSales->count() > 0)
-        <section class="market-section">
-            <div class="market-section-head">
-                <h2>Frissen hozzáadott</h2>
-                <p>Legutóbbi ajánlatok időrendben.</p>
-            </div>
-
-            <div class="market-grid market-grid-recent">
-                @foreach($recentSales as $sale)
-                    <article class="market-card" data-market-item data-status="{{ $sale->is_active ? 'active' : 'inactive' }}" data-condition="{{ mb_strtolower((string) ($sale->car_condition ?? '')) }}" data-price="{{ (float) $sale->price }}" data-search="{{ $searchableText($sale) }}">
-                        <div class="market-card-body">
-                            <h3>{{ $sale->car?->make_model ?? 'Ismeretlen autó' }}</h3>
-                            <p>{{ \Illuminate\Support\Str::limit($sale->description ?: 'Nincs leírás megadva.', 95) }}</p>
-                        </div>
-                        <div class="market-card-foot">
-                            <strong>{{ number_format((float) $sale->price, 0, ',', ' ') }} Ft</strong>
-                            <a href="{{ route('sales.show', $sale) }}" class="market-btn-soft">Megnyit</a>
-                        </div>
-                    </article>
-                @endforeach
-            </div>
-        </section>
-    @endif
-
     <section class="market-section">
         <div class="market-section-head">
             <h2>Összes listing</h2>
@@ -141,7 +69,22 @@
 
         <div class="market-grid market-grid-all" id="market-all-grid">
             @forelse($allSales as $sale)
-                <article class="market-card" data-market-item data-status="{{ $sale->is_active ? 'active' : 'inactive' }}" data-condition="{{ mb_strtolower((string) ($sale->car_condition ?? '')) }}" data-price="{{ (float) $sale->price }}" data-search="{{ $searchableText($sale) }}">
+                <article class="market-card" data-market-item data-status="{{ $sale->is_active ? 'active' : 'inactive' }}" data-condition="{{ mb_strtolower((string) ($sale->car_condition ?? '')) }}" data-price="{{ (float) $sale->price }}" data-search="{{ $searchableText($sale) }}" onclick="if(!event.target.closest('.carousel-btn, .market-btn-soft, .inline-form, button'))window.location='{{ route('sales.show', $sale) }}'" style="cursor:pointer;">
+                    @if($sale->images->count())
+                        <div class="market-card-media" style="position:relative;">
+                            <div class="sale-carousel" id="carousel-{{ $sale->id }}">
+                                @foreach($sale->images as $img)
+                                    <img src="{{ asset('storage/' . $img->path) }}" alt="{{ $sale->car?->make_model }}" class="sale-carousel-img" style="width:100%;height:200px;object-fit:cover;display:{{ $loop->first ? 'block' : 'none' }};">
+                                @endforeach
+                            </div>
+                            @if($sale->images->count() > 1)
+                                <button type="button" class="carousel-btn carousel-prev" onclick="event.preventDefault();slideCarousel('carousel-{{ $sale->id }}',-1)">&#10094;</button>
+                                <button type="button" class="carousel-btn carousel-next" onclick="event.preventDefault();slideCarousel('carousel-{{ $sale->id }}',1)">&#10095;</button>
+                            @endif
+                        </div>
+                    @elseif($sale->image)
+                        <div class="market-card-media"><img src="{{ asset('storage/' . $sale->image) }}" alt="{{ $sale->car?->make_model }}" style="width:100%;height:200px;object-fit:cover;"></div>
+                    @endif
                     <div class="market-card-body">
                         <h3>{{ $sale->car?->make_model ?? 'Ismeretlen autó' }}</h3>
                         <p>{{ \Illuminate\Support\Str::limit($sale->description ?: 'Nincs leírás megadva.', 105) }}</p>
@@ -155,7 +98,6 @@
                     <div class="market-card-foot">
                         <strong>{{ number_format((float) $sale->price, 0, ',', ' ') }} Ft</strong>
                         <div class="market-card-actions">
-                            <a href="{{ route('sales.show', $sale) }}" class="market-btn-soft">Megnyit</a>
                             @if($isAdmin)
                                 <a href="{{ route('sales.edit', $sale) }}" class="market-btn-soft">Szerkeszt</a>
 
@@ -180,6 +122,28 @@
         </div>
     </section>
 </section>
+
+<style>
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.45);color:#fff;border:none;font-size:18px;padding:4px 10px;cursor:pointer;border-radius:5px;z-index:2;transition:background .2s}
+.carousel-btn:hover{background:rgba(0,0,0,.7)}
+.carousel-prev{left:6px}
+.carousel-next{right:6px}
+</style>
+
+<script>
+function slideCarousel(id, dir) {
+    var wrap = document.getElementById(id);
+    if (!wrap) return;
+    var imgs = wrap.querySelectorAll('.sale-carousel-img');
+    var idx = 0;
+    imgs.forEach(function(img, i) { if (img.style.display !== 'none') idx = i; });
+    imgs[idx].style.display = 'none';
+    idx = (idx + dir + imgs.length) % imgs.length;
+    imgs[idx].style.display = 'block';
+    var counter = document.getElementById(id + '-counter');
+    if (counter) counter.textContent = (idx + 1) + ' / ' + imgs.length;
+}
+</script>
 
 <script>
     (function () {

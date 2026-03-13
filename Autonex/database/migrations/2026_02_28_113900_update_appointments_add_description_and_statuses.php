@@ -18,7 +18,9 @@ return new class extends Migration
             });
         }
 
-        DB::statement("ALTER TABLE appointments MODIFY COLUMN status ENUM('pending','confirmed','in_progress','completed','cancelled') NOT NULL DEFAULT 'pending'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE appointments MODIFY COLUMN status ENUM('pending','confirmed','in_progress','completed','cancelled') NOT NULL DEFAULT 'pending'");
+        }
     }
 
     /**
@@ -26,7 +28,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE appointments MODIFY COLUMN status ENUM('pending','confirmed','completed') NOT NULL DEFAULT 'pending'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE appointments MODIFY COLUMN status ENUM('pending','confirmed','completed') NOT NULL DEFAULT 'pending'");
+        }
 
         if (Schema::hasColumn('appointments', 'description')) {
             Schema::table('appointments', function (Blueprint $table) {
