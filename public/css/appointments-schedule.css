@@ -1,0 +1,845 @@
+/* Appointments page: scheduler timeline layout */
+/* Belépési animáció. */
+.apps-page-enter {
+    animation: appsFadeIn 360ms ease both;
+}
+
+@keyframes appsFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.apps-shell {
+    display: grid;
+    gap: 28px;
+}
+
+/* Fejléc blokk és kiemelt foglalás gomb. */
+
+.apps-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.apps-kicker {
+    display: inline-flex;
+    font-size: 12px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #c4b5fd;
+    background: rgba(109, 40, 217, 0.22);
+    border: 1px solid rgba(196, 181, 253, 0.35);
+    border-radius: 999px;
+    padding: 6px 11px;
+    margin-bottom: 9px;
+}
+
+.apps-book-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    color: #f8fbff;
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    border: 1px solid rgba(196, 181, 253, 0.4);
+    box-shadow: 0 10px 22px rgba(76, 29, 149, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.apps-book-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 26px rgba(76, 29, 149, 0.42);
+}
+
+.apps-icon {
+    width: 15px;
+    height: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.apps-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.apps-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+/* Összegző statisztikák. */
+
+.apps-stats article {
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: linear-gradient(155deg, rgba(20, 12, 46, 0.74), rgba(10, 8, 24, 0.92));
+    box-shadow: 0 12px 30px rgba(2, 8, 23, 0.44);
+    padding: 18px;
+}
+
+.apps-stats p {
+    color: rgba(221, 214, 254, 0.86);
+    margin-bottom: 8px;
+}
+
+.apps-stats strong {
+    color: #f5f3ff;
+    font-size: 32px;
+    line-height: 1;
+}
+
+.apps-columns {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 14px;
+    align-items: start;
+}
+
+/* Kétpaneles scheduler elrendezés. */
+
+.apps-panel {
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: linear-gradient(160deg, rgba(11, 16, 34, 0.86), rgba(8, 11, 24, 0.96));
+    box-shadow: 0 14px 32px rgba(2, 8, 23, 0.48);
+    overflow: hidden;
+}
+
+.apps-panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(15, 23, 42, 0.42);
+}
+
+.apps-panel-head h2 {
+    color: #f8fbff;
+    font-size: 16px;
+}
+
+.apps-panel-head span {
+    border-radius: 999px;
+    border: 1px solid rgba(196, 181, 253, 0.45);
+    color: #ddd6fe;
+    font-size: 12px;
+    padding: 4px 9px;
+}
+
+.apps-timeline {
+    position: relative;
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+}
+
+/* Idővonal vizuális gerince. */
+
+.apps-timeline::before {
+    content: '';
+    position: absolute;
+    left: 21px;
+    top: 18px;
+    bottom: 18px;
+    width: 2px;
+    background: linear-gradient(180deg, rgba(196, 181, 253, 0.45), rgba(59, 130, 246, 0.2));
+}
+
+.apps-event-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr);
+    gap: 10px;
+}
+
+.apps-event-dot {
+    width: 14px;
+    height: 14px;
+    margin-top: 14px;
+    border-radius: 999px;
+    border: 2px solid rgba(167, 139, 250, 0.9);
+    background: #0f172a;
+    z-index: 1;
+}
+
+.apps-event-main {
+    border-radius: 13px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: rgba(12, 18, 38, 0.74);
+    padding: 13px;
+    display: grid;
+    gap: 10px;
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+/* Közelgő esemény kártya. */
+
+.apps-event-main:hover {
+    transform: translateY(-2px);
+    border-color: rgba(167, 139, 250, 0.5);
+    box-shadow: 0 10px 22px rgba(2, 8, 23, 0.5);
+}
+
+.apps-event-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.apps-event-head h3 {
+    color: #f5f3ff;
+    font-size: 15px;
+}
+
+.apps-event-car {
+    color: rgba(196, 181, 253, 0.92);
+    font-size: 13px;
+}
+
+.apps-event-meta {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.apps-event-meta span {
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.34);
+    background: rgba(30, 41, 59, 0.36);
+    color: rgba(221, 214, 254, 0.9);
+    font-size: 12px;
+    padding: 4px 9px;
+}
+
+.apps-event-desc {
+    color: rgba(226, 232, 240, 0.95);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.apps-event-actions,
+.apps-past-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.apps-past-list {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+}
+
+/* Korábbi időpontok listája. */
+
+.apps-past-card {
+    border-radius: 13px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: rgba(9, 14, 30, 0.7);
+    padding: 12px;
+    transition: transform 0.22s ease, border-color 0.22s ease;
+}
+
+.apps-past-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(167, 139, 250, 0.45);
+}
+
+.apps-past-card h3 {
+    color: #f5f3ff;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.apps-past-card p {
+    color: rgba(196, 181, 253, 0.84);
+    font-size: 12px;
+}
+
+.apps-past-meta {
+    display: inline-flex;
+    gap: 7px;
+}
+
+.apps-past-meta span {
+    color: rgba(191, 219, 254, 0.9);
+    font-size: 12px;
+}
+
+.apps-link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    min-height: 34px;
+    padding: 6px 12px;
+    border: 1px solid rgba(196, 181, 253, 0.46);
+    color: #ddd6fe;
+    background: rgba(109, 40, 217, 0.18);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* Esemény műveletgomb. */
+
+.apps-link-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(109, 40, 217, 0.26);
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+}
+
+.apps-empty {
+    border: 1px dashed rgba(148, 163, 184, 0.4);
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.34);
+    color: rgba(221, 214, 254, 0.84);
+    padding: 14px;
+    font-size: 13px;
+}
+
+/* Reszponzív töréspontok. */
+
+@media (max-width: 1100px) {
+    .apps-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .apps-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .svc-progress-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .svc-step-line {
+        width: 3px !important;
+        height: 24px !important;
+        margin: 0 0 0 22px !important;
+    }
+}
+
+@media (max-width: 760px) {
+    .apps-book-btn {
+        width: 100%;
+    }
+
+    .svc-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .svc-table-wrap {
+        overflow-x: auto;
+    }
+}
+
+/* ========================================
+   Szerviz lista (appointments/index)
+   ======================================== */
+
+.svc-next-card {
+    display: block;
+    text-decoration: none;
+    border-radius: 16px;
+    border: 1px solid rgba(167, 139, 250, 0.4);
+    background: linear-gradient(155deg, rgba(109, 40, 217, 0.18), rgba(30, 41, 59, 0.6));
+    box-shadow: 0 12px 30px rgba(2, 8, 23, 0.44);
+    padding: 20px;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.svc-next-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px rgba(2, 8, 23, 0.55);
+    border-color: rgba(167, 139, 250, 0.6);
+}
+
+.svc-next-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #c4b5fd;
+    margin-bottom: 8px;
+}
+
+.svc-next-main h2 {
+    color: #f5f3ff;
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.svc-next-main p {
+    color: rgba(196, 181, 253, 0.9);
+    font-size: 14px;
+}
+
+.svc-next-meta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    align-items: center;
+}
+
+.svc-next-meta span {
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.34);
+    background: rgba(30, 41, 59, 0.36);
+    color: rgba(221, 214, 254, 0.9);
+    font-size: 12px;
+    padding: 4px 10px;
+}
+
+.svc-next-stage {
+    margin-top: 10px;
+    font-size: 13px;
+    color: rgba(196, 181, 253, 0.85);
+}
+
+.svc-next-stage strong {
+    color: #93c5fd;
+}
+
+/* Szerviz táblázat */
+
+.svc-table-wrap {
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: linear-gradient(160deg, rgba(11, 16, 34, 0.86), rgba(8, 11, 24, 0.96));
+    box-shadow: 0 14px 32px rgba(2, 8, 23, 0.48);
+    overflow: hidden;
+}
+
+.svc-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.svc-table thead {
+    background: rgba(15, 23, 42, 0.6);
+}
+
+.svc-table th {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(196, 181, 253, 0.8);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.svc-table td {
+    padding: 13px 16px;
+    font-size: 14px;
+    color: #e2e8f0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.svc-table-row {
+    cursor: pointer;
+    transition: background 0.18s ease;
+}
+
+.svc-table-row:hover {
+    background: rgba(109, 40, 217, 0.1);
+}
+
+.svc-id {
+    color: #a78bfa;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.svc-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    border: 1px solid transparent;
+}
+
+.svc-badge-pending {
+    background: rgba(251, 191, 36, 0.16);
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.35);
+}
+
+.svc-badge-confirmed {
+    background: rgba(59, 130, 246, 0.16);
+    color: #60a5fa;
+    border-color: rgba(59, 130, 246, 0.35);
+}
+
+.svc-badge-in_progress {
+    background: rgba(139, 92, 246, 0.16);
+    color: #a78bfa;
+    border-color: rgba(139, 92, 246, 0.35);
+}
+
+.svc-badge-completed {
+    background: rgba(34, 197, 94, 0.16);
+    color: #4ade80;
+    border-color: rgba(34, 197, 94, 0.35);
+}
+
+.svc-badge-cancelled {
+    background: rgba(239, 68, 68, 0.16);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.35);
+}
+
+.svc-badge-lg {
+    padding: 6px 14px;
+    font-size: 13px;
+}
+
+.svc-stage-chip {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    background: rgba(59, 130, 246, 0.14);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.svc-stage-none {
+    background: transparent;
+    border-color: transparent;
+    color: rgba(148, 163, 184, 0.5);
+}
+
+.svc-empty {
+    text-align: center;
+    padding: 32px;
+    color: rgba(221, 214, 254, 0.6);
+    font-size: 14px;
+}
+
+/* ========================================
+   Szerviz részletek (appointments/show)
+   ======================================== */
+
+.svc-detail-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.svc-back-link {
+    display: inline-block;
+    color: #a78bfa;
+    font-size: 13px;
+    text-decoration: none;
+    margin-bottom: 6px;
+    transition: color 0.2s;
+}
+
+.svc-back-link:hover {
+    color: #c4b5fd;
+}
+
+.svc-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.svc-info-card {
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: linear-gradient(155deg, rgba(20, 12, 46, 0.74), rgba(10, 8, 24, 0.92));
+    padding: 16px;
+}
+
+.svc-info-label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(196, 181, 253, 0.7);
+    margin-bottom: 6px;
+}
+
+.svc-info-card strong {
+    color: #f5f3ff;
+    font-size: 16px;
+}
+
+.svc-desc-card {
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(12, 18, 38, 0.74);
+    padding: 16px;
+}
+
+.svc-desc-card p {
+    color: #e2e8f0;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-top: 4px;
+}
+
+/* 4-lépéses szerviz folyamat */
+
+.svc-progress-wrap {
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: linear-gradient(160deg, rgba(11, 16, 34, 0.86), rgba(8, 11, 24, 0.96));
+    padding: 24px;
+}
+
+.svc-section-title {
+    color: #f5f3ff;
+    font-size: 17px;
+    margin-bottom: 18px;
+}
+
+.svc-progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+}
+
+.svc-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 100px;
+    text-align: center;
+    position: relative;
+}
+
+.svc-step-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 2px solid rgba(148, 163, 184, 0.3);
+    background: rgba(15, 23, 42, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(148, 163, 184, 0.5);
+    transition: all 0.3s ease;
+}
+
+.svc-step-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.svc-step-label {
+    font-size: 11px;
+    color: rgba(148, 163, 184, 0.6);
+    max-width: 110px;
+    line-height: 1.3;
+}
+
+.svc-step-num {
+    font-size: 10px;
+    color: rgba(148, 163, 184, 0.4);
+}
+
+.svc-step-done .svc-step-icon {
+    border-color: rgba(34, 197, 94, 0.6);
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+}
+
+.svc-step-done .svc-step-label {
+    color: #4ade80;
+}
+
+.svc-step-done .svc-step-num {
+    color: rgba(34, 197, 94, 0.6);
+}
+
+.svc-step-active .svc-step-icon {
+    border-color: rgba(139, 92, 246, 0.7);
+    background: rgba(139, 92, 246, 0.2);
+    color: #a78bfa;
+    box-shadow: 0 0 16px rgba(139, 92, 246, 0.3);
+}
+
+.svc-step-active .svc-step-label {
+    color: #c4b5fd;
+    font-weight: 600;
+}
+
+.svc-step-line {
+    width: 48px;
+    height: 3px;
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 2px;
+    margin: 0 2px;
+    margin-bottom: 36px;
+}
+
+.svc-step-line-done {
+    background: rgba(34, 197, 94, 0.5);
+}
+
+/* Befejezett szerviz eredmény */
+
+.svc-completed-wrap {
+    display: grid;
+    gap: 16px;
+}
+
+.svc-result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.svc-result-card {
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: rgba(12, 18, 38, 0.74);
+    padding: 16px;
+}
+
+.svc-result-card strong {
+    color: #f5f3ff;
+    font-size: 18px;
+}
+
+.svc-cost {
+    color: #4ade80 !important;
+    font-size: 22px !important;
+}
+
+.svc-report-card {
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(12, 18, 38, 0.74);
+    padding: 16px;
+}
+
+.svc-report-card p {
+    color: #e2e8f0;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    margin-top: 4px;
+}
+
+.svc-report-info {
+    border-color: rgba(251, 191, 36, 0.3);
+    background: rgba(251, 191, 36, 0.06);
+}
+
+.svc-report-critical {
+    border-color: rgba(239, 68, 68, 0.4);
+    background: rgba(239, 68, 68, 0.08);
+}
+
+/* Szerviz fotók */
+
+.svc-photos-wrap {
+    margin-top: 8px;
+}
+
+.svc-photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.svc-photo-card {
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: rgba(12, 18, 38, 0.74);
+    overflow: hidden;
+}
+
+.svc-photo-card img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    display: block;
+}
+
+.svc-photo-card span {
+    display: block;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: rgba(221, 214, 254, 0.85);
+}
+
+.svc-photo-delete-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.8);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.svc-photo-delete-btn:hover {
+    background: rgba(239, 68, 68, 1);
+}
+
+/* Törölve állapot */
+
+.svc-cancelled-notice {
+    border-radius: 14px;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.08);
+    padding: 20px;
+    text-align: center;
+}
+
+.svc-cancelled-notice p {
+    color: #f87171;
+    font-size: 15px;
+}
+
+.svc-link-detail {
+    display: inline-block;
+    margin-top: 14px;
+    color: #a78bfa;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.svc-link-detail:hover {
+    color: #c4b5fd;
+}

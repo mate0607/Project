@@ -1,0 +1,298 @@
+/* Issues page: board-style tracker layout */
+/* Belépési animáció az oldal fő konténerére. */
+.issues-page-enter {
+    animation: issuesFadeIn 360ms ease both;
+}
+
+@keyframes issuesFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.issues-shell {
+    display: grid;
+    gap: 28px;
+}
+
+/* Fejléc + elsődleges művelet. */
+
+.issues-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.issues-kicker {
+    display: inline-flex;
+    font-size: 12px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #7dd3fc;
+    background: rgba(14, 116, 144, 0.2);
+    border: 1px solid rgba(125, 211, 252, 0.35);
+    border-radius: 999px;
+    padding: 6px 11px;
+    margin-bottom: 9px;
+}
+
+.issue-btn-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    color: #f8fbff;
+    background: linear-gradient(135deg, #0ea5e9, #2563eb);
+    border: 1px solid rgba(125, 211, 252, 0.36);
+    box-shadow: 0 10px 20px rgba(14, 116, 144, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.issue-btn-main:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 24px rgba(14, 116, 144, 0.36);
+}
+
+.issues-icon {
+    width: 15px;
+    height: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.issues-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.issues-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+/* Összegző KPI kártyák. */
+
+.issues-stat-card {
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: linear-gradient(155deg, rgba(10, 20, 38, 0.76), rgba(7, 12, 24, 0.9));
+    box-shadow: 0 12px 30px rgba(2, 8, 23, 0.42);
+    padding: 18px;
+    transition: transform 0.24s ease, border-color 0.24s ease;
+}
+
+.issues-stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(56, 189, 248, 0.45);
+}
+
+.issues-stat-card p {
+    color: rgba(191, 219, 254, 0.84);
+    margin-bottom: 8px;
+}
+
+.issues-stat-card strong {
+    color: #f8fbff;
+    font-size: 30px;
+    line-height: 1;
+}
+
+.issues-board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    align-items: start;
+}
+
+/* Board oszlopok: vizuális státusz szerinti csoportosítás. */
+
+.issues-column {
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: linear-gradient(160deg, rgba(8, 16, 32, 0.84), rgba(6, 11, 22, 0.96));
+    box-shadow: 0 14px 32px rgba(2, 8, 23, 0.48);
+    overflow: hidden;
+}
+
+.issues-column-open {
+    border-top: 2px solid rgba(239, 68, 68, 0.8);
+}
+
+.issues-column-progress {
+    border-top: 2px solid rgba(251, 191, 36, 0.88);
+}
+
+.issues-column-resolved {
+    border-top: 2px solid rgba(34, 197, 94, 0.82);
+}
+
+.issues-column-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.issues-column-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.issues-column-head h2 {
+    color: #f8fbff;
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.issues-column-head p {
+    color: rgba(191, 219, 254, 0.78);
+    font-size: 12px;
+}
+
+.issues-column-count {
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    color: #cfe2ff;
+    font-size: 12px;
+    padding: 4px 9px;
+}
+
+.issues-column-list {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+}
+
+/* Egyedi hibaelemek (kártyák) az oszlopon belül. */
+
+.issue-item-card {
+    border-radius: 13px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: rgba(9, 17, 31, 0.72);
+    padding: 14px;
+    display: grid;
+    gap: 10px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.issue-item-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(56, 189, 248, 0.45);
+    box-shadow: 0 10px 20px rgba(2, 8, 23, 0.45);
+}
+
+.issue-item-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+
+.issue-item-head h3 {
+    color: #f8fbff;
+    font-size: 15px;
+}
+
+.issue-item-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: rgba(191, 219, 254, 0.86);
+    font-size: 12px;
+}
+
+.issue-item-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.issue-item-desc {
+    color: rgba(203, 213, 225, 0.95);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.issue-item-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.issue-link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    min-height: 34px;
+    padding: 6px 12px;
+    border: 1px solid rgba(125, 211, 252, 0.45);
+    color: #dbeafe;
+    background: rgba(14, 116, 144, 0.16);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* Másodlagos gombstílus törléshez. */
+
+.issue-link-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(37, 99, 235, 0.26);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.14);
+}
+
+.issue-link-danger {
+    border-color: rgba(252, 165, 165, 0.5);
+    background: rgba(239, 68, 68, 0.18);
+}
+
+.issue-link-danger:hover {
+    background: rgba(239, 68, 68, 0.28);
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+}
+
+.issues-empty-column {
+    border: 1px dashed rgba(148, 163, 184, 0.4);
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.36);
+    padding: 14px;
+    color: rgba(191, 219, 254, 0.82);
+    font-size: 13px;
+}
+
+/* Reszponzív viselkedés kisebb nézetekre. */
+
+@media (max-width: 1100px) {
+    .issues-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .issues-board {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .issues-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .issue-btn-main {
+        width: 100%;
+    }
+}
