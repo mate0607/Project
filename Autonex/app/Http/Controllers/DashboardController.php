@@ -6,6 +6,7 @@ use App\Models\AdminNotification;
 use App\Models\Appointment;
 use App\Models\Car;
 use App\Models\Issue;
+use App\Models\Sale;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
@@ -90,24 +91,34 @@ class DashboardController extends Controller
 
     public function admin()
     {
-        $stats = [
-            'cars' => Car::count(),
-            'users' => User::count(),
-            'issues' => Issue::count(),
-            'appointments' => Appointment::count(),
-            'todayAppointments' => Appointment::where('date', now()->toDateString())->count(),
-            'pendingAppointments' => Appointment::where('status', 'pending')->count(),
-            'confirmedAppointments' => Appointment::where('status', 'confirmed')->count(),
-            'pendingIssues' => Issue::count(),
-            'completedServices' => Appointment::where('status', 'completed')->count(),
-        ];
+        $today = now()->toDateString();
+
+        // Jelenleg szervizben levo autok (in_progress statuszu idopontok egyedi autoi)
+        $inServiceCount = Appointment::where('status', 'in_progress')
+            ->distinct('car_id')
+            ->count('car_id');
+
+        // Mai idopontok listaja
+        $todayAppointments = Appointment::with(['car', 'user'])
+            ->where('date', $today)
+            ->orderBy('time')
+            ->get();
+
+        // Mai kesz autok (completed + service_stage = ready, mai datum)
+        $todayCompletedCars = Appointment::with(['car', 'user'])
+            ->where('date', $today)
+            ->where('status', 'completed')
+            ->where('service_stage', 'ready')
+            ->get();
 
         $recentActivities = $this->recentActivities();
         [$monthlyLabels, $monthlyCounts] = $this->buildMonthlyAppointmentSeries();
         $upcomingAppointments = $this->upcomingAppointments();
 
         return view('dashboard.admin', compact(
-            'stats',
+            'inServiceCount',
+            'todayAppointments',
+            'todayCompletedCars',
             'recentActivities',
             'monthlyLabels',
             'monthlyCounts',
@@ -148,13 +159,21 @@ class DashboardController extends Controller
             ->orderBy('time')
             ->first();
 
+        // A 8 legujabban hozzaadott aktiv elado auto, kepekkel egyutt.
+        $latestSales = Sale::with(['car', 'images'])
+            ->where('is_active', true)
+            ->latest()
+            ->limit(8)
+            ->get();
+
         return view('dashboard.user', compact(
             'appointments',
             'inServiceCount',
             'upcomingAppointmentsCount',
             'notificationsCount',
             'adminNotifications',
-            'nextAppointment'
+            'nextAppointment',
+            'latestSales'
         ));
     }
 }

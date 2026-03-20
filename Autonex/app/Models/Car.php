@@ -16,6 +16,7 @@ class Car extends Model
         'user_id',
         'make_model',
         'vin',
+        'license_plate',
         'year',
     ];
 

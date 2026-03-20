@@ -30,6 +30,12 @@
 			<p class="field-error">{{ $message }}</p>
 		@enderror
 
+		<label for="license_plate">Rendszám</label>
+		<input id="license_plate" type="text" name="license_plate" value="{{ old('license_plate') }}" placeholder="pl. ABC-123">
+		@error('license_plate')
+			<p class="field-error">{{ $message }}</p>
+		@enderror
+
 		<label for="year">Év</label>
 		<input id="year" type="number" name="year" value="{{ old('year') }}" placeholder="pl. 2020">
 		@error('year')

@@ -38,7 +38,7 @@
                 <input type="text" id="user_search" autocomplete="off"
                        placeholder="Keresés név vagy email alapján… (üres = Mindenki)"
                        style="margin-bottom:0;">
-                <input type="hidden" name="user_id" id="user_id" value="{{ old('user_id', '') }}">
+                <input type="hidden" name="user_id" id="user_id" value="{{ old('user_id', request('user_id', '')) }}">
                 <div id="user_dropdown" style="display:none; position:absolute; left:0; right:0; top:100%; z-index:10;
                     max-height:220px; overflow-y:auto; background:#0f1a2e; border:1px solid rgba(148,163,184,0.28);
                     border-radius:0 0 10px 10px; margin-top:-2px;">
@@ -52,9 +52,9 @@
                     const hidden = document.getElementById('user_id');
                     const dropdown = document.getElementById('user_dropdown');
 
-                    const oldId = hidden.value;
-                    if (oldId) {
-                        const found = users.find(u => u.id == oldId);
+                    const currentId = hidden.value;
+                    if (currentId) {
+                        const found = users.find(u => u.id == currentId);
                         if (found) search.value = found.name + ' (' + found.email + ')';
                     }
 
@@ -93,13 +93,13 @@
 
             <div class="an-field">
                 <label for="title">Cím</label>
-                <input type="text" name="title" id="title" value="{{ old('title') }}" placeholder="Pl. Szerviz kész">
+                <input type="text" name="title" id="title" value="{{ old('title', request('title', '')) }}" placeholder="Pl. Szerviz kész">
                 @error('title') <div class="an-error">{{ $message }}</div> @enderror
             </div>
 
             <div class="an-field">
                 <label for="message">Üzenet</label>
-                <textarea name="message" id="message" placeholder="Írd ide az értesítés szövegét...">{{ old('message') }}</textarea>
+                <textarea name="message" id="message" placeholder="Írd ide az értesítés szövegét...">{{ old('message', request('message', '')) }}</textarea>
                 @error('message') <div class="an-error">{{ $message }}</div> @enderror
             </div>
 

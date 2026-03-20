@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SaleController;
 use App\Models\Car;
 use Illuminate\Support\Facades\Auth;
@@ -58,6 +59,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 // Bejelentkezett felhasznalok altal elerheto route-ok.
 Route::middleware(['auth'])->group(function () {
+    // Profil beallitasok.
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+
     // Sajat jarmuvek teljes CRUD.
     Route::resource('cars', CarController::class);
 

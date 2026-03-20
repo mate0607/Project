@@ -25,7 +25,6 @@
                 {{-- Admin navigacio: teljes menedzsment modulok --}}
                 @if($isAdmin)
                     <a href="{{ route('admin.dashboard') }}">Dashboard</a>
-                    <a href="{{ route('cars.index') }}">Autók kezelése</a>
                     <a href="{{ route('sales.index') }}">Eladások</a>
                     <a href="{{ route('admin.appointments.index') }}">Időpontok kezelése</a>
                     <a href="{{ route('admin.notifications.index') }}">Ügyfél értesítés</a>
@@ -42,15 +41,24 @@
 
             <div class="nav-auth">
                 @if($currentUser)
-                    <span class="nav-user">{{ $currentUser->name }}</span>
-
-                    <form action="{{ route('logout') }}" method="POST" class="logout-form">
-                        @csrf
-                        <button type="submit" class="nav-logout">Logout</button>
-                    </form>
+                    <div class="nav-profile-wrap">
+                        <button type="button" class="nav-profile-icon" id="profileToggle" aria-label="Profil menü">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </button>
+                        <div class="nav-profile-dropdown" id="profileDropdown">
+                            <span class="nav-dd-name">{{ $currentUser->name }}</span>
+                            <a href="{{ route('profile.edit') }}" class="nav-dd-item">Profil beállítások</a>
+                            <form action="{{ route('logout') }}" method="POST" class="nav-dd-logout">
+                                @csrf
+                                <button type="submit" class="nav-dd-item nav-dd-item-logout">Kijelentkezés</button>
+                            </form>
+                        </div>
+                    </div>
                 @else
-                    <a href="{{ route('login') }}">Login</a>
-                    <a href="{{ route('register') }}">Register</a>
+                    <a href="{{ route('login') }}" class="nav-login-btn">Bejelentkezés</a>
                 @endauth
             </div>
         </div>
@@ -72,6 +80,21 @@
         if (menuToggleButton && mainNavigation) {
             menuToggleButton.addEventListener('click', () => {
                 mainNavigation.classList.toggle('open');
+            });
+        }
+
+        // Profil legordulo menu nyitas-zaras.
+        const profileToggle = document.getElementById('profileToggle');
+        const profileDropdown = document.getElementById('profileDropdown');
+
+        if (profileToggle && profileDropdown) {
+            profileToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profileDropdown.classList.toggle('nav-dd-open');
+            });
+
+            document.addEventListener('click', () => {
+                profileDropdown.classList.remove('nav-dd-open');
             });
         }
     </script>

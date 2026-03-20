@@ -6,56 +6,82 @@
 
 @section('content')
 
-{{-- Admin dashboard: rendszer-szintu mutatok es operativ attekintes --}}
 <section class="admin-dashboard">
-    <header class="ad-hero">
-        <h1>Rendszer áttekintés</h1>
-    </header>
 
-    <section class="ad-stats-grid">
+    {{-- 3 interaktiv kocka --}}
+    <section class="ad-stats-grid ad-stats-grid-3">
+
+        {{-- 1. Szervizben levo autok --}}
         <article class="ad-stat-card">
-            <span class="ad-stat-label">Autók száma</span>
-            <strong class="ad-stat-value">{{ $stats['cars'] }}</strong>
+            <span class="ad-stat-label">Jelenleg szervizben</span>
+            <strong class="ad-stat-value">{{ $inServiceCount }}</strong>
+            <span class="ad-stat-sub">autó</span>
         </article>
 
-        <article class="ad-stat-card">
-            <span class="ad-stat-label">Felhasználók száma</span>
-            <strong class="ad-stat-value">{{ $stats['users'] }}</strong>
-        </article>
-
-        <article class="ad-stat-card">
-            <span class="ad-stat-label">Hibák száma</span>
-            <strong class="ad-stat-value">{{ $stats['issues'] }}</strong>
-        </article>
-
-        <article class="ad-stat-card">
-            <span class="ad-stat-label">Időpontok száma</span>
-            <strong class="ad-stat-value">{{ $stats['appointments'] }}</strong>
-        </article>
-
-        <article class="ad-stat-card">
+        {{-- 2. Mai idopontok (kattinthato) --}}
+        <article class="ad-stat-card ad-stat-clickable" onclick="document.getElementById('todayAppointmentsPanel').classList.toggle('ad-panel-open')">
             <span class="ad-stat-label">Mai időpontok</span>
-            <strong class="ad-stat-value">{{ $stats['todayAppointments'] }}</strong>
+            <strong class="ad-stat-value">{{ $todayAppointments->count() }}</strong>
+            <span class="ad-stat-sub">Kattints a listáért ▾</span>
         </article>
 
-        <article class="ad-stat-card">
-            <span class="ad-stat-label">Pending időpontok</span>
-            <strong class="ad-stat-value">{{ $stats['pendingAppointments'] }}</strong>
+        {{-- 3. Mai kesz autok (kattinthato) --}}
+        <article class="ad-stat-card ad-stat-clickable" onclick="document.getElementById('todayCompletedPanel').classList.toggle('ad-panel-open')">
+            <span class="ad-stat-label">Mai kész autók</span>
+            <strong class="ad-stat-value">{{ $todayCompletedCars->count() }}</strong>
+            <span class="ad-stat-sub">Kattints a listáért ▾</span>
         </article>
+    </section>
 
-        <article class="ad-stat-card">
-            <span class="ad-stat-label">Confirmed időpontok</span>
-            <strong class="ad-stat-value">{{ $stats['confirmedAppointments'] }}</strong>
+    {{-- Mai idopontok lenyilo lista --}}
+    <section id="todayAppointmentsPanel" class="ad-panel">
+        <article class="ad-card">
+            <h2>Mai időpontok</h2>
+            @if($todayAppointments->count() > 0)
+                <div class="ad-list">
+                    @foreach($todayAppointments as $apt)
+                        <a href="{{ route('admin.appointments.index') }}" class="ad-list-item">
+                            <div class="ad-list-info">
+                                <strong>{{ $apt->car?->make_model ?? '—' }}</strong>
+                                <span>{{ $apt->user?->name ?? '—' }}</span>
+                            </div>
+                            <div class="ad-list-meta">
+                                <span>{{ \Carbon\Carbon::parse($apt->time)->format('H:i') }}</span>
+                                <span class="ad-badge ad-badge-{{ $apt->status }}">{{ strtoupper($apt->status) }}</span>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            @else
+                <p class="ad-empty">Nincs mai időpont.</p>
+            @endif
         </article>
+    </section>
 
-        <article class="ad-stat-card">
-            <span class="ad-stat-label">Függő hibajegyek</span>
-            <strong class="ad-stat-value">{{ $stats['pendingIssues'] }}</strong>
-        </article>
-
-        <article class="ad-stat-card">
-            <span class="ad-stat-label">Befejezett szervizek</span>
-            <strong class="ad-stat-value">{{ $stats['completedServices'] }}</strong>
+    {{-- Mai kesz autok lenyilo lista --}}
+    <section id="todayCompletedPanel" class="ad-panel">
+        <article class="ad-card">
+            <h2>Mai kész autók — átvehetők</h2>
+            @if($todayCompletedCars->count() > 0)
+                <div class="ad-list">
+                    @foreach($todayCompletedCars as $apt)
+                        <div class="ad-list-item ad-list-item-ready ad-list-item-block">
+                            <div class="ad-list-info">
+                                <strong>{{ $apt->car?->make_model ?? '—' }}</strong>
+                                <span>Tulajdonos: {{ $apt->user?->name ?? '—' }}</span>
+                                <span class="ad-list-detail">Tel: {{ $apt->user?->phone ?? 'Nincs megadva' }}</span>
+                                <span class="ad-list-detail">VIN: {{ $apt->car?->vin ?? '—' }} | {{ $apt->car?->year ?? '' }}</span>
+                            </div>
+                            <div class="ad-list-meta">
+                                <span class="ad-badge ad-badge-completed">KÉSZ</span>
+                                <a href="{{ route('admin.notifications.create') }}?user_id={{ $apt->user_id }}&title={{ urlencode('Szerviz kész — ' . ($apt->car?->make_model ?? '')) }}&message={{ urlencode('Tisztelt ' . ($apt->user?->name ?? 'Ügyfél') . '! Az Ön autója (' . ($apt->car?->make_model ?? '') . ', ' . ($apt->car?->vin ?? '') . ') elkészült és átvehető. Kérjük, egyeztessen időpontot az átvételhez.') }}" class="ad-list-action-btn">Értesítés küldése →</a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="ad-empty">Nincs ma elkészült autó.</p>
+            @endif
         </article>
     </section>
 
@@ -63,7 +89,6 @@
         <article class="ad-card">
             <h2>Legutóbbi aktivitások</h2>
             <div class="ad-activity-list">
-                {{-- Az activity elemeket a controller eloallitott strukturaja hajtja meg. --}}
                 @foreach($recentActivities as $activity)
                     <div class="ad-activity-item">
                         <span class="ad-activity-dot"></span>
@@ -81,8 +106,8 @@
         <article class="ad-card">
             <h2>Gyors műveletek</h2>
             <div class="ad-actions">
-                <a href="{{ route('cars.create') }}" class="ad-btn">Új autó hozzáadása</a>
                 <a href="{{ route('appointments.create') }}" class="ad-btn">Új időpont</a>
+                <a href="{{ route('admin.notifications.create') }}" class="ad-btn">Új értesítés</a>
             </div>
         </article>
     </section>
@@ -134,7 +159,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     (function () {
-        // A chart inicializalas csak akkor fusson, ha a canvas es a Chart library is elerheto.
         const chartEl = document.getElementById('adminMonthlyChart');
 
         if (!chartEl || typeof Chart === 'undefined') {

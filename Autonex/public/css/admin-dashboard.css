@@ -259,3 +259,134 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* --- 3 kockas elrendezes --- */
+.ad-stats-grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ad-stat-sub {
+    color: #6b8ab8;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.ad-stat-clickable {
+    cursor: pointer;
+    position: relative;
+}
+
+.ad-stat-clickable:hover {
+    border-color: rgba(78, 215, 241, 0.55);
+    box-shadow: 0 14px 32px rgba(78, 215, 241, 0.22);
+}
+
+/* --- Lenyilo panelek --- */
+.ad-panel {
+    display: none;
+}
+
+.ad-panel.ad-panel-open {
+    display: block;
+}
+
+/* --- Lista stilus --- */
+.ad-list {
+    display: grid;
+    gap: 8px;
+}
+
+.ad-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(159, 176, 207, 0.2);
+    background: rgba(78, 215, 241, 0.06);
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.ad-list-item:hover {
+    background: rgba(78, 215, 241, 0.14);
+    border-color: rgba(78, 215, 241, 0.4);
+    transform: translateX(3px);
+}
+
+.ad-list-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ad-list-info strong {
+    color: #e5ecff;
+    font-size: 15px;
+}
+
+.ad-list-info span {
+    color: #9fb0cf;
+    font-size: 13px;
+}
+
+.ad-list-detail {
+    color: #6b8ab8 !important;
+    font-size: 12px !important;
+}
+
+.ad-list-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ad-list-meta span {
+    color: #9fb0cf;
+    font-size: 13px;
+}
+
+.ad-list-action {
+    color: #4ED7F1 !important;
+    font-weight: 600;
+    font-size: 13px !important;
+    white-space: nowrap;
+}
+
+.ad-list-item-ready:hover .ad-list-action {
+    text-decoration: underline;
+}
+
+.ad-list-item-block {
+    cursor: default;
+}
+
+.ad-list-action-btn {
+    display: inline-block;
+    text-decoration: none;
+    color: #06101f;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #4ED7F1, #6FE6FC);
+    transition: transform 0.2s, filter 0.2s;
+    white-space: nowrap;
+}
+
+.ad-list-action-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(0.92);
+}
+
+@media (max-width: 760px) {
+    .ad-stats-grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .ad-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}

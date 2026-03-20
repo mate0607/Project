@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateAppointmentRequest;
+use App\Models\AdminNotification;
 use App\Models\Appointment;
 use App\Models\Car;
 use App\Models\ServicePhoto;
@@ -61,6 +62,12 @@ class AppointmentManagementController extends Controller
 
         $appointment->update($validated);
 
+        // Automatikus ertesites: ha a statusz completed es a service_stage ready, kuldjunk uzenetet.
+        if ($appointment->status === 'completed' && $appointment->service_stage === 'ready' && $appointment->user_id) {
+            $car = $appointment->car;
+            $this->sendReadyNotification($appointment->user_id, $car);
+        }
+
         if ($photoFile) {
             $path = $photoFile->store('service-photos', 'public');
             ServicePhoto::create([
@@ -93,6 +100,12 @@ class AppointmentManagementController extends Controller
             'status' => $validated['status'],
         ]);
 
+        // Automatikus ertesites: ha completed-re valtott es a service_stage mar ready.
+        if ($validated['status'] === 'completed' && $appointment->service_stage === 'ready' && $appointment->user_id) {
+            $appointment->load('car');
+            $this->sendReadyNotification($appointment->user_id, $appointment->car);
+        }
+
         return redirect()->route('admin.appointments.index')
             ->with('success', 'Státusz sikeresen módosítva.');
     }
@@ -107,6 +120,18 @@ class AppointmentManagementController extends Controller
         $photo->delete();
 
         return back()->with('success', 'Fotó törölve.');
+    }
+
+    private function sendReadyNotification(int $userId, ?Car $car): void
+    {
+        $makeModel = $car?->make_model ?? 'Ismeretlen autó';
+        $vin = $car?->vin ?? '';
+
+        AdminNotification::create([
+            'user_id' => $userId,
+            'title' => 'Szerviz kész — ' . $makeModel,
+            'message' => 'Az Ön autója (' . $makeModel . ($vin ? ', ' . $vin : '') . ') elkészült és átvehető. Kérjük, egyeztessen időpontot az átvételhez.',
+        ]);
     }
 
     private function hasConfirmedConflict(string $date, string $time, ?int $ignoreId = null): bool

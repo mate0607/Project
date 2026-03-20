@@ -56,6 +56,7 @@
                 <h1 class="page-title car-detail-title">{{ $car->make_model }}</h1>
                 <div class="car-meta-chips">
                     <span>VIN: {{ $car->vin ?? 'Nincs megadva' }}</span>
+                    <span>Rendszám: {{ $car->license_plate ?? 'Nincs megadva' }}</span>
                     <span>Év: {{ $car->year ?? 'Nincs megadva' }}</span>
                     <span>ID: #{{ $car->id }}</span>
                 </div>

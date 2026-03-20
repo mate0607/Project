@@ -7,25 +7,45 @@
 
 @section('content')
 
-
-
 <section class="user-dashboard">
-    <header class="ud-hero fade-in">
-        <div class="ud-hero-content">
-            <p class="ud-kicker">Autonex</p>
-            <h1>Saját felületem</h1>
-            <p>Autóid, hibajegyeid és időpontjaid egy helyen.</p>
 
-            <div class="ud-hero-actions">
-                <a href="{{ route('appointments.create') }}" class="ud-action-btn ud-action-btn-primary">Új időpont foglalása</a>
-                <a href="{{ route('cars.index') }}" class="ud-action-btn ud-action-btn-soft">Saját autóim</a>
-            </div>
+    {{-- Eladó autók carousel --}}
+    <section class="ud-sales-carousel fade-in">
+        <div class="ud-sales-head">
+            <h2>Legújabb eladó autók</h2>
         </div>
+        @if($latestSales->count() > 0)
+            <div class="ud-sales-slider" id="salesSlider">
+                @foreach($latestSales as $sale)
+                    @php
+                        $img = $sale->images->sortBy('sort_order')->first();
+                        $imgUrl = $img ? asset('storage/' . $img->path) : 'https://asset.hasznaltautocdn.com/skeletor/images/no-image.31cc7f70.svg';
+                    @endphp
+                    <a href="{{ route('sales.show', $sale) }}" class="ud-sale-slide">
+                        <div class="ud-sale-img-wrap">
+                            <img src="{{ $imgUrl }}" alt="{{ $sale->car?->make_model ?? 'Eladó autó' }}" loading="lazy">
+                        </div>
+                        <div class="ud-sale-info">
+                            <strong>{{ $sale->car?->make_model ?? 'Ismeretlen' }}</strong>
+                            <span class="ud-sale-price">{{ number_format($sale->price, 0, ',', ' ') }} Ft</span>
+                            @if($sale->mileage)
+                                <span class="ud-sale-km">{{ number_format($sale->mileage, 0, ',', ' ') }} km</span>
+                            @endif
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+            <div class="ud-sales-nav">
+                <button type="button" class="ud-sales-btn" id="salesPrev" aria-label="Előző">‹</button>
+                <button type="button" class="ud-sales-btn" id="salesNext" aria-label="Következő">›</button>
+            </div>
+        @else
+            <p class="ud-empty">Jelenleg nincs eladó autó.</p>
+        @endif
+    </section>
 
-        <div class="ud-hero-glow" aria-hidden="true"></div>
-    </header>
-
-    <section class="ud-stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+    {{-- Stat kártyák: Szervizben + Közelgő + Új időpont --}}
+    <section class="ud-stats-grid" style="grid-template-columns: repeat(3, 1fr);">
         <article class="ud-stat-card fade-in delay-1">
             <div class="ud-stat-icon" aria-hidden="true">
                 <svg class="ud-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -46,8 +66,18 @@
             <div class="ud-stat-value">{{ $upcomingAppointmentsCount }}</div>
             <div class="ud-stat-label">Közelgő időpontjaim</div>
         </article>
+
+        <a href="{{ route('appointments.create') }}" class="ud-stat-card ud-stat-card-action fade-in delay-3">
+            <div class="ud-stat-icon ud-stat-icon-action" aria-hidden="true">
+                <svg class="ud-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+            </div>
+            <div class="ud-stat-label-action">Új időpont foglalás</div>
+        </a>
     </section>
 
+    {{-- Következő időpont --}}
     <section class="ud-next-card fade-in delay-2">
         <div class="ud-next-head">
             <h2>Következő időpont</h2>
@@ -77,6 +107,7 @@
         @endif
     </section>
 
+    {{-- Értesítések --}}
     <section class="ud-notifications-card fade-in delay-3">
         <div class="ud-table-head">
             <h2>Értesítések</h2>
@@ -99,76 +130,32 @@
         @endif
     </section>
 
-    @if($appointments->count() === 0)
-        <section class="ud-empty-card fade-in delay-4">
-            <div class="ud-empty-icon" aria-hidden="true">📭</div>
-            <h3>Még nincs időpontod</h3>
-            <p>Foglalj most egyet</p>
-            <a href="{{ route('appointments.create') }}" class="ud-action-btn ud-action-btn-primary">Új időpont</a>
-        </section>
-    @endif
-
-    <section class="ud-table-card fade-in delay-4">
-        <div class="ud-table-head">
-            <h2>Saját időpontok</h2>
-        </div>
-
-        <div class="ud-table-wrap">
-            <table class="ud-table">
-                <thead>
-                    <tr>
-                        <th>Autó</th>
-                        <th>Dátum</th>
-                        <th>Idő</th>
-                        <th>Státusz</th>
-                        <th>Művelet</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($appointments as $appointment)
-                        <tr>
-                            <td>{{ $appointment->car?->make_model ?? '—' }}</td>
-                            <td>{{ $appointment->date }}</td>
-                            <td>{{ $appointment->time }}</td>
-                            <td>
-                                <span class="ud-badge ud-badge-{{ $appointment->status }}">{{ strtoupper($appointment->status) }}</span>
-                            </td>
-                            <td>
-                                <a href="{{ route('appointments.show', $appointment) }}" class="ud-table-btn">Megnyit</a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="ud-empty">Még nincs időpontod.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </section>
-
 </section>
 
-@endsection
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const slider = document.getElementById('salesSlider');
+    if (!slider) return;
+    const prev = document.getElementById('salesPrev');
+    const next = document.getElementById('salesNext');
+    let current = 0;
+    const slides = slider.querySelectorAll('.ud-sale-slide');
+    const total = slides.length;
+    if (total <= 1) { prev && (prev.style.display = 'none'); next && (next.style.display = 'none'); return; }
 
-@section('page_footer')
-<footer class="ud-site-footer fade-in delay-4">
-    <div class="ud-site-footer-inner">
-        <div class="ud-footer-brand">
-            <span class="ud-footer-logo">Autonex</span>
-            <p>Modern autós szerviz management platform.</p>
-        </div>
+    function show(idx) {
+        current = (idx + total) % total;
+        slider.style.transform = 'translateX(-' + (current * 100) + '%)';
+    }
 
-        <nav class="ud-footer-links" aria-label="Footer navigáció">
-            <a href="{{ route('user.dashboard') }}">Dashboard</a>
-            <a href="{{ route('cars.index') }}">Autóim</a>
-            <a href="{{ route('appointments.index') }}">Időpontok</a>
-        </nav>
+    prev && prev.addEventListener('click', function () { show(current - 1); });
+    next && next.addEventListener('click', function () { show(current + 1); });
 
-        <div class="ud-footer-contact">
-            <p>Kapcsolat: support@autonex.hu</p>
-            <small>© {{ now()->year }} Autonex. Minden jog fenntartva.</small>
-        </div>
-    </div>
-</footer>
+    // Auto-rotate every 4 seconds
+    let timer = setInterval(function () { show(current + 1); }, 4000);
+    slider.closest('.ud-sales-carousel').addEventListener('mouseenter', function () { clearInterval(timer); });
+    slider.closest('.ud-sales-carousel').addEventListener('mouseleave', function () { timer = setInterval(function () { show(current + 1); }, 4000); });
+});
+</script>
+
 @endsection

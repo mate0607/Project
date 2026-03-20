@@ -110,6 +110,108 @@ body {
     color: #fff;
 }
 
+/* --- Profil ikon es legordulo menu --- */
+.nav-profile-wrap {
+    position: relative;
+}
+
+.nav-profile-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(96, 165, 250, 0.35);
+    background: rgba(59, 130, 246, 0.18);
+    color: #bfdbfe;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.nav-profile-icon:hover {
+    background: rgba(59, 130, 246, 0.32);
+    border-color: rgba(96, 165, 250, 0.6);
+    color: #fff;
+}
+
+.nav-profile-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 200px;
+    background: rgba(10, 18, 33, 0.97);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 8px 0;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    z-index: 60;
+}
+
+.nav-profile-dropdown.nav-dd-open {
+    display: block;
+}
+
+.nav-dd-name {
+    display: block;
+    padding: 10px 16px;
+    color: #bfdbfe;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    margin-bottom: 4px;
+}
+
+.nav-dd-item {
+    display: block;
+    padding: 9px 16px;
+    color: #dbe7ff;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.2s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.nav-dd-item:hover {
+    background: rgba(59, 130, 246, 0.18);
+    color: #fff;
+}
+
+.nav-dd-item-logout {
+    color: #fca5a5;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    margin-top: 4px;
+    padding-top: 10px;
+}
+
+.nav-dd-item-logout:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fecaca;
+}
+
+.nav-dd-logout {
+    display: block;
+}
+
+.nav-login-btn {
+    text-decoration: none;
+    color: #0b1220;
+    font-weight: 600;
+    padding: 9px 18px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #4ED7F1, #6FE6FC);
+    transition: 0.2s;
+}
+
+.nav-login-btn:hover {
+    filter: brightness(0.92);
+}
+
 .main-container {
     max-width: 1150px;
     margin: 0 auto;
@@ -429,6 +531,28 @@ input:focus {
         margin-top: 4px;
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .nav-profile-wrap {
+        width: 100%;
+    }
+
+    .nav-profile-icon {
+        width: 100%;
+        border-radius: 9px;
+    }
+
+    .nav-profile-dropdown {
+        position: static;
+        min-width: 100%;
+        margin-top: 6px;
+        box-shadow: none;
+        border-radius: 9px;
+    }
+
+    .nav-login-btn {
+        display: block;
+        text-align: center;
     }
 
     .nav-user {

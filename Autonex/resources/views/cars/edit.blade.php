@@ -39,6 +39,14 @@
                 </div>
 
                 <div class="field-group">
+                    <label for="license_plate">Rendszám</label>
+                    <input id="license_plate" type="text" name="license_plate" value="{{ old('license_plate', $car->license_plate) }}" placeholder="pl. ABC-123">
+                    @error('license_plate')
+                        <p class="field-error">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="field-group">
                     <label for="year">Év</label>
                     <input id="year" type="number" name="year" value="{{ old('year', $car->year) }}" placeholder="pl. 2022">
                     @error('year')
@@ -71,6 +79,10 @@
                 <div>
                     <p>VIN</p>
                     <strong>{{ $car->vin ?? 'n/a' }}</strong>
+                </div>
+                <div>
+                    <p>Rendszám</p>
+                    <strong>{{ $car->license_plate ?? 'n/a' }}</strong>
                 </div>
                 <div>
                     <p>Év</p>
