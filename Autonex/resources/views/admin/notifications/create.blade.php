@@ -1,29 +1,6 @@
 @extends('layouts.app')
 
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}">
-    <style>
-        .an-form-container { max-width: 680px; margin: 30px auto; }
-        .an-form-container h1 { margin: 0 0 20px; font-size: 24px; }
-        .an-form { display: grid; gap: 16px; }
-        .an-field label { display: block; color: #94a3b8; margin-bottom: 6px; font-size: 14px; }
-        .an-field input, .an-field textarea, .an-field select {
-            width: 100%; padding: 10px 14px; border-radius: 10px;
-            border: 1px solid rgba(148,163,184,0.28); background: #0f1a2e; color: #e2ecff;
-            font-size: 15px; box-sizing: border-box;
-        }
-        .an-field textarea { min-height: 100px; resize: vertical; }
-        .an-field input:focus, .an-field textarea:focus, .an-field select:focus {
-            outline: none; border-color: #4ed7f1;
-        }
-        .an-form-actions { display: flex; gap: 10px; margin-top: 4px; }
-        .an-submit { background: #4ed7f1; color: #0b1220; border: none; padding: 10px 22px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 15px; }
-        .an-submit:hover { background: #38bcd6; }
-        .an-cancel { background: rgba(148,163,184,0.12); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); padding: 10px 22px; border-radius: 10px; text-decoration: none; font-size: 15px; }
-        .an-cancel:hover { background: rgba(148,163,184,0.2); }
-        .an-error { color: #f87171; font-size: 13px; margin-top: 4px; }
-    </style>
-@endpush
+
 
 @section('content')
 <div class="an-form-container">

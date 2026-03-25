@@ -1,8 +1,5 @@
 @extends('layouts.app')
 
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/marketplace.css') }}">
-@endpush
 
 @section('content')
 
@@ -123,12 +120,7 @@
     </section>
 </section>
 
-<style>
-.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.45);color:#fff;border:none;font-size:18px;padding:4px 10px;cursor:pointer;border-radius:5px;z-index:2;transition:background .2s}
-.carousel-btn:hover{background:rgba(0,0,0,.7)}
-.carousel-prev{left:6px}
-.carousel-next{right:6px}
-</style>
+
 
 <script>
 function slideCarousel(id, dir) {

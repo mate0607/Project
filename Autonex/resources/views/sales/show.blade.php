@@ -77,13 +77,7 @@
     <p>{{ $sale->description ?: 'Nincs részletes leírás.' }}</p>
 </div>
 
-<style>
-.carousel-btn{position:absolute;top:50%;transform:translateY(-60%);background:rgba(0,0,0,.45);color:#fff;border:none;font-size:24px;padding:8px 14px;cursor:pointer;border-radius:6px;z-index:2;transition:background .2s}
-.carousel-btn:hover{background:rgba(0,0,0,.7)}
-.carousel-prev{left:10px}
-.carousel-next{right:10px}
-.carousel-counter{font-size:14px;color:#555}
-</style>
+
 
 <script>
 function slideCarousel(id, dir) {

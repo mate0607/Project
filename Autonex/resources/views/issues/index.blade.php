@@ -1,8 +1,5 @@
 @extends('layouts.app')
 
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/issues-board.css') }}">
-@endpush
 
 @section('content')
 
