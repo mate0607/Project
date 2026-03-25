@@ -26,9 +26,10 @@ class SaleController extends Controller
      */
     public function index()
     {
-        $sales = Sale::with(['car', 'buyer', 'seller', 'images'])->latest()->get();
+        $allSalesForFilters = Sale::select('vehicle_type', 'body_type', 'fuel_type', 'car_condition')->get();
+        $sales = Sale::with(['car', 'buyer', 'seller', 'images'])->latest()->paginate(10);
 
-        return view('sales.index', compact('sales'));
+        return view('sales.index', compact('sales', 'allSalesForFilters'));
     }
 
     /**

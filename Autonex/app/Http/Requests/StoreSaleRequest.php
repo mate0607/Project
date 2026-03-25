@@ -22,13 +22,19 @@ class StoreSaleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'car_id' => ['required', 'integer', 'exists:cars,id'],
-            'buyer_id' => ['required', 'integer', 'exists:users,id'],
+            'car_id' => ['nullable', 'integer', 'exists:cars,id'],
+            'vehicle_type' => ['required', 'string', 'max:255'],
+            'model' => ['required', 'string', 'max:255'],
+            'body_type' => ['nullable', 'string', 'max:255'],
+            'engine_cc' => ['nullable', 'integer', 'min:0'],
+            'fuel_type' => ['nullable', 'string', 'max:255'],
+            'documents_available' => ['nullable', 'boolean'],
+            'document_type' => ['nullable', 'string', 'max:255'],
+            'technical_inspection' => ['nullable', 'boolean'],
             'price' => ['required', 'numeric', 'min:0'],
             'description' => ['nullable', 'string'],
-            'car_condition' => ['nullable', 'string', 'max:255'],
+            'car_condition' => ['required', 'string', 'max:255'],
             'mileage' => ['nullable', 'integer', 'min:0'],
-            'is_active' => ['nullable', 'boolean'],
             'images' => ['nullable', 'array', 'max:10'],
             'images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
         ];

@@ -3,10 +3,10 @@
 
 
 @section('content')
-<div class="an-form-container">
+<div class="an-form-container" style="max-width:1500px;width:100%;">
     <h1>Új ügyfél értesítés küldése</h1>
 
-    <div class="ad-card" style="padding: 24px;">
+    <div class="ad-card" style="padding: 24px; width: 100%; box-sizing: border-box;">
         <form method="POST" action="{{ route('admin.notifications.store') }}" class="an-form">
             @csrf
 

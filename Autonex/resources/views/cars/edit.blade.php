@@ -28,14 +28,6 @@
                 </div>
 
                 <div class="field-group">
-                    <label for="vin">VIN</label>
-                    <input id="vin" type="text" name="vin" value="{{ old('vin', $car->vin) }}" placeholder="pl. JTDKB20U793123456">
-                    @error('vin')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="field-group">
                     <label for="license_plate">Rendszám</label>
                     <input id="license_plate" type="text" name="license_plate" value="{{ old('license_plate', $car->license_plate) }}" placeholder="pl. ABC-123">
                     @error('license_plate')
@@ -72,10 +64,6 @@
                 <div>
                     <p>Típus</p>
                     <strong>{{ $car->make_model }}</strong>
-                </div>
-                <div>
-                    <p>VIN</p>
-                    <strong>{{ $car->vin ?? 'n/a' }}</strong>
                 </div>
                 <div>
                     <p>Rendszám</p>

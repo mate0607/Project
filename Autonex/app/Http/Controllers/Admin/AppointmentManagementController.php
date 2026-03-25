@@ -12,19 +12,35 @@ use Illuminate\Http\Request;
 
 class AppointmentManagementController extends Controller
 {
-    // Az admin gyors statusz-modositasnal engedett ertekek listaja.
     private const QUICK_UPDATE_STATUSES = 'confirmed,cancelled,completed';
 
-    public function index()
+    private const MECHANIC_POOL = [
+        'Kovács István', 'Nagy Péter', 'Szabó Gábor', 'Tóth László', 'Horváth Zoltán',
+        'Varga Tamás', 'Kiss András', 'Molnár Ferenc', 'Németh Attila', 'Farkas Béla',
+        'Balogh Károly', 'Papp Dániel', 'Takács Mihály', 'Simon József', 'Rácz Tibor',
+        'Lakatos Róbert', 'Mészáros Imre', 'Oláh Sándor', 'Fekete Márton', 'Szilágyi Ádám',
+    ];
+
+    public function index(Request $request)
     {
-        $appointments = Appointment::with(['user', 'car'])
-            ->latest()
-            ->get();
+        $query = Appointment::with(['user', 'car'])->latest();
 
-        $pendingCount = Appointment::where('status', 'pending')->count();
-        $confirmedCount = Appointment::where('status', 'confirmed')->count();
+        if ($request->filled('filter_name')) {
+            $query->whereHas('user', fn ($q) => $q->where('name', 'like', '%' . $request->filter_name . '%'));
+        }
+        if ($request->filled('filter_car')) {
+            $query->whereHas('car', fn ($q) => $q->where('make_model', 'like', '%' . $request->filter_car . '%'));
+        }
+        if ($request->filled('filter_plate')) {
+            $query->whereHas('car', fn ($q) => $q->where('license_plate', 'like', '%' . $request->filter_plate . '%'));
+        }
+        if ($request->filled('filter_date')) {
+            $query->where('date', $request->filter_date);
+        }
 
-        return view('admin.appointments.index', compact('appointments', 'pendingCount', 'confirmedCount'));
+        $appointments = $query->get();
+
+        return view('admin.appointments.index', compact('appointments'));
     }
 
     public function edit(Appointment $appointment)
@@ -32,7 +48,10 @@ class AppointmentManagementController extends Controller
         $appointment->load(['user', 'car', 'servicePhotos']);
         $cars = Car::orderBy('make_model')->get();
 
-        return view('admin.appointments.edit', compact('appointment', 'cars'));
+        // Mechanic pool: pick a random mechanic if none assigned
+        $mechanicPool = self::MECHANIC_POOL;
+
+        return view('admin.appointments.edit', compact('appointment', 'cars', 'mechanicPool'));
     }
 
     public function update(UpdateAppointmentRequest $request, Appointment $appointment)
@@ -50,19 +69,16 @@ class AppointmentManagementController extends Controller
                 ]);
         }
 
-        // Ha a service_stage üres string, null-ra állítjuk.
         if (empty($validated['service_stage'])) {
             $validated['service_stage'] = null;
         }
 
-        // Fotó feltöltés kezelése.
         $photoFile = $request->file('photo');
         $photoTitle = $validated['photo_title'] ?? null;
         unset($validated['photo'], $validated['photo_title']);
 
         $appointment->update($validated);
 
-        // Automatikus ertesites: ha a statusz completed es a service_stage ready, kuldjunk uzenetet.
         if ($appointment->status === 'completed' && $appointment->service_stage === 'ready' && $appointment->user_id) {
             $car = $appointment->car;
             $this->sendReadyNotification($appointment->user_id, $car);
@@ -100,7 +116,6 @@ class AppointmentManagementController extends Controller
             'status' => $validated['status'],
         ]);
 
-        // Automatikus ertesites: ha completed-re valtott es a service_stage mar ready.
         if ($validated['status'] === 'completed' && $appointment->service_stage === 'ready' && $appointment->user_id) {
             $appointment->load('car');
             $this->sendReadyNotification($appointment->user_id, $appointment->car);

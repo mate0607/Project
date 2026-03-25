@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autonex</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ time() }}">
     @stack('styles')
 </head>
 <body>
@@ -59,7 +59,7 @@
                     </div>
                 @else
                     <a href="{{ route('login') }}" class="nav-login-btn">Bejelentkezés</a>
-                @endauth
+                @endif
             </div>
         </div>
     </nav>
@@ -71,6 +71,24 @@
     @hasSection('page_footer')
         @yield('page_footer')
     @endif
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span class="footer-logo">Autonex</span>
+                <p>Modern járműkezelés és szerviz platform.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Elérhetőség</h4>
+                <p>Email: info@autonex.hu</p>
+                <p>Tel: +36 1 234 5678</p>
+                <p>Cím: 1000 Budapest, Fő utca 1.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; {{ date('Y') }} Autonex. Minden jog fenntartva.
+        </div>
+    </footer>
 
     <script>
         // Mobilnezetben egyszeru menu nyitas-zaras kezeles.

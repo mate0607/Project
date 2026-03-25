@@ -39,6 +39,14 @@
 @endphp
 
 <section class="cars-shell cars-page-enter">
+    {{-- Vissza nyíl --}}
+    <a href="{{ route('cars.index') }}" class="car-back-arrow" title="Vissza a listára">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5"/>
+            <path d="M12 19l-7-7 7-7"/>
+        </svg>
+    </a>
+
     {{-- Fejléc --}}
     <article class="car-profile-hero">
         <div class="car-profile-main">
@@ -51,7 +59,6 @@
             <div>
                 <h1 class="page-title car-detail-title">{{ $car->make_model }}</h1>
                 <div class="car-meta-chips">
-                    <span>VIN: {{ $car->vin ?? 'Nincs megadva' }}</span>
                     <span>Rendszám: {{ $car->license_plate ?? 'Nincs megadva' }}</span>
                     <span>Év: {{ $car->year ?? 'Nincs megadva' }}</span>
                     <span>ID: #{{ $car->id }}</span>
@@ -60,8 +67,9 @@
         </div>
 
         <div class="car-profile-actions">
-            <a href="{{ route('cars.index') }}" class="btn btn-muted">Vissza a listára</a>
-            <a href="{{ route('cars.edit', $car) }}" class="btn car-btn-main">Szerkesztés</a>
+            <a href="{{ route('cars.edit', $car) }}" class="car-edit-icon" title="Szerkesztés">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </a>
         </div>
     </article>
 

@@ -7,11 +7,22 @@
         <p class="sales-kicker">Sale Detail</p>
         <h1 class="page-title">Eladás #{{ $sale->id }}</h1>
     </div>
-    <div class="form-actions" style="margin-top: 0;">
+    <div class="form-actions" style="margin-top: 0; display:flex; gap:8px; align-items:center;">
         @if(auth()->check() && auth()->user()->role === 'admin')
-            <a href="{{ route('sales.edit', $sale) }}" class="btn sale-btn-main">Szerkesztés</a>
+            <a href="{{ route('sales.edit', $sale) }}" class="market-action-icon" title="Szerkesztés">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </a>
+            <form action="{{ route('sales.destroy', $sale) }}" method="POST" onsubmit="return confirm('Biztosan törölni szeretnéd?');" style="display:inline-flex;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="market-action-icon market-action-danger" title="Törlés">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+            </form>
         @endif
-        <a href="{{ route('sales.index') }}" class="btn btn-muted">Vissza</a>
+        <a href="{{ route('sales.index') }}" class="market-action-icon" title="Vissza">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        </a>
     </div>
 </section>
 

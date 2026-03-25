@@ -15,6 +15,7 @@ class Appointment extends Model
     protected $fillable = [
         'user_id',
         'car_id',
+        'work_number',
         'date',
         'time',
         'description',
@@ -27,6 +28,15 @@ class Appointment extends Model
         'issues_found',
         'critical_warning',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Appointment $appointment) {
+            if (!$appointment->work_number) {
+                $appointment->work_number = 'MNK-' . strtoupper(substr(uniqid(), -6));
+            }
+        });
+    }
 
     // Datum es kulcs mezok egyseges tipizalasa az alkalmazas tobbi reszehez.
     protected $casts = [

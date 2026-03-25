@@ -6,7 +6,7 @@
     <header class="car-create-head">
         <p class="car-create-kicker">Gépjármű hozzáadása</p>
         <h1 class="page-title car-create-title">Új autó</h1>
-        <p class="car-create-subtitle">Add meg a járműved adatait. A VIN opcionális, de későbbi azonosításhoz hasznos lehet.</p>
+        <p class="car-create-subtitle">Add meg a járműved adatait.</p>
     </header>
 
     <div class="card car-form-card car-create-card">
@@ -38,13 +38,6 @@
                     @enderror
                 </div>
 
-                <div class="car-field car-field-full">
-                    <label for="vin">VIN (opcionális)</label>
-                    <input id="vin" type="text" name="vin" value="{{ old('vin') }}" placeholder="pl. 1HGCM82633A123456">
-                    @error('vin')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
-                </div>
             </div>
 
             <div class="form-actions car-actions">

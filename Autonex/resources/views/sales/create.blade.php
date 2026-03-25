@@ -24,85 +24,103 @@
 
         <div class="sales-form-grid">
             <div>
-                <label for="car_id">Autó</label>
-                <select id="car_id" name="car_id" class="sale-select">
-                    <option value="">Válassz autót...</option>
-                    @foreach($cars as $car)
-                        <option value="{{ $car->id }}" {{ (string) old('car_id') === (string) $car->id ? 'selected' : '' }}>
-                            #{{ $car->id }} - {{ $car->make_model }}
-                        </option>
+                <label for="vehicle_type">Jármű típus</label>
+                <select id="vehicle_type" name="vehicle_type" class="sale-select">
+                    <option value="">Válassz...</option>
+                    @foreach(['Autó', 'Motor', 'Kis teherautó', 'Mezőgazdasági gép', 'Egyéb'] as $vt)
+                        <option value="{{ $vt }}" {{ old('vehicle_type') === $vt ? 'selected' : '' }}>{{ $vt }}</option>
                     @endforeach
                 </select>
-                @error('car_id')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
+                @error('vehicle_type') <p class="field-error">{{ $message }}</p> @enderror
             </div>
 
             <div>
-                <label for="buyer_id">Vevő</label>
-                <select id="buyer_id" name="buyer_id" class="sale-select">
-                    <option value="">Válassz felhasználót...</option>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}" {{ (string) old('buyer_id') === (string) $user->id ? 'selected' : '' }}>
-                            {{ $user->name }} ({{ $user->email }})
-                        </option>
+                <label for="model">Modell</label>
+                <input id="model" type="text" name="model" value="{{ old('model') }}" placeholder="pl. Toyota Corolla">
+                @error('model') <p class="field-error">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label for="body_type">Karosszéria</label>
+                <select id="body_type" name="body_type" class="sale-select">
+                    <option value="">Válassz...</option>
+                    @foreach(['Sedan', 'Kombi', 'Hatchback', 'SUV', 'Kupé', 'Kabrió', 'Furgon', 'Pickup', 'Egyéb'] as $bt)
+                        <option value="{{ $bt }}" {{ old('body_type') === $bt ? 'selected' : '' }}>{{ $bt }}</option>
                     @endforeach
                 </select>
-                @error('buyer_id')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
+                @error('body_type') <p class="field-error">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label for="engine_cc">Köbcenti (cm³)</label>
+                <input id="engine_cc" type="number" name="engine_cc" value="{{ old('engine_cc') }}" placeholder="pl. 1600">
+                @error('engine_cc') <p class="field-error">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label for="fuel_type">Üzemanyag típus</label>
+                <select id="fuel_type" name="fuel_type" class="sale-select">
+                    <option value="">Válassz...</option>
+                    @foreach(['Benzin', 'Dízel', 'Elektromos', 'Hibrid', 'LPG', 'CNG', 'Egyéb'] as $ft)
+                        <option value="{{ $ft }}" {{ old('fuel_type') === $ft ? 'selected' : '' }}>{{ $ft }}</option>
+                    @endforeach
+                </select>
+                @error('fuel_type') <p class="field-error">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label for="car_condition">Állapot</label>
+                <select id="car_condition" name="car_condition" class="sale-select">
+                    <option value="">Válassz...</option>
+                    @foreach(['Új', 'Újszerű', 'Megkímélt', 'Normál', 'Használt', 'Sérült', 'Roncs'] as $cond)
+                        <option value="{{ $cond }}" {{ old('car_condition') === $cond ? 'selected' : '' }}>{{ $cond }}</option>
+                    @endforeach
+                </select>
+                @error('car_condition') <p class="field-error">{{ $message }}</p> @enderror
             </div>
 
             <div>
                 <label for="price">Ár (Ft)</label>
-                <input id="price" type="number" step="0.01" name="price" value="{{ old('price') }}" placeholder="pl. 1250000">
-                @error('price')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
+                <input id="price" type="number" step="1" name="price" value="{{ old('price') }}" placeholder="pl. 1250000">
+                @error('price') <p class="field-error">{{ $message }}</p> @enderror
             </div>
 
             <div>
                 <label for="mileage">Kilométer</label>
                 <input id="mileage" type="number" name="mileage" value="{{ old('mileage') }}" placeholder="pl. 98000">
-                @error('mileage')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
-                <label for="car_condition">Állapot</label>
-                <input id="car_condition" type="text" name="car_condition" value="{{ old('car_condition') }}" placeholder="pl. Good">
-                @error('car_condition')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
-                <label for="is_active">Státusz</label>
-                <select id="is_active" name="is_active" class="sale-select">
-                    <option value="1" {{ old('is_active', '1') === '1' ? 'selected' : '' }}>Aktív</option>
-                    <option value="0" {{ old('is_active') === '0' ? 'selected' : '' }}>Inaktív</option>
-                </select>
-                @error('is_active')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
+                @error('mileage') <p class="field-error">{{ $message }}</p> @enderror
             </div>
         </div>
 
-        <label for="images">Képek az autóról (max 10)</label>
-        <input id="images" type="file" name="images[]" multiple accept="image/jpeg,image/png,image/jpg,image/webp">
-        @error('images')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
-        @error('images.*')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        <div class="sales-form-grid" style="margin-top: 16px;">
+            <div>
+                <label class="checkbox-row">
+                    <input type="hidden" name="documents_available" value="0">
+                    <input type="checkbox" name="documents_available" value="1" {{ old('documents_available') ? 'checked' : '' }} id="docsCheck">
+                    <span>Okmányok megvannak</span>
+                </label>
+            </div>
+            <div id="docTypeWrap" style="{{ old('documents_available') ? '' : 'display:none;' }}">
+                <label for="document_type">Okmány típusa</label>
+                <input id="document_type" type="text" name="document_type" value="{{ old('document_type') }}" placeholder="pl. Forgalmi, Törzskönyv">
+                @error('document_type') <p class="field-error">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label class="checkbox-row">
+                    <input type="hidden" name="technical_inspection" value="0">
+                    <input type="checkbox" name="technical_inspection" value="1" {{ old('technical_inspection') ? 'checked' : '' }}>
+                    <span>Érvényes műszaki</span>
+                </label>
+            </div>
+        </div>
 
-        <label for="description">Leírás</label>
+        <label for="images" style="margin-top: 16px;">Képek az autóról (max 10)</label>
+        <input id="images" type="file" name="images[]" multiple accept="image/jpeg,image/png,image/jpg,image/webp">
+        @error('images') <p class="field-error">{{ $message }}</p> @enderror
+
+        <label for="description" style="margin-top: 16px;">Leírás</label>
         <textarea id="description" name="description" rows="5" class="sale-textarea" placeholder="Részletezd az autó állapotát, extráit...">{{ old('description') }}</textarea>
-        @error('description')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        @error('description') <p class="field-error">{{ $message }}</p> @enderror
 
         <div class="form-actions">
             <button type="submit" class="btn sale-btn-main">Mentés</button>
@@ -110,5 +128,11 @@
         </div>
     </form>
 </div>
+
+<script>
+document.getElementById('docsCheck').addEventListener('change', function() {
+    document.getElementById('docTypeWrap').style.display = this.checked ? '' : 'none';
+});
+</script>
 
 @endsection

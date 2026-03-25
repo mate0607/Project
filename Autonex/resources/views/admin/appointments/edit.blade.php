@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-
 @section('content')
 
 <div class="page-head">
@@ -14,7 +13,11 @@
         @method('PUT')
 
         <label>Felhasználó</label>
-        <input type="text" value="{{ $appointment->user?->name ?? '—' }}" disabled>
+        <input type="text" value="{{ $appointment->user?->name ?? '—' }}" disabled style="opacity:0.6;">
+
+        <label>Szerelő neve</label>
+        <input type="text" value="{{ $appointment->mechanic_name ?? '—' }}" disabled style="opacity:0.6;">
+        <input type="hidden" name="mechanic_name" value="{{ old('mechanic_name', $appointment->mechanic_name) }}">
 
         <label for="car_id">Autó</label>
         <select id="car_id" name="car_id" class="app-select">
@@ -24,27 +27,19 @@
                 </option>
             @endforeach
         </select>
-        @error('car_id')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        @error('car_id') <p class="field-error">{{ $message }}</p> @enderror
 
         <label for="date">Dátum</label>
-        <input id="date" type="date" name="date" value="{{ old('date', $appointment->date) }}">
-        @error('date')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        <input id="date" type="date" name="date" value="{{ old('date', $appointment->date instanceof \Carbon\Carbon ? $appointment->date->format('Y-m-d') : $appointment->date) }}">
+        @error('date') <p class="field-error">{{ $message }}</p> @enderror
 
         <label for="time">Időpont</label>
         <input id="time" type="time" name="time" value="{{ old('time', \Illuminate\Support\Carbon::parse($appointment->time)->format('H:i')) }}">
-        @error('time')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        @error('time') <p class="field-error">{{ $message }}</p> @enderror
 
         <label for="description">Megjegyzés</label>
         <textarea id="description" name="description" rows="4" placeholder="Megjegyzés (opcionális)">{{ old('description', $appointment->description) }}</textarea>
-        @error('description')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        @error('description') <p class="field-error">{{ $message }}</p> @enderror
 
         <label for="status">Státusz</label>
         <select id="status" name="status" class="app-select">
@@ -54,9 +49,7 @@
                 </option>
             @endforeach
         </select>
-        @error('status')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        @error('status') <p class="field-error">{{ $message }}</p> @enderror
 
         <label for="service_stage">Szerviz állapot</label>
         <select id="service_stage" name="service_stage" class="app-select">
@@ -67,42 +60,26 @@
                 </option>
             @endforeach
         </select>
-        @error('service_stage')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        @error('service_stage') <p class="field-error">{{ $message }}</p> @enderror
 
         <hr style="border-color: rgba(148,163,184,0.2); margin: 20px 0;">
         <h3 style="color: #f5f3ff; margin-bottom: 12px;">Szerviz eredmény</h3>
 
-        <label for="mechanic_name">Szerelő neve</label>
-        <input id="mechanic_name" type="text" name="mechanic_name" value="{{ old('mechanic_name', $appointment->mechanic_name) }}" placeholder="Pl. Kovács János">
-        @error('mechanic_name')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
-
         <label for="total_cost">Végösszeg (Ft)</label>
         <input id="total_cost" type="number" step="1" name="total_cost" value="{{ old('total_cost', $appointment->total_cost) }}" placeholder="Pl. 45000">
-        @error('total_cost')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        @error('total_cost') <p class="field-error">{{ $message }}</p> @enderror
 
         <label for="service_report">Elvégzett munkák leírása</label>
         <textarea id="service_report" name="service_report" rows="4" placeholder="Mi történt a szerviz során?">{{ old('service_report', $appointment->service_report) }}</textarea>
-        @error('service_report')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        @error('service_report') <p class="field-error">{{ $message }}</p> @enderror
 
         <label for="issues_found">Talált hibák / megjegyzések</label>
         <textarea id="issues_found" name="issues_found" rows="3" placeholder="Nem kritikus, de figyelmet érdemlő hibák...">{{ old('issues_found', $appointment->issues_found) }}</textarea>
-        @error('issues_found')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        @error('issues_found') <p class="field-error">{{ $message }}</p> @enderror
 
         <label for="critical_warning">Kritikus figyelmeztetés</label>
         <textarea id="critical_warning" name="critical_warning" rows="3" placeholder="Veszélyes / sürgős probléma...">{{ old('critical_warning', $appointment->critical_warning) }}</textarea>
-        @error('critical_warning')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        @error('critical_warning') <p class="field-error">{{ $message }}</p> @enderror
 
         <hr style="border-color: rgba(148,163,184,0.2); margin: 20px 0;">
         <h3 style="color: #f5f3ff; margin-bottom: 12px;">Szerviz fotók feltöltése</h3>
@@ -112,11 +89,8 @@
 
         <label for="photo">Fotó</label>
         <input id="photo" type="file" name="photo" accept="image/*">
-        @error('photo')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+        @error('photo') <p class="field-error">{{ $message }}</p> @enderror
 
-        {{-- Meglévő fotók --}}
         @if($appointment->servicePhotos && $appointment->servicePhotos->count() > 0)
             <div style="margin-top: 16px;">
                 <h4 style="color: #ddd6fe; margin-bottom: 10px;">Feltöltött fotók</h4>
@@ -138,7 +112,6 @@
         </div>
     </form>
 
-    {{-- Fotó törlés formok --}}
     @if($appointment->servicePhotos)
         @foreach($appointment->servicePhotos as $photo)
             <form id="deletePhoto{{ $photo->id }}" method="POST" action="{{ route('admin.service-photos.destroy', $photo) }}" style="display:none;">

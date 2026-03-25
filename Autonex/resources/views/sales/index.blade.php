@@ -1,215 +1,241 @@
 @extends('layouts.app')
 
-
 @section('content')
 
 @php
-    // A nezetben tobb szekcio is ugyanarra az adathalmazra epul, ezert itt keszitjuk elo.
-    $salesCollection = collect($sales);
     $isAdmin = auth()->check() && auth()->user()->role === 'admin';
-
-    $allSales = $salesCollection->sortByDesc('created_at');
-
-    // A kliensoldali kereseshez egyseges, kisbetus szovegmezot epitunk.
-    $searchableText = fn ($sale) => mb_strtolower(
-        ($sale->car?->make_model ?? '') . ' ' . ($sale->description ?? '') . ' ' . ($sale->car_condition ?? '')
-    );
 @endphp
 
 <section class="market-shell market-page-enter">
     <header class="market-hero">
         <div>
             <h1 class="page-title">Market</h1>
-            <p class="page-subtitle">Fedezd fel az autós ajánlatokat, szolgáltatásokat és hirdetéseket egy modern böngésző felületen.</p>
+            <p class="page-subtitle">Fedezd fel az autós ajánlatokat egy modern felületen.</p>
         </div>
-        <div class="market-hero-actions">
+        <div class="market-hero-actions" style="display:flex;gap:8px;align-items:center;">
+            <button type="button" id="marketSearchToggle" title="Keresés" style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:rgba(59,130,246,0.18);border:1px solid rgba(96,165,250,0.35);cursor:pointer;transition:background 0.2s;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            </button>
             @if($isAdmin)
-                <a href="{{ route('sales.create') }}" class="btn market-btn-main">+ Új ajánlat</a>
+                <a href="{{ route('sales.create') }}" class="btn sale-btn-main">+ Új ajánlat</a>
             @endif
         </div>
     </header>
 
-    <section class="market-toolbar" aria-label="Keresés és szűrés">
-        <div class="market-search-wrap">
-            <span class="market-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.2-3.2"></path></svg>
-            </span>
-            <input id="market-search" type="text" placeholder="Keresés cím, leírás vagy autó alapján...">
+    <div id="marketSearchPanel" style="display:none;margin-bottom:12px;">
+        <div class="market-toolbar">
+            <div class="market-search-wrap">
+                <span class="market-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.2-3.2"></path></svg>
+                </span>
+                <input id="market-search" type="text" placeholder="Keresés modell, leírás alapján...">
+            </div>
+
+            <div class="market-filter-row" style="flex-wrap:wrap;">
+                <select id="filter-vehicle-type" class="market-select">
+                    <option value="all">Jármű típus: mind</option>
+                    @foreach($allSalesForFilters->pluck('vehicle_type')->filter()->unique() as $vt)
+                        <option value="{{ mb_strtolower($vt) }}">{{ $vt }}</option>
+                    @endforeach
+                </select>
+                <select id="filter-body-type" class="market-select">
+                    <option value="all">Karosszéria: mind</option>
+                    @foreach($allSalesForFilters->pluck('body_type')->filter()->unique() as $bt)
+                        <option value="{{ mb_strtolower($bt) }}">{{ $bt }}</option>
+                    @endforeach
+                </select>
+                <select id="filter-fuel-type" class="market-select">
+                    <option value="all">Üzemanyag: mind</option>
+                    @foreach($allSalesForFilters->pluck('fuel_type')->filter()->unique() as $ft)
+                        <option value="{{ mb_strtolower($ft) }}">{{ $ft }}</option>
+                    @endforeach
+                </select>
+                <select id="filter-condition" class="market-select">
+                    <option value="all">Állapot: mind</option>
+                    @foreach($allSalesForFilters->pluck('car_condition')->filter()->unique() as $cond)
+                        <option value="{{ mb_strtolower($cond) }}">{{ $cond }}</option>
+                    @endforeach
+                </select>
+                <select id="filter-price-range" class="market-select">
+                    <option value="all">Ár: mind</option>
+                    <option value="0-2000000">0 – 2 000 000 Ft</option>
+                    <option value="2000001-5000000">2 000 001 – 5 000 000 Ft</option>
+                    <option value="5000001-max">5 000 001+ Ft</option>
+                </select>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:6px;">
+                <label style="color:var(--text-muted);font-size:13px;">Rendezés:</label>
+                <select id="market-sort" class="market-select" style="min-width:140px;">
+                    <option value="date-desc">Legújabb</option>
+                    <option value="price-asc">Ár: növekvő</option>
+                    <option value="price-desc">Ár: csökkenő</option>
+                </select>
+            </div>
         </div>
-
-        <div class="market-filter-row">
-            <button class="market-filter-chip active" type="button" data-filter-status="all">Minden</button>
-            <button class="market-filter-chip" type="button" data-filter-status="active">Aktív</button>
-            <button class="market-filter-chip" type="button" data-filter-status="inactive">Inaktív</button>
-
-            <select id="market-condition-filter" class="market-select" aria-label="Állapot szerint">
-                <option value="all">Állapot: mind</option>
-                @foreach($allSales->pluck('car_condition')->filter()->unique()->values() as $condition)
-                    <option value="{{ mb_strtolower($condition) }}">{{ $condition }}</option>
-                @endforeach
-            </select>
-
-            <select id="market-price-filter" class="market-select" aria-label="Ár szerint">
-                <option value="all">Ár: mind</option>
-                <option value="0-2000000">0 - 2 000 000 Ft</option>
-                <option value="2000001-5000000">2 000 001 - 5 000 000 Ft</option>
-                <option value="5000001-max">5 000 001+ Ft</option>
-            </select>
-        </div>
-    </section>
+    </div>
 
     <section class="market-section">
-        <div class="market-section-head">
-            <h2>Összes listing</h2>
-            <p>Teljes kínálat a választott szűrők alapján.</p>
-        </div>
+        <div class="market-card-grid" id="market-list">
+            @forelse($sales as $sale)
+                @php
+                    $img = $sale->images->sortBy('sort_order')->first();
+                    $imgUrl = $img ? asset('storage/' . $img->path) : null;
+                    $imgCount = $sale->images->count();
+                @endphp
+                <a href="{{ route('sales.show', $sale) }}" class="market-card-item" data-market-item
+                    data-vehicle-type="{{ mb_strtolower($sale->vehicle_type ?? '') }}"
+                    data-body-type="{{ mb_strtolower($sale->body_type ?? '') }}"
+                    data-fuel-type="{{ mb_strtolower($sale->fuel_type ?? '') }}"
+                    data-condition="{{ mb_strtolower($sale->car_condition ?? '') }}"
+                    data-price="{{ (float) $sale->price }}"
+                    data-date="{{ $sale->created_at?->timestamp ?? 0 }}"
+                    data-search="{{ mb_strtolower(($sale->model ?? '') . ' ' . ($sale->vehicle_type ?? '') . ' ' . ($sale->description ?? '') . ' ' . ($sale->car_condition ?? '') . ' ' . ($sale->car?->make_model ?? '')) }}">
 
-        <div class="market-grid market-grid-all" id="market-all-grid">
-            @forelse($allSales as $sale)
-                <article class="market-card" data-market-item data-status="{{ $sale->is_active ? 'active' : 'inactive' }}" data-condition="{{ mb_strtolower((string) ($sale->car_condition ?? '')) }}" data-price="{{ (float) $sale->price }}" data-search="{{ $searchableText($sale) }}" onclick="if(!event.target.closest('.carousel-btn, .market-btn-soft, .inline-form, button'))window.location='{{ route('sales.show', $sale) }}'" style="cursor:pointer;">
-                    @if($sale->images->count())
-                        <div class="market-card-media" style="position:relative;">
-                            <div class="sale-carousel" id="carousel-{{ $sale->id }}">
-                                @foreach($sale->images as $img)
-                                    <img src="{{ asset('storage/' . $img->path) }}" alt="{{ $sale->car?->make_model }}" class="sale-carousel-img" style="width:100%;height:200px;object-fit:cover;display:{{ $loop->first ? 'block' : 'none' }};">
-                                @endforeach
-                            </div>
-                            @if($sale->images->count() > 1)
-                                <button type="button" class="carousel-btn carousel-prev" onclick="event.preventDefault();slideCarousel('carousel-{{ $sale->id }}',-1)">&#10094;</button>
-                                <button type="button" class="carousel-btn carousel-next" onclick="event.preventDefault();slideCarousel('carousel-{{ $sale->id }}',1)">&#10095;</button>
-                            @endif
-                        </div>
-                    @elseif($sale->image)
-                        <div class="market-card-media"><img src="{{ asset('storage/' . $sale->image) }}" alt="{{ $sale->car?->make_model }}" style="width:100%;height:200px;object-fit:cover;"></div>
-                    @endif
+                    <div class="market-card-img">
+                        @if($imgUrl)
+                            <img src="{{ $imgUrl }}" alt="{{ $sale->model ?? $sale->car?->make_model ?? 'Eladó jármű' }}" loading="lazy">
+                        @else
+                            <div class="market-card-noimg">Nincs kép</div>
+                        @endif
+                        @if($imgCount > 1)
+                            <span class="market-card-imgcount">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                                {{ $imgCount }}
+                            </span>
+                        @endif
+                    </div>
+
                     <div class="market-card-body">
-                        <h3>{{ $sale->car?->make_model ?? 'Ismeretlen autó' }}</h3>
-                        <p>{{ \Illuminate\Support\Str::limit($sale->description ?: 'Nincs leírás megadva.', 105) }}</p>
+                        <h3 class="market-card-title">{{ $sale->model ?? $sale->car?->make_model ?? 'Ismeretlen' }}</h3>
 
                         <div class="market-card-tags">
-                            <span class="market-tag">{{ $sale->car_condition ?? 'Állapot: n/a' }}</span>
-                            <span class="market-tag {{ $sale->is_active ? 'is-active' : 'is-inactive' }}">{{ $sale->is_active ? 'Aktív' : 'Inaktív' }}</span>
-                        </div>
-                    </div>
-
-                    <div class="market-card-foot">
-                        <strong>{{ number_format((float) $sale->price, 0, ',', ' ') }} Ft</strong>
-                        <div class="market-card-actions">
-                            @if($isAdmin)
-                                <a href="{{ route('sales.edit', $sale) }}" class="market-btn-soft">Szerkeszt</a>
-
-                                <form action="{{ route('sales.destroy', $sale) }}" method="POST" class="inline-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="market-btn-soft market-btn-danger">Törlés</button>
-                                </form>
+                            @if($sale->vehicle_type)
+                                <span class="market-tag-chip">{{ $sale->vehicle_type }}</span>
+                            @endif
+                            @if($sale->body_type)
+                                <span class="market-tag-chip">{{ $sale->body_type }}</span>
+                            @endif
+                            @if($sale->fuel_type)
+                                <span class="market-tag-chip">{{ $sale->fuel_type }}</span>
+                            @endif
+                            @if($sale->car_condition)
+                                <span class="market-tag-chip">{{ $sale->car_condition }}</span>
                             @endif
                         </div>
+
+                        <div class="market-card-specs">
+                            @if($sale->fuel_type)<span>{{ $sale->fuel_type }}</span>@endif
+                            @if($sale->engine_cc)<span>{{ number_format($sale->engine_cc, 0, ',', ' ') }} cm³</span>@endif
+                            @if($sale->mileage)<span>{{ number_format($sale->mileage, 0, ',', ' ') }} km</span>@endif
+                        </div>
+
+                        <p class="market-card-desc">{{ \Illuminate\Support\Str::limit($sale->description ?: 'Nincs leírás.', 120) }}</p>
                     </div>
-                </article>
+
+                    <div class="market-card-pricecol">
+                        <strong class="market-card-price">{{ number_format((float)$sale->price, 0, ',', ' ') }} Ft</strong>
+                    </div>
+                </a>
             @empty
-                <article class="market-empty">
+                <article class="market-empty" style="grid-column: 1 / -1;">
                     <h3>Még nincs ajánlat</h3>
-                    <p>Hozz létre egy új listinget, hogy megjelenjen a piactéren.</p>
+                    <p>Hozz létre egy új listinget.</p>
                     @if($isAdmin)
-                        <a href="{{ route('sales.create') }}" class="btn market-btn-main">Első ajánlat létrehozása</a>
+                        <a href="{{ route('sales.create') }}" class="btn sale-btn-main">Első ajánlat létrehozása</a>
                     @endif
                 </article>
             @endforelse
         </div>
+
+        @if($sales->hasPages())
+            <div class="market-pagination">
+                @if($sales->onFirstPage())
+                    <span class="market-page-arrow disabled">&laquo; Előző</span>
+                @else
+                    <a href="{{ $sales->previousPageUrl() }}" class="market-page-arrow">&laquo; Előző</a>
+                @endif
+
+                @foreach($sales->getUrlRange(1, $sales->lastPage()) as $page => $url)
+                    @if($page == $sales->currentPage())
+                        <span class="market-page-num active">{{ $page }}</span>
+                    @else
+                        <a href="{{ $url }}" class="market-page-num">{{ $page }}</a>
+                    @endif
+                @endforeach
+
+                @if($sales->hasMorePages())
+                    <a href="{{ $sales->nextPageUrl() }}" class="market-page-arrow">Következő &raquo;</a>
+                @else
+                    <span class="market-page-arrow disabled">Következő &raquo;</span>
+                @endif
+            </div>
+        @endif
     </section>
 </section>
 
-
-
 <script>
-function slideCarousel(id, dir) {
-    var wrap = document.getElementById(id);
-    if (!wrap) return;
-    var imgs = wrap.querySelectorAll('.sale-carousel-img');
-    var idx = 0;
-    imgs.forEach(function(img, i) { if (img.style.display !== 'none') idx = i; });
-    imgs[idx].style.display = 'none';
-    idx = (idx + dir + imgs.length) % imgs.length;
-    imgs[idx].style.display = 'block';
-    var counter = document.getElementById(id + '-counter');
-    if (counter) counter.textContent = (idx + 1) + ' / ' + imgs.length;
-}
-</script>
+(function () {
+    var toggleBtn = document.getElementById('marketSearchToggle');
+    var panel = document.getElementById('marketSearchPanel');
+    var searchInput = document.getElementById('market-search');
+    var sortSelect = document.getElementById('market-sort');
+    var list = document.getElementById('market-list');
+    var cards = Array.from(document.querySelectorAll('[data-market-item]'));
 
-<script>
-    (function () {
-        // Kliensoldali filter allapotok: statusz, allapot es ar-sav szerint.
-        const searchInput = document.getElementById('market-search');
-        const statusButtons = Array.from(document.querySelectorAll('[data-filter-status]'));
-        const conditionSelect = document.getElementById('market-condition-filter');
-        const priceSelect = document.getElementById('market-price-filter');
-        const cards = Array.from(document.querySelectorAll('[data-market-item]'));
+    var filterVehicle = document.getElementById('filter-vehicle-type');
+    var filterBody = document.getElementById('filter-body-type');
+    var filterFuel = document.getElementById('filter-fuel-type');
+    var filterCondition = document.getElementById('filter-condition');
+    var filterPrice = document.getElementById('filter-price-range');
 
-        let statusFilter = 'all';
-        const PRICE_RANGES = {
-            '0-2000000': [0, 2000000],
-            '2000001-5000000': [2000001, 5000000],
-        };
+    toggleBtn.addEventListener('click', function() {
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
 
-        function matchPrice(cardPrice, range) {
-            if (range === 'all') {
-                return true;
-            }
+    function matchPrice(p, range) {
+        if (range === 'all') return true;
+        if (range === '5000001-max') return p >= 5000001;
+        var parts = range.split('-');
+        return p >= parseInt(parts[0]) && p <= parseInt(parts[1]);
+    }
 
-            if (range === '5000001-max') {
-                return cardPrice >= 5000001;
-            }
+    function applyFilters() {
+        var term = (searchInput.value || '').trim().toLowerCase();
+        var vt = filterVehicle.value;
+        var bt = filterBody.value;
+        var ft = filterFuel.value;
+        var cond = filterCondition.value;
+        var price = filterPrice.value;
 
-            const selectedRange = PRICE_RANGES[range];
-
-            if (selectedRange) {
-                const [min, max] = selectedRange;
-
-                return cardPrice >= min && cardPrice <= max;
-            }
-
-            return true;
-        }
-
-        // Egy kartyara vonatkozo osszes feltetel egyszerre ellenorzesre kerul.
-        function cardMatchesFilters(card, term, condition, price) {
-            const cardSearch = card.dataset.search || '';
-            const cardStatus = card.dataset.status || 'inactive';
-            const cardCondition = card.dataset.condition || '';
-            const cardPrice = Number(card.dataset.price || 0);
-
-            const matchTerm = term === '' || cardSearch.includes(term);
-            const matchStatus = statusFilter === 'all' || cardStatus === statusFilter;
-            const matchCondition = condition === 'all' || cardCondition === condition;
-            const matchPriceRange = matchPrice(cardPrice, price);
-
-            return matchTerm && matchStatus && matchCondition && matchPriceRange;
-        }
-
-        function applyFilters() {
-            const term = (searchInput?.value || '').trim().toLowerCase();
-            const condition = conditionSelect?.value || 'all';
-            const price = priceSelect?.value || 'all';
-
-            cards.forEach((card) => {
-                card.style.display = cardMatchesFilters(card, term, condition, price) ? '' : 'none';
-            });
-        }
-
-        statusButtons.forEach((button) => {
-            button.addEventListener('click', () => {
-                statusFilter = button.dataset.filterStatus || 'all';
-                statusButtons.forEach((b) => b.classList.remove('active'));
-                button.classList.add('active');
-                applyFilters();
-            });
+        cards.forEach(function(c) {
+            var ok = true;
+            if (term && (c.dataset.search || '').indexOf(term) === -1) ok = false;
+            if (vt !== 'all' && c.dataset.vehicleType !== vt) ok = false;
+            if (bt !== 'all' && c.dataset.bodyType !== bt) ok = false;
+            if (ft !== 'all' && c.dataset.fuelType !== ft) ok = false;
+            if (cond !== 'all' && c.dataset.condition !== cond) ok = false;
+            if (!matchPrice(Number(c.dataset.price || 0), price)) ok = false;
+            c.style.display = ok ? '' : 'none';
         });
+    }
 
-        searchInput?.addEventListener('input', applyFilters);
-        conditionSelect?.addEventListener('change', applyFilters);
-        priceSelect?.addEventListener('change', applyFilters);
-    })();
+    function applySort() {
+        var val = sortSelect.value;
+        var sorted = cards.slice().sort(function(a, b) {
+            if (val === 'price-asc') return Number(a.dataset.price) - Number(b.dataset.price);
+            if (val === 'price-desc') return Number(b.dataset.price) - Number(a.dataset.price);
+            return Number(b.dataset.date) - Number(a.dataset.date);
+        });
+        sorted.forEach(function(c) { list.appendChild(c); });
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+    [filterVehicle, filterBody, filterFuel, filterCondition, filterPrice].forEach(function(el) {
+        el.addEventListener('change', applyFilters);
+    });
+    sortSelect.addEventListener('change', function() { applySort(); applyFilters(); });
+})();
 </script>
 
 @endsection

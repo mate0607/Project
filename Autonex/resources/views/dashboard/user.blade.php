@@ -80,24 +80,24 @@
         </div>
 
         @if($nextAppointment)
-            <div class="ud-next-grid">
+            <a href="{{ route('appointments.show', $nextAppointment) }}" class="ud-next-grid" style="text-decoration:none;color:inherit;display:grid;cursor:pointer;">
                 <div class="ud-next-item">
                     <span>Autó</span>
                     <strong>{{ $nextAppointment->car?->make_model ?? 'Nincs autó' }}</strong>
                 </div>
                 <div class="ud-next-item">
+                    <span>Szerviz</span>
+                    <strong>{{ $nextAppointment->service ?? '—' }}</strong>
+                </div>
+                <div class="ud-next-item">
                     <span>Dátum</span>
-                    <strong>{{ $nextAppointment->date }}</strong>
+                    <strong>{{ \Carbon\Carbon::parse($nextAppointment->date)->format('Y.m.d') }}</strong>
                 </div>
                 <div class="ud-next-item">
                     <span>Idő</span>
                     <strong>{{ $nextAppointment->time }}</strong>
                 </div>
-                <div class="ud-next-item">
-                    <span>Státusz</span>
-                    <strong class="ud-badge ud-badge-{{ $nextAppointment->status }}">{{ strtoupper($nextAppointment->status) }}</strong>
-                </div>
-            </div>
+            </a>
         @else
             <p class="ud-empty">Nincs közelgő időpontod.</p>
         @endif

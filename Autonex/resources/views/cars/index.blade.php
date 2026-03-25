@@ -44,10 +44,7 @@
                     <label for="filterPlate">Rendszám</label>
                     <input type="text" id="filterPlate" class="cars-adv-input" placeholder="pl. ABC-123">
                 </div>
-                <div class="cars-adv-field">
-                    <label for="filterVin">VIN</label>
-                    <input type="text" id="filterVin" class="cars-adv-input" placeholder="pl. 1HGCM82...">
-                </div>
+
             </div>
         </div>
 
@@ -59,17 +56,15 @@
                 <a href="{{ route('cars.show', $car) }}" class="car-entry-card car-entry-link"
                    data-make="{{ strtolower($car->make_model) }}"
                    data-year="{{ $car->year }}"
-                   data-plate="{{ strtolower($car->license_plate ?? '') }}"
-                   data-vin="{{ strtolower($car->vin ?? '') }}">
+                   data-plate="{{ strtolower($car->license_plate ?? '') }}">
                     <div class="car-entry-head">
                         <span class="car-entry-chip">#{{ $car->id }}</span>
-                        <h3>{{ $car->make_model }}</h3>
                     </div>
 
                     <div class="car-entry-meta">
                         <div>
-                            <span>VIN</span>
-                            <strong>{{ $car->vin ?? 'Nincs megadva' }}</strong>
+                            <span>Típus</span>
+                            <strong>{{ $car->make_model }}</strong>
                         </div>
                         <div>
                             <span>Rendszám</span>
@@ -106,7 +101,6 @@
             var filterYear = document.getElementById('filterYear');
             var filterModel = document.getElementById('filterModel');
             var filterPlate = document.getElementById('filterPlate');
-            var filterVin = document.getElementById('filterVin');
             var cards = document.querySelectorAll('.car-entry-link');
 
             advToggle.addEventListener('click', function () {
@@ -120,20 +114,17 @@
                 var yearVal = filterYear.value;
                 var modelVal = filterModel.value.toLowerCase().trim();
                 var plateVal = filterPlate.value.toLowerCase().trim();
-                var vinVal = filterVin.value.toLowerCase().trim();
 
                 cards.forEach(function (card) {
                     var make = card.getAttribute('data-make') || '';
                     var year = card.getAttribute('data-year') || '';
                     var plate = card.getAttribute('data-plate') || '';
-                    var vin = card.getAttribute('data-vin') || '';
 
                     var ok = true;
                     if (searchVal && make.indexOf(searchVal) === -1) ok = false;
                     if (yearVal && year !== yearVal) ok = false;
                     if (modelVal && make.indexOf(modelVal) === -1) ok = false;
                     if (plateVal && plate.indexOf(plateVal) === -1) ok = false;
-                    if (vinVal && vin.indexOf(vinVal) === -1) ok = false;
 
                     card.style.display = ok ? '' : 'none';
                 });
@@ -143,7 +134,6 @@
             filterYear.addEventListener('change', filterCars);
             filterModel.addEventListener('input', filterCars);
             filterPlate.addEventListener('input', filterCars);
-            filterVin.addEventListener('input', filterCars);
         });
     </script>
 

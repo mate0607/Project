@@ -14,6 +14,14 @@ class Sale extends Model
     // A piacteri listing alapadatai, amelyeket create/update soran engedelyezunk.
     protected $fillable = [
         'car_id',
+        'vehicle_type',
+        'model',
+        'body_type',
+        'engine_cc',
+        'fuel_type',
+        'documents_available',
+        'document_type',
+        'technical_inspection',
         'buyer_id',
         'seller_id',
         'price',
@@ -31,7 +39,10 @@ class Sale extends Model
         'seller_id' => 'integer',
         'price' => 'decimal:2',
         'mileage' => 'integer',
+        'engine_cc' => 'integer',
         'is_active' => 'boolean',
+        'documents_available' => 'boolean',
+        'technical_inspection' => 'boolean',
     ];
 
     // A meghirdetett auto kapcsolata.

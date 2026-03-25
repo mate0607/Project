@@ -1,28 +1,30 @@
 @extends('layouts.app')
 
-
 @section('content')
+
+@php
+    $prevMonth = $calendarDate->copy()->subMonth()->format('Y-m');
+    $nextMonth = $calendarDate->copy()->addMonth()->format('Y-m');
+    $daysInMonth = $calendarDate->daysInMonth;
+    $firstDayOfWeek = $calendarDate->copy()->startOfMonth()->dayOfWeekIso;
+    $dayNames = ['H', 'K', 'Sze', 'Cs', 'P', 'Szo', 'V'];
+@endphp
 
 <section class="admin-dashboard">
 
-    {{-- 3 interaktiv kocka --}}
     <section class="ad-stats-grid ad-stats-grid-3">
-
-        {{-- 1. Szervizben levo autok --}}
         <article class="ad-stat-card">
             <span class="ad-stat-label">Jelenleg szervizben</span>
             <strong class="ad-stat-value">{{ $inServiceCount }}</strong>
             <span class="ad-stat-sub">autó</span>
         </article>
 
-        {{-- 2. Mai idopontok (kattinthato) --}}
         <article class="ad-stat-card ad-stat-clickable" onclick="document.getElementById('todayAppointmentsPanel').classList.toggle('ad-panel-open')">
             <span class="ad-stat-label">Mai időpontok</span>
             <strong class="ad-stat-value">{{ $todayAppointments->count() }}</strong>
             <span class="ad-stat-sub">Kattints a listáért ▾</span>
         </article>
 
-        {{-- 3. Mai kesz autok (kattinthato) --}}
         <article class="ad-stat-card ad-stat-clickable" onclick="document.getElementById('todayCompletedPanel').classList.toggle('ad-panel-open')">
             <span class="ad-stat-label">Mai kész autók</span>
             <strong class="ad-stat-value">{{ $todayCompletedCars->count() }}</strong>
@@ -30,14 +32,13 @@
         </article>
     </section>
 
-    {{-- Mai idopontok lenyilo lista --}}
     <section id="todayAppointmentsPanel" class="ad-panel">
         <article class="ad-card">
             <h2>Mai időpontok</h2>
             @if($todayAppointments->count() > 0)
                 <div class="ad-list">
                     @foreach($todayAppointments as $apt)
-                        <a href="{{ route('admin.appointments.index') }}" class="ad-list-item">
+                        <a href="{{ route('admin.appointments.edit', $apt) }}" class="ad-list-item">
                             <div class="ad-list-info">
                                 <strong>{{ $apt->car?->make_model ?? '—' }}</strong>
                                 <span>{{ $apt->user?->name ?? '—' }}</span>
@@ -55,7 +56,6 @@
         </article>
     </section>
 
-    {{-- Mai kesz autok lenyilo lista --}}
     <section id="todayCompletedPanel" class="ad-panel">
         <article class="ad-card">
             <h2>Mai kész autók — átvehetők</h2>
@@ -67,11 +67,10 @@
                                 <strong>{{ $apt->car?->make_model ?? '—' }}</strong>
                                 <span>Tulajdonos: {{ $apt->user?->name ?? '—' }}</span>
                                 <span class="ad-list-detail">Tel: {{ $apt->user?->phone ?? 'Nincs megadva' }}</span>
-                                <span class="ad-list-detail">VIN: {{ $apt->car?->vin ?? '—' }} | {{ $apt->car?->year ?? '' }}</span>
                             </div>
                             <div class="ad-list-meta">
                                 <span class="ad-badge ad-badge-completed">KÉSZ</span>
-                                <a href="{{ route('admin.notifications.create') }}?user_id={{ $apt->user_id }}&title={{ urlencode('Szerviz kész — ' . ($apt->car?->make_model ?? '')) }}&message={{ urlencode('Tisztelt ' . ($apt->user?->name ?? 'Ügyfél') . '! Az Ön autója (' . ($apt->car?->make_model ?? '') . ', ' . ($apt->car?->vin ?? '') . ') elkészült és átvehető. Kérjük, egyeztessen időpontot az átvételhez.') }}" class="ad-list-action-btn">Értesítés küldése →</a>
+                                <a href="{{ route('admin.notifications.create') }}?user_id={{ $apt->user_id }}&title={{ urlencode('Szerviz kész — ' . ($apt->car?->make_model ?? '')) }}" class="ad-list-action-btn">Értesítés küldése →</a>
                             </div>
                         </div>
                     @endforeach
@@ -82,121 +81,112 @@
         </article>
     </section>
 
+    {{-- 2 identical action cards --}}
     <section class="ad-grid-2col">
-        <article class="ad-card">
-            <h2>Legutóbbi aktivitások</h2>
-            <div class="ad-activity-list">
-                @foreach($recentActivities as $activity)
-                    <div class="ad-activity-item">
-                        <span class="ad-activity-dot"></span>
-                        <div>
-                            <p>{{ $activity['label'] }}</p>
-                            <small>
-                                {{ $activity['item'] ? optional($activity['item']->{$activity['dateField']})->format('Y-m-d H:i') : 'Nincs adat' }}
-                            </small>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </article>
-
-        <article class="ad-card">
-            <h2>Gyors műveletek</h2>
-            <div class="ad-actions">
-                <a href="{{ route('appointments.create') }}" class="ad-btn">Új időpont</a>
-                <a href="{{ route('admin.notifications.create') }}" class="ad-btn">Új értesítés</a>
-            </div>
-        </article>
+        <a href="{{ route('appointments.create') }}" class="ad-action-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg>
+            <span>Új időpont</span>
+        </a>
+        <a href="{{ route('admin.notifications.create') }}" class="ad-action-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span>Új értesítés</span>
+        </a>
     </section>
 
-    <section class="ad-grid-2col">
-        <article class="ad-card">
-            <h2>Időpontok havi statisztikája</h2>
-            <div class="ad-chart-wrap">
-                <canvas id="adminMonthlyChart" aria-label="Admin havi időpont statisztika" role="img"></canvas>
-            </div>
-        </article>
+    {{-- Calendar view --}}
+    <section class="ad-calendar-box">
+        <div class="ad-calendar-header">
+            <a href="{{ route('admin.dashboard', ['month' => $prevMonth]) }}" class="ad-cal-nav">‹</a>
+            <h2>{{ $calendarDate->isoFormat('YYYY MMMM') }}</h2>
+            <a href="{{ route('admin.dashboard', ['month' => $nextMonth]) }}" class="ad-cal-nav">›</a>
+        </div>
 
-        <article class="ad-card">
-            <h2>Közelgő időpontok</h2>
-            <div class="ad-table-wrap">
-                <table class="ad-table">
-                    <thead>
-                        <tr>
-                            <th>Autó</th>
-                            <th>Felhasználó</th>
-                            <th>Dátum</th>
-                            <th>Idő</th>
-                            <th>Státusz</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($upcomingAppointments as $appointment)
-                            <tr>
-                                <td>{{ $appointment->car?->make_model ?? '—' }}</td>
-                                <td>{{ $appointment->user?->name ?? '—' }}</td>
-                                <td>{{ $appointment->date }}</td>
-                                <td>{{ $appointment->time }}</td>
-                                <td>
-                                    <span class="ad-badge ad-badge-{{ $appointment->status }}">{{ strtoupper($appointment->status) }}</span>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="ad-empty">Nincs közelgő időpont.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </article>
-    </section>
-</section>
+        <div class="ad-calendar-grid">
+            @foreach($dayNames as $dn)
+                <div class="ad-cal-dayname">{{ $dn }}</div>
+            @endforeach
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    (function () {
-        const chartEl = document.getElementById('adminMonthlyChart');
+            @for($i = 1; $i < $firstDayOfWeek; $i++)
+                <div class="ad-cal-empty"></div>
+            @endfor
 
-        if (!chartEl || typeof Chart === 'undefined') {
-            return;
-        }
+            @for($day = 1; $day <= $daysInMonth; $day++)
+                @php
+                    $dateKey = $calendarDate->copy()->day($day)->format('Y-m-d');
+                    $dayAppointments = $calendarAppointments->get($dateKey, collect());
+                    $isToday = $dateKey === now()->format('Y-m-d');
+                @endphp
+                <div class="ad-cal-day {{ $isToday ? 'ad-cal-today' : '' }} {{ $dayAppointments->count() > 0 ? 'ad-cal-has-items' : '' }}"
+                     onclick="toggleDayPanel('{{ $dateKey }}')"
+                     data-date="{{ $dateKey }}">
+                    <span class="ad-cal-day-num">{{ $day }}</span>
+                    @if($dayAppointments->count() > 0)
+                        <span class="ad-cal-dot">{{ $dayAppointments->count() }}</span>
+                    @endif
+                </div>
+            @endfor
+        </div>
 
-        new Chart(chartEl, {
-            type: 'bar',
-            data: {
-                labels: @json($monthlyLabels),
-                datasets: [{
-                    label: 'Időpontok',
-                    data: @json($monthlyCounts),
-                    backgroundColor: 'rgba(79, 124, 247, 0.28)',
-                    borderColor: '#4F7CF7',
-                    borderWidth: 1,
-                    borderRadius: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        grid: { color: 'rgba(107, 140, 255, 0.2)' },
-                        ticks: { color: '#64748B' }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: 'rgba(107, 140, 255, 0.2)' },
-                        ticks: { color: '#64748B', stepSize: 1 }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        labels: { color: '#1F2937' }
+        {{-- Day panels with half-hour timeline --}}
+        @foreach($calendarAppointments as $dateKey => $dayAppts)
+            @php
+                $slots = [];
+                foreach ($dayAppts as $apt) {
+                    $t = \Carbon\Carbon::parse($apt->time);
+                    $slotKey = $t->format('H') . ':' . ($t->minute < 30 ? '00' : '30');
+                    $slots[$slotKey][] = $apt;
+                }
+                ksort($slots);
+
+                $allSlots = [];
+                if (count($slots) > 0) {
+                    $minH = (int) min(array_map(fn($k) => explode(':', $k)[0], array_keys($slots)));
+                    $maxH = (int) max(array_map(fn($k) => explode(':', $k)[0], array_keys($slots)));
+                    for ($h = $minH; $h <= $maxH; $h++) {
+                        $allSlots[] = sprintf('%02d:00', $h);
+                        $allSlots[] = sprintf('%02d:30', $h);
                     }
                 }
+            @endphp
+            <div class="ad-day-panel" id="day-{{ $dateKey }}" style="display:none;">
+                <h3>{{ \Carbon\Carbon::parse($dateKey)->isoFormat('YYYY. MMMM D. (dddd)') }}</h3>
+                <div class="ad-timeline">
+                    @foreach($allSlots as $slot)
+                        <div class="ad-timeline-slot {{ isset($slots[$slot]) ? 'ad-timeline-slot-active' : '' }}">
+                            <span class="ad-timeline-time">{{ $slot }}</span>
+                            <div class="ad-timeline-content">
+                                @if(isset($slots[$slot]))
+                                    @foreach($slots[$slot] as $apt)
+                                        <a href="{{ route('admin.appointments.edit', $apt) }}" class="ad-timeline-item">
+                                            <strong>{{ $apt->car?->make_model ?? '—' }}</strong>
+                                            <span>{{ $apt->user?->name ?? '—' }}</span>
+                                            <span class="ad-badge ad-badge-{{ $apt->status }}">{{ strtoupper($apt->status) }}</span>
+                                        </a>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                    @if(count($allSlots) === 0)
+                        <p class="ad-empty">Nincs időpont ezen a napon.</p>
+                    @endif
+                </div>
+            </div>
+        @endforeach
+    </section>
+
+</section>
+
+<script>
+    function toggleDayPanel(dateKey) {
+        var panels = document.querySelectorAll('.ad-day-panel');
+        panels.forEach(function(p) {
+            if (p.id === 'day-' + dateKey) {
+                p.style.display = p.style.display === 'none' ? 'block' : 'none';
+            } else {
+                p.style.display = 'none';
             }
         });
-    })();
+    }
 </script>
-
 @endsection

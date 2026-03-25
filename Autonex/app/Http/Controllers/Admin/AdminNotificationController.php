@@ -9,9 +9,24 @@ use Illuminate\Http\Request;
 
 class AdminNotificationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $notifications = AdminNotification::with('user')->latest()->paginate(20);
+        $query = AdminNotification::with('user')->latest();
+
+        if ($request->filled('filter_name')) {
+            $query->whereHas('user', fn($q) => $q->where('name', 'like', '%' . $request->filter_name . '%'));
+        }
+        if ($request->filled('filter_plate')) {
+            $query->whereHas('user', fn($q) => $q->whereHas('cars', fn($c) => $c->where('license_plate', 'like', '%' . $request->filter_plate . '%')));
+        }
+        if ($request->filled('filter_vin')) {
+            $query->whereHas('user', fn($q) => $q->whereHas('cars', fn($c) => $c->where('vin', 'like', '%' . $request->filter_vin . '%')));
+        }
+        if ($request->filled('filter_date')) {
+            $query->whereDate('created_at', $request->filter_date);
+        }
+
+        $notifications = $query->paginate(20)->withQueryString();
 
         return view('admin.notifications.index', compact('notifications'));
     }
