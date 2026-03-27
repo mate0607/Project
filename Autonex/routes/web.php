@@ -76,3 +76,4 @@ Route::middleware(['auth'])->group(function () {
         'index', 'show',
     ]);
 });
+
