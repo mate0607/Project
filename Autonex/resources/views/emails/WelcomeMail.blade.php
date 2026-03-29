@@ -1,66 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to AutoNex</title>
+    <title>Üdvözlünk az AutoNex-ben</title>
+    <style>{!! file_get_contents(public_path('css/welcome-mail.css')) !!}</style>
 </head>
-<body style="margin:0; padding:0; width:100%; background-color:#f3f4f6; font-family:Arial, Helvetica, sans-serif; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
-    <div style="display:none; font-size:1px; color:#f3f4f6; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden;">
-        Welcome to AutoNex. Your account is ready.
+<body class="wm-body">
+    <div class="wm-preheader">
+        AutoNex – A fiókod sikeresen létrejött.
     </div>
 
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f3f4f6; margin:0; padding:24px 0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="wm-wrapper">
         <tr>
-            <td align="center" style="padding:0 12px;">
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px; background-color:#ffffff; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden;">
+            <td align="center" class="wm-wrapper-cell">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="wm-container">
+
+                    {{-- Header --}}
                     <tr>
-                        <td style="padding:24px 28px; background:linear-gradient(135deg, #991b1b 0%, #dc2626 100%);">
+                        <td class="wm-header">
                             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                                 <tr>
-                                    <td style="color:#ffffff; font-size:24px; line-height:1.2; font-weight:700;">
-                                        AutoNex
-                                    </td>
+                                    <td class="wm-logo">AutoNex</td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-top:8px; color:#fee2e2; font-size:14px; line-height:1.4;">
-                                        Welcome to your automotive hub
+                                    <td class="wm-subtitle">Járműkezelés egyszerűen</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    {{-- Content --}}
+                    <tr>
+                        <td class="wm-content">
+                            <p class="wm-greeting">Szia {{ $userName }}!</p>
+                            <p>
+                                Örülünk, hogy csatlakoztál! A fiókodat sikeresen létrehoztuk
+                                az <strong>AutoNex</strong> rendszerben.
+                            </p>
+                            <p class="wm-text-muted">
+                                Mostantól hozzáférsz a teljes platformhoz – kezelheted
+                                járműveidet, időpontot foglalhatsz, és nyomon követheted
+                                a szervizfolyamatokat.
+                            </p>
+
+                            {{-- Info box --}}
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td class="wm-info-box">
+                                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                            <tr>
+                                                <td class="wm-info-title">Elérhető funkciók</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="wm-info-item">
+                                                    <span class="wm-info-icon">&#x2022;</span> Járművek kezelése és nyilvántartása
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="wm-info-item">
+                                                    <span class="wm-info-icon">&#x2022;</span> Szerviz időpontok foglalása
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="wm-info-item">
+                                                    <span class="wm-info-icon">&#x2022;</span> Szervizfolyamatok nyomon követése
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
 
+                    {{-- Divider --}}
                     <tr>
-                        <td style="padding:30px 28px 20px 28px; color:#111827; font-size:16px; line-height:1.7;">
-                            <p style="margin:0 0 14px 0;">Hi {{ $userName }},</p>
-                            <p style="margin:0 0 14px 0;">
-                                Thank you for creating your <strong>AutoNex</strong> account. You're all set!
-                            </p>
-                            <p style="margin:0 0 24px 0; color:#4b5563;">
-                                You can now manage your cars, book appointments, and browse the marketplace from your dashboard.
-                            </p>
-
-                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0;">
-                                <tr>
-                                    <td align="center" style="border-radius:8px; background-color:#dc2626;">
-                                        <a href="{{ $appUrl }}" target="_blank" rel="noopener"
-                                           style="display:inline-block; padding:12px 22px; color:#ffffff; text-decoration:none; font-size:15px; font-weight:700; line-height:1;">
-                                            Open AutoNex
-                                        </a>
-                                    </td>
-                                </tr>
+                        <td>
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr><td class="wm-divider"></td></tr>
                             </table>
                         </td>
                     </tr>
 
+                    {{-- Footer --}}
                     <tr>
-                        <td style="padding:18px 28px 24px 28px; border-top:1px solid #e5e7eb; color:#6b7280; font-size:13px; line-height:1.5; text-align:left;">
-                            If you did not create this account, please ignore this email.
-                            <br><br>
-                            © {{ date('Y') }} AutoNex. All rights reserved.
+                        <td class="wm-footer">
+                            <p class="wm-footer-note">
+                                Ez egy automatikusan generált üzenet.<br>
+                                Kérjük, erre az emailre ne válaszolj.
+                            </p>
+                            <p class="wm-footer-copy">
+                                &copy; {{ date('Y') }} AutoNex. Minden jog fenntartva.
+                            </p>
                         </td>
                     </tr>
+
                 </table>
             </td>
         </tr>
