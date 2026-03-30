@@ -11,11 +11,9 @@ use App\Models\Car;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-// Nyitooldal: itt csak az uzenofalhoz szukseges darabszamot toltjuk be.
+// Nyitooldal
 Route::get('/', function () {
-    return view('welcome', [
-        'carCount' => Car::count(),
-    ]);
+    return view('welcome');
 });
 
 // Laravel alap auth route-ok (login, register, logout, stb.).
@@ -45,6 +43,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Admin idopontkezelo modul dedikalt route nevekkel.
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('appointments', [AppointmentManagementController::class, 'index'])->name('appointments.index');
+        Route::get('appointments/{appointment}', [AppointmentManagementController::class, 'show'])->name('appointments.show');
         Route::get('appointments/{appointment}/edit', [AppointmentManagementController::class, 'edit'])->name('appointments.edit');
         Route::put('appointments/{appointment}', [AppointmentManagementController::class, 'update'])->name('appointments.update');
         Route::patch('appointments/{appointment}/update-status', [AppointmentManagementController::class, 'updateStatus'])->name('appointments.update-status');

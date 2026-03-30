@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autonex</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ time() }}">
+    <script>if(localStorage.getItem('autonex-theme')==='light')document.documentElement.classList.add('light-mode');</script>
     @stack('styles')
 </head>
 <body>
+    <div class="pulse-left"></div>
+    <div class="pulse-right"></div>
     @php
         // A navbar tobb ponton hasznalja az auth adatokat, ezert egy helyen taroljuk.
         $currentUser = auth()->user();
@@ -51,6 +54,16 @@
                         <div class="nav-profile-dropdown" id="profileDropdown">
                             <span class="nav-dd-name">{{ $currentUser->name }}</span>
                             <a href="{{ route('profile.edit') }}" class="nav-dd-item">Profil beállítások</a>
+                            <div class="nav-dd-theme">
+                                <span class="nav-dd-theme-label">Téma</span>
+                                <label class="theme-switch">
+                                    <input type="checkbox" id="themeToggle">
+                                    <span class="theme-slider">
+                                        <svg class="theme-icon theme-icon-dark" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+                                        <svg class="theme-icon theme-icon-light" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                                    </span>
+                                </label>
+                            </div>
                             <form action="{{ route('logout') }}" method="POST" class="nav-dd-logout">
                                 @csrf
                                 <button type="submit" class="nav-dd-item nav-dd-item-logout">Kijelentkezés</button>
@@ -58,7 +71,7 @@
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="nav-login-btn">Bejelentkezés</a>
+                    {{-- Login/register buttons are on the welcome page --}}
                 @endif
             </div>
         </div>
@@ -110,9 +123,15 @@
                 e.stopPropagation();
                 profileDropdown.classList.toggle('nav-dd-open');
             });
+        }
 
-            document.addEventListener('click', () => {
-                profileDropdown.classList.remove('nav-dd-open');
+        // Theme switch logic
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.checked = document.documentElement.classList.contains('light-mode');
+            themeToggle.addEventListener('change', () => {
+                document.documentElement.classList.toggle('light-mode', themeToggle.checked);
+                localStorage.setItem('autonex-theme', themeToggle.checked ? 'light' : 'dark');
             });
         }
     </script>
