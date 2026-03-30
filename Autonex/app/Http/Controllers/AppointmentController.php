@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AppointmentConfirmationMail;
 use App\Models\Appointment;
 use App\Models\Car;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class AppointmentController extends Controller
@@ -137,11 +140,23 @@ class AppointmentController extends Controller
                 ->withErrors($exception->errors());
         }
 
-        Appointment::create([
+        $appointment = Appointment::create([
             ...$validated,
             'user_id' => $userId,
             'status' => 'pending',
         ]);
+
+        try {
+            $appointment->load(['user', 'car']);
+            Mail::to($appointment->user->email)
+                ->send(new AppointmentConfirmationMail($appointment));
+        } catch (\Throwable $e) {
+            Log::error('APPOINTMENT_MAIL: send FAILED.', [
+                'appointment_id' => $appointment->id,
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+            ]);
+        }
 
         return redirect()->route('appointments.index')
             ->with('success', 'Időpont sikeresen létrehozva!');

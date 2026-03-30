@@ -28,7 +28,7 @@ class WelcomeMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to AutoNex',
+            subject: 'Üdvözlünk az AutoNex-ben!',
         );
     }
 
@@ -41,7 +41,6 @@ class WelcomeMail extends Mailable
             view: 'emails.WelcomeMail',
             with: [
                 'userName' => $this->userName,
-                'appUrl' => config('app.url'),
             ],
         );
     }
