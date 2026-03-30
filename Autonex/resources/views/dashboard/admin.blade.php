@@ -38,7 +38,7 @@
             @if($todayAppointments->count() > 0)
                 <div class="ad-list">
                     @foreach($todayAppointments as $apt)
-                        <a href="{{ route('admin.appointments.edit', $apt) }}" class="ad-list-item">
+                        <a href="{{ route('admin.appointments.show', $apt) }}" class="ad-list-item">
                             <div class="ad-list-info">
                                 <strong>{{ $apt->car?->make_model ?? '—' }}</strong>
                                 <span>{{ $apt->user?->name ?? '—' }}</span>
@@ -157,7 +157,7 @@
                             <div class="ad-timeline-content">
                                 @if(isset($slots[$slot]))
                                     @foreach($slots[$slot] as $apt)
-                                        <a href="{{ route('admin.appointments.edit', $apt) }}" class="ad-timeline-item">
+                                        <a href="{{ route('admin.appointments.show', $apt) }}" class="ad-timeline-item">
                                             <strong>{{ $apt->car?->make_model ?? '—' }}</strong>
                                             <span>{{ $apt->user?->name ?? '—' }}</span>
                                             <span class="ad-badge ad-badge-{{ $apt->status }}">{{ strtoupper($apt->status) }}</span>

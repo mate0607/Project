@@ -3,107 +3,115 @@
 
 @section('content')
 
-<section class="user-dashboard">
+<section class="user-dashboard ud-layout-v2">
 
-    {{-- Eladó autók carousel --}}
-    <section class="ud-sales-carousel fade-in">
-        <div class="ud-sales-head">
-            <h2>Legújabb eladó autók</h2>
+    {{-- Row 1: Sliding images + Next appointment side by side --}}
+    <section class="ud-top-split">
+        <section class="ud-sales-carousel fade-in">
+            <div class="ud-sales-head">
+                <h2>Legújabb eladó autók</h2>
+            </div>
+            @if($latestSales->count() > 0)
+                <div class="ud-sales-slider" id="salesSlider">
+                    @foreach($latestSales as $sale)
+                        @php
+                            $img = $sale->images->sortBy('sort_order')->first();
+                            $imgUrl = $img ? asset('storage/' . $img->path) : 'https://asset.hasznaltautocdn.com/skeletor/images/no-image.31cc7f70.svg';
+                        @endphp
+                        <a href="{{ route('sales.show', $sale) }}" class="ud-sale-slide">
+                            <div class="ud-sale-img-wrap">
+                                <img src="{{ $imgUrl }}" alt="{{ $sale->car?->make_model ?? 'Eladó autó' }}" loading="lazy">
+                            </div>
+                            <div class="ud-sale-info">
+                                <strong>{{ $sale->car?->make_model ?? 'Ismeretlen' }}</strong>
+                                <span class="ud-sale-price">{{ number_format($sale->price, 0, ',', ' ') }} Ft</span>
+                                @if($sale->mileage)
+                                    <span class="ud-sale-km">{{ number_format($sale->mileage, 0, ',', ' ') }} km</span>
+                                @endif
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+                <div class="ud-sales-nav">
+                    <button type="button" class="ud-sales-btn" id="salesPrev" aria-label="Előző">‹</button>
+                    <button type="button" class="ud-sales-btn" id="salesNext" aria-label="Következő">›</button>
+                </div>
+            @else
+                <p class="ud-empty">Jelenleg nincs eladó autó.</p>
+            @endif
+        </section>
+
+        <div class="ud-next-card fade-in delay-2">
+            <div class="ud-next-head">
+                <h2>Következő időpont</h2>
+            </div>
+
+            @if($nextAppointment)
+                <a href="{{ route('appointments.show', $nextAppointment) }}" class="ud-next-grid" style="text-decoration:none;color:inherit;display:grid;cursor:pointer;">
+                    <div class="ud-next-item">
+                        <span>Autó</span>
+                        <strong>{{ $nextAppointment->car?->make_model ?? 'Nincs autó' }}</strong>
+                    </div>
+                    <div class="ud-next-item">
+                        <span>Szerviz</span>
+                        <strong>{{ $nextAppointment->service ?? '—' }}</strong>
+                    </div>
+                    <div class="ud-next-item">
+                        <span>Dátum</span>
+                        <strong>{{ \Carbon\Carbon::parse($nextAppointment->date)->format('Y.m.d') }}</strong>
+                    </div>
+                    <div class="ud-next-item">
+                        <span>Idő</span>
+                        <strong>{{ $nextAppointment->time }}</strong>
+                    </div>
+                </a>
+            @else
+                <p class="ud-empty">Nincs közelgő időpontod.</p>
+            @endif
         </div>
-        @if($latestSales->count() > 0)
-            <div class="ud-sales-slider" id="salesSlider">
-                @foreach($latestSales as $sale)
-                    @php
-                        $img = $sale->images->sortBy('sort_order')->first();
-                        $imgUrl = $img ? asset('storage/' . $img->path) : 'https://asset.hasznaltautocdn.com/skeletor/images/no-image.31cc7f70.svg';
-                    @endphp
-                    <a href="{{ route('sales.show', $sale) }}" class="ud-sale-slide">
-                        <div class="ud-sale-img-wrap">
-                            <img src="{{ $imgUrl }}" alt="{{ $sale->car?->make_model ?? 'Eladó autó' }}" loading="lazy">
-                        </div>
-                        <div class="ud-sale-info">
-                            <strong>{{ $sale->car?->make_model ?? 'Ismeretlen' }}</strong>
-                            <span class="ud-sale-price">{{ number_format($sale->price, 0, ',', ' ') }} Ft</span>
-                            @if($sale->mileage)
-                                <span class="ud-sale-km">{{ number_format($sale->mileage, 0, ',', ' ') }} km</span>
-                            @endif
-                        </div>
-                    </a>
-                @endforeach
-            </div>
-            <div class="ud-sales-nav">
-                <button type="button" class="ud-sales-btn" id="salesPrev" aria-label="Előző">‹</button>
-                <button type="button" class="ud-sales-btn" id="salesNext" aria-label="Következő">›</button>
-            </div>
-        @else
-            <p class="ud-empty">Jelenleg nincs eladó autó.</p>
-        @endif
     </section>
 
-    {{-- Stat kártyák: Szervizben + Közelgő + Új időpont --}}
-    <section class="ud-stats-grid" style="grid-template-columns: repeat(3, 1fr);">
-        <article class="ud-stat-card fade-in delay-1">
-            <div class="ud-stat-icon" aria-hidden="true">
+    {{-- Row 2: 3 service-style stat boxes --}}
+    <section class="ud-service-boxes">
+        <article class="ud-service-box fade-in delay-1">
+            <div class="ud-service-box-icon" aria-hidden="true">
                 <svg class="ud-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-3 3-3-3z"/>
                 </svg>
             </div>
-            <div class="ud-stat-value">{{ $inServiceCount }}</div>
-            <div class="ud-stat-label">Szervizben lévő autóim</div>
+            <div class="ud-service-box-text">
+                <strong>Szervizben lévő autóim</strong>
+                <span>{{ $inServiceCount }} autó jelenleg szervizben</span>
+            </div>
         </article>
 
-        <article class="ud-stat-card fade-in delay-2">
-            <div class="ud-stat-icon" aria-hidden="true">
+        <article class="ud-service-box fade-in delay-2">
+            <div class="ud-service-box-icon" aria-hidden="true">
                 <svg class="ud-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M8 2v4M16 2v4M3 10h18"/>
                     <rect x="3" y="4" width="18" height="18" rx="2"/>
                 </svg>
             </div>
-            <div class="ud-stat-value">{{ $upcomingAppointmentsCount }}</div>
-            <div class="ud-stat-label">Közelgő időpontjaim</div>
+            <div class="ud-service-box-text">
+                <strong>Közelgő időpontjaim</strong>
+                <span>{{ $upcomingAppointmentsCount }} foglalt időpont</span>
+            </div>
         </article>
 
-        <a href="{{ route('appointments.create') }}" class="ud-stat-card ud-stat-card-action fade-in delay-3">
-            <div class="ud-stat-icon ud-stat-icon-action" aria-hidden="true">
+        <a href="{{ route('appointments.create') }}" class="ud-service-box ud-service-box-action fade-in delay-3">
+            <div class="ud-service-box-icon" aria-hidden="true">
                 <svg class="ud-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 5v14M5 12h14"/>
                 </svg>
             </div>
-            <div class="ud-stat-label-action">Új időpont foglalás</div>
+            <div class="ud-service-box-text">
+                <strong>Új időpont foglalás</strong>
+                <span>Válassz szabad időpontot</span>
+            </div>
         </a>
     </section>
 
-    {{-- Következő időpont --}}
-    <section class="ud-next-card fade-in delay-2">
-        <div class="ud-next-head">
-            <h2>Következő időpont</h2>
-        </div>
-
-        @if($nextAppointment)
-            <a href="{{ route('appointments.show', $nextAppointment) }}" class="ud-next-grid" style="text-decoration:none;color:inherit;display:grid;cursor:pointer;">
-                <div class="ud-next-item">
-                    <span>Autó</span>
-                    <strong>{{ $nextAppointment->car?->make_model ?? 'Nincs autó' }}</strong>
-                </div>
-                <div class="ud-next-item">
-                    <span>Szerviz</span>
-                    <strong>{{ $nextAppointment->service ?? '—' }}</strong>
-                </div>
-                <div class="ud-next-item">
-                    <span>Dátum</span>
-                    <strong>{{ \Carbon\Carbon::parse($nextAppointment->date)->format('Y.m.d') }}</strong>
-                </div>
-                <div class="ud-next-item">
-                    <span>Idő</span>
-                    <strong>{{ $nextAppointment->time }}</strong>
-                </div>
-            </a>
-        @else
-            <p class="ud-empty">Nincs közelgő időpontod.</p>
-        @endif
-    </section>
-
-    {{-- Értesítések --}}
+    {{-- Row 3: Notifications full width --}}
     <section class="ud-notifications-card fade-in delay-3">
         <div class="ud-table-head">
             <h2>Értesítések</h2>

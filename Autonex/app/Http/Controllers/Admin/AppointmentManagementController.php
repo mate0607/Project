@@ -43,6 +43,13 @@ class AppointmentManagementController extends Controller
         return view('admin.appointments.index', compact('appointments'));
     }
 
+    public function show(Appointment $appointment)
+    {
+        $appointment->load(['user', 'car']);
+
+        return view('admin.appointments.show', compact('appointment'));
+    }
+
     public function edit(Appointment $appointment)
     {
         $appointment->load(['user', 'car', 'servicePhotos']);
