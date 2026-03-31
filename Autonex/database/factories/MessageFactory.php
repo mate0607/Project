@@ -18,8 +18,8 @@ class MessageFactory extends Factory
     {
         return [
             "sale_id" => \App\Models\Sale::factory(),
-            "sender_id" => fake()->numberBetween(1, 10),
-            "receiver_id" => fake()->numberBetween(1, 10),
+            "sender_id" => \App\Models\User::inRandomOrder()->value('id') ?? \App\Models\User::factory(),
+            "receiver_id" => \App\Models\User::inRandomOrder()->value('id') ?? \App\Models\User::factory(),
             "message" => fake()->paragraph(),
             "is_read" => fake()->boolean()
         ];

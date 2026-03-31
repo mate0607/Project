@@ -18,7 +18,7 @@ class CarFactory extends Factory
     public function definition(): array
     {
         return [
-        "user_id" => fake()->numberBetween(1, 10),
+        "user_id" => User::inRandomOrder()->value('id') ?? User::factory(),
         "make_model" => fake()->randomElement([
             "BMW 320d",
             "Audi A4",
