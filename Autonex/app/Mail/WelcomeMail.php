@@ -13,6 +13,7 @@ class WelcomeMail extends Mailable
     use Queueable, SerializesModels;
 
     public string $userName;
+    public string $appUrl;
 
     /**
      * Create a new message instance.
@@ -20,6 +21,7 @@ class WelcomeMail extends Mailable
     public function __construct(string $userName)
     {
         $this->userName = $userName;
+        $this->appUrl = config('app.url');
     }
 
     /**
@@ -41,6 +43,7 @@ class WelcomeMail extends Mailable
             view: 'emails.WelcomeMail',
             with: [
                 'userName' => $this->userName,
+                'appUrl' => $this->appUrl,
             ],
         );
     }
