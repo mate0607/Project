@@ -39,6 +39,14 @@
 @endphp
 
 <section class="apps-shell apps-page-enter">
+    {{-- Flash üzenetek --}}
+    @if(session('success'))
+        <div class="svc-flash svc-flash-success">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div class="svc-flash svc-flash-error">{{ session('error') }}</div>
+    @endif
+
     {{-- Fejléc --}}
     <div class="svc-detail-head">
         <div>
@@ -165,6 +173,98 @@
             <p>Ez az időpont törölve lett.</p>
         </div>
     @endif
+
+    {{-- Cancel / Reschedule akciók --}}
+    @if($isUpcoming)
+        <div class="svc-actions-bar">
+            <button type="button" class="svc-action-btn svc-action-reschedule" id="openRescheduleBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+                Átütemezés
+            </button>
+            <button type="button" class="svc-action-btn svc-action-cancel" id="openCancelBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+                Lemondás
+            </button>
+        </div>
+
+        {{-- Cancel modal --}}
+        <div class="svc-modal-overlay" id="cancelModal">
+            <div class="svc-modal">
+                <div class="svc-modal-icon svc-modal-icon--red">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+                </div>
+                <h3>Időpont lemondása</h3>
+                <p>Biztosan le szeretnéd mondani ezt az időpontot?<br>
+                <strong>{{ \Carbon\Carbon::parse($datePart)->format('Y.m.d') }} {{ $timePart }}</strong> — {{ $appointment->car?->make_model ?? '—' }}</p>
+                <div class="svc-modal-actions">
+                    <form method="POST" action="{{ route('appointments.cancel', $appointment) }}">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="svc-modal-btn svc-modal-btn--danger">Lemondás</button>
+                    </form>
+                    <button type="button" class="svc-modal-btn svc-modal-btn--ghost" id="closeCancelBtn">Mégse</button>
+                </div>
+            </div>
+        </div>
+
+        {{-- Reschedule modal --}}
+        <div class="svc-modal-overlay" id="rescheduleModal">
+            <div class="svc-modal">
+                <div class="svc-modal-icon svc-modal-icon--blue">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                </div>
+                <h3>Időpont átütemezése</h3>
+                <p>Válaszd ki az új dátumot és időpontot.</p>
+                <form method="POST" action="{{ route('appointments.reschedule', $appointment) }}" class="svc-reschedule-form">
+                    @csrf
+                    @method('PATCH')
+                    <div class="svc-reschedule-fields">
+                        <div class="svc-reschedule-field">
+                            <label for="reschedule_date">Dátum</label>
+                            <input type="date" id="reschedule_date" name="date" value="{{ \Carbon\Carbon::parse($datePart)->format('Y-m-d') }}" min="{{ now()->format('Y-m-d') }}" required>
+                        </div>
+                        <div class="svc-reschedule-field">
+                            <label for="reschedule_time">Időpont</label>
+                            <input type="time" id="reschedule_time" name="time" value="{{ $timePart }}" required>
+                        </div>
+                    </div>
+                    @error('time')
+                        <p class="svc-modal-error">{{ $message }}</p>
+                    @enderror
+                    <div class="svc-modal-actions">
+                        <button type="submit" class="svc-modal-btn svc-modal-btn--primary">Átütemezés</button>
+                        <button type="button" class="svc-modal-btn svc-modal-btn--ghost" id="closeRescheduleBtn">Mégse</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function setupModal(openBtnId, closeBtnId, overlayId) {
+        const openBtn = document.getElementById(openBtnId);
+        const closeBtn = document.getElementById(closeBtnId);
+        const overlay = document.getElementById(overlayId);
+        if (!openBtn || !overlay) return;
+
+        openBtn.addEventListener('click', () => overlay.classList.add('svc-modal-open'));
+        if (closeBtn) closeBtn.addEventListener('click', () => overlay.classList.remove('svc-modal-open'));
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) overlay.classList.remove('svc-modal-open');
+        });
+    }
+
+    setupModal('openCancelBtn', 'closeCancelBtn', 'cancelModal');
+    setupModal('openRescheduleBtn', 'closeRescheduleBtn', 'rescheduleModal');
+
+    // Ha van validation error az átütemezésnél, nyissuk meg automatikusan
+    @error('time')
+        const rm = document.getElementById('rescheduleModal');
+        if (rm) rm.classList.add('svc-modal-open');
+    @enderror
+});
+</script>
 
 @endsection

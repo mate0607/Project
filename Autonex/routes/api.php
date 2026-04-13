@@ -7,8 +7,8 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\SaleController;
 use Illuminate\Support\Facades\Route;
 
-// API route-ok kulon nevterben: ezek a frontendtol fuggetlen, gepi vegpontok.
-Route::name('api.')->group(function () {
+// API route-ok: authentikalt es rate-limitalt vegpontok.
+Route::middleware(['auth:sanctum', 'throttle:60,1'])->name('api.')->group(function () {
     Route::apiResource('cars', CarController::class);
     Route::apiResource('sales', SaleController::class);
     Route::apiResource('appointments', AppointmentController::class);

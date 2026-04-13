@@ -174,4 +174,67 @@ class AppointmentController extends Controller
         return view('appointments.show', compact('appointment'));
     }
 
+    /**
+     * Cancel an upcoming appointment.
+     */
+    public function cancel(Appointment $appointment)
+    {
+        $this->ensureAppointmentOwnership($appointment);
+
+        if (!in_array($appointment->status, ['pending', 'confirmed'])) {
+            return back()->with('error', 'Csak függőben lévő vagy megerősített időpont mondható le.');
+        }
+
+        $appointment->update(['status' => 'cancelled']);
+
+        // Értesítés küldése a felhasználónak
+        \App\Models\AdminNotification::create([
+            'user_id' => $appointment->user_id,
+            'title'   => 'Időpont lemondva',
+            'message' => 'A(z) ' . ($appointment->car?->make_model ?? 'ismeretlen autó') . ' szerviz időpontja (' . \Carbon\Carbon::parse($appointment->date)->format('Y.m.d') . ' ' . $appointment->time . ') lemondásra került.',
+        ]);
+
+        return redirect()->route('appointments.show', $appointment)
+            ->with('success', 'Időpont sikeresen lemondva.');
+    }
+
+    /**
+     * Reschedule an upcoming appointment.
+     */
+    public function reschedule(Request $request, Appointment $appointment)
+    {
+        $this->ensureAppointmentOwnership($appointment);
+
+        if (!in_array($appointment->status, ['pending', 'confirmed'])) {
+            return back()->with('error', 'Csak függőben lévő vagy megerősített időpont ütemezhető át.');
+        }
+
+        $validated = $request->validate([
+            'date' => ['required', 'date', 'after_or_equal:today'],
+            'time' => ['required', 'date_format:H:i'],
+        ]);
+
+        if ($this->hasConfirmedConflict($validated['date'], $validated['time'])) {
+            return back()->withErrors(['time' => 'Erre az időpontra már van megerősített foglalás.']);
+        }
+
+        $oldDate = \Carbon\Carbon::parse($appointment->date)->format('Y.m.d') . ' ' . $appointment->time;
+
+        $appointment->update([
+            'date'   => $validated['date'],
+            'time'   => $validated['time'],
+            'status' => 'pending',
+        ]);
+
+        // Értesítés küldése a felhasználónak
+        \App\Models\AdminNotification::create([
+            'user_id' => $appointment->user_id,
+            'title'   => 'Időpont átütemezve',
+            'message' => 'A(z) ' . ($appointment->car?->make_model ?? 'ismeretlen autó') . ' szerviz időpontja átütemezésre került: ' . $oldDate . ' → ' . $validated['date'] . ' ' . $validated['time'] . '. Státusz: függőben.',
+        ]);
+
+        return redirect()->route('appointments.show', $appointment)
+            ->with('success', 'Időpont sikeresen átütemezve.');
+    }
+
 }

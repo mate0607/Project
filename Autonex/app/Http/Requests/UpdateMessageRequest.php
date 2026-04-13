@@ -11,7 +11,7 @@ class UpdateMessageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check() && $this->route('message')->sender_id === auth()->id();
     }
 
     /**
@@ -22,7 +22,7 @@ class UpdateMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'message' => ['required', 'string', 'max:2000'],
         ];
     }
 }

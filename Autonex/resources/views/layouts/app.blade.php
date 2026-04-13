@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Autonex</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ time() }}">
     <script>if(localStorage.getItem('autonex-theme')==='light')document.documentElement.classList.add('light-mode');</script>
@@ -39,11 +40,58 @@
                     <a href="{{ route('cars.index') }}">Saját autóim</a>
                     <a href="{{ route('appointments.index') }}">Időpontjaim</a>
                     <a href="{{ route('sales.index') }}">Market</a>
+                    <a href="{{ route('messages.index') }}">Üzenetek</a>
                 @endif
             </div>
 
             <div class="nav-auth">
                 @if($currentUser)
+                    {{-- Notification bell for standard users --}}
+                    @if($isStandardUser)
+                    <div class="nav-notif-wrap">
+                        <button type="button" class="nav-notif-btn" id="notifToggle" aria-label="Értesítések">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                            @if($navUnreadCount > 0)
+                                <span class="nav-notif-badge">{{ $navUnreadCount > 9 ? '9+' : $navUnreadCount }}</span>
+                            @endif
+                        </button>
+                        <div class="nav-notif-dropdown" id="notifDropdown">
+                            <div class="nav-notif-header">
+                                <span class="nav-notif-title">Értesítések</span>
+                                <div class="nav-notif-header-actions">
+                                    @if($navUnreadCount > 0)
+                                        <button type="button" class="nav-notif-read-all" id="notifReadAll">Összes olvasott</button>
+                                        <span class="nav-notif-count">{{ $navUnreadCount }} új</span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="nav-notif-list">
+                                @forelse($navNotifications as $notif)
+                                    <div class="nav-notif-item {{ !$notif->is_read ? 'nav-notif-unread' : '' }}" data-notif-id="{{ $notif->id }}">
+                                        <div class="nav-notif-dot-wrap">
+                                            @if(!$notif->is_read)
+                                                <span class="nav-notif-dot"></span>
+                                            @else
+                                                <span class="nav-notif-dot nav-notif-dot--read"></span>
+                                            @endif
+                                        </div>
+                                        <div class="nav-notif-body">
+                                            <strong>{{ $notif->title }}</strong>
+                                            <span>{{ Str::limit($notif->message, 70) }}</span>
+                                            <time>{{ $notif->created_at->diffForHumans() }}</time>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="nav-notif-empty">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                                        <span>Nincs értesítésed</span>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
                     <div class="nav-profile-wrap">
                         <button type="button" class="nav-profile-icon" id="profileToggle" aria-label="Profil menü">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -122,8 +170,88 @@
             profileToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
                 profileDropdown.classList.toggle('nav-dd-open');
+                // Close notification dropdown when profile opens
+                const nd = document.getElementById('notifDropdown');
+                if (nd) nd.classList.remove('nav-notif-open');
             });
         }
+
+        // Notification dropdown toggle
+        const notifToggle = document.getElementById('notifToggle');
+        const notifDropdown = document.getElementById('notifDropdown');
+
+        if (notifToggle && notifDropdown) {
+            notifToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notifDropdown.classList.toggle('nav-notif-open');
+                // Close profile dropdown when notifications open
+                if (profileDropdown) profileDropdown.classList.remove('nav-dd-open');
+            });
+
+            notifDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+
+        // Close both dropdowns when clicking outside
+        document.addEventListener('click', () => {
+            if (profileDropdown) profileDropdown.classList.remove('nav-dd-open');
+            if (notifDropdown) notifDropdown.classList.remove('nav-notif-open');
+        });
+
+        // Mark all notifications as read
+        const readAllBtn = document.getElementById('notifReadAll');
+        if (readAllBtn) {
+            readAllBtn.addEventListener('click', function () {
+                fetch('/notifications/read-all', {
+                    method: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        'Accept': 'application/json'
+                    }
+                }).then(() => {
+                    document.querySelectorAll('.nav-notif-item.nav-notif-unread').forEach(el => {
+                        el.classList.remove('nav-notif-unread');
+                        const dot = el.querySelector('.nav-notif-dot');
+                        if (dot) dot.classList.add('nav-notif-dot--read');
+                    });
+                    const badge = document.querySelector('.nav-notif-badge');
+                    const countEl = document.querySelector('.nav-notif-count');
+                    if (badge) badge.remove();
+                    if (countEl) countEl.remove();
+                    this.remove();
+                });
+            });
+        }
+
+        // Mark notification as read on hover
+        document.querySelectorAll('.nav-notif-item.nav-notif-unread').forEach(item => {
+            item.addEventListener('mouseenter', function () {
+                const id = this.dataset.notifId;
+                if (!id || this.dataset.reading) return;
+                this.dataset.reading = '1';
+                fetch('/notifications/' + id + '/read', {
+                    method: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        'Accept': 'application/json'
+                    }
+                }).then(() => {
+                    this.classList.remove('nav-notif-unread');
+                    const dot = this.querySelector('.nav-notif-dot');
+                    if (dot) dot.classList.add('nav-notif-dot--read');
+                    // Update badge count
+                    const badge = document.querySelector('.nav-notif-badge');
+                    const countEl = document.querySelector('.nav-notif-count');
+                    if (badge) {
+                        let n = parseInt(badge.textContent) || 0;
+                        n = Math.max(0, n - 1);
+                        if (n === 0) { badge.remove(); if (countEl) countEl.remove(); }
+                        else { badge.textContent = n > 9 ? '9+' : n; if (countEl) countEl.textContent = n + ' új'; }
+                    }
+                });
+            }, { once: true });
+        });
 
         // Theme switch logic
         const themeToggle = document.getElementById('themeToggle');

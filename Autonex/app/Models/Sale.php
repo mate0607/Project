@@ -67,4 +67,9 @@ class Sale extends Model
     {
         return $this->hasMany(SaleImage::class)->orderBy('sort_order');
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
 }

@@ -88,6 +88,21 @@
     <p>{{ $sale->description ?: 'Nincs részletes leírás.' }}</p>
 </div>
 
+@auth
+    @if($sale->seller_id !== auth()->id())
+        <div class="card" style="margin-top: 16px;display:flex;align-items:center;justify-content:space-between;">
+            <div>
+                <h3 style="margin:0;">Érdeklődsz?</h3>
+                <p style="opacity:.6;margin:4px 0 0;">Írj az eladónak közvetlenül.</p>
+            </div>
+            <a href="{{ route('messages.show_conversation', $sale) }}" class="btn issue-btn-main">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;vertical-align:middle;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Üzenet küldése
+            </a>
+        </div>
+    @endif
+@endauth
+
 
 
 <script>

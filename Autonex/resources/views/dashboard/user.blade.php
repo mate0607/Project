@@ -5,6 +5,33 @@
 
 <section class="ud3-dashboard">
 
+    {{-- Skeleton overlay - shown until page loads --}}
+    <div class="ud3-skeleton-wrap" id="dashSkeleton">
+        <div class="ud3-row ud3-hero-row skeleton">
+            <div class="ud3-hero-main" style="display:flex;flex-direction:column;gap:16px;">
+                <div class="skel-bone skel-text-sm" style="width:80px;"></div>
+                <div class="skel-bone skel-title"></div>
+                <div class="skel-bone skel-block-lg" style="border-radius:14px;margin-top:8px;"></div>
+            </div>
+            <div class="ud3-hero-side skeleton-row">
+                <div class="skel-stat-row"><div class="skel-bone skel-circle"></div><div class="skel-stat-info"><div class="skel-bone skel-text-lg" style="width:40px;"></div><div class="skel-bone skel-text-sm" style="width:90px;"></div></div></div>
+                <div class="skel-stat-row"><div class="skel-bone skel-circle"></div><div class="skel-stat-info"><div class="skel-bone skel-text-lg" style="width:30px;"></div><div class="skel-bone skel-text-sm" style="width:110px;"></div></div></div>
+                <div class="skel-stat-row"><div class="skel-bone skel-circle"></div><div class="skel-stat-info"><div class="skel-bone skel-text-lg" style="width:30px;"></div><div class="skel-bone skel-text-sm" style="width:80px;"></div></div></div>
+            </div>
+        </div>
+        <div class="ud3-row ud3-actions-row skeleton">
+            <div class="skel-bone skel-block" style="border-radius:14px;"></div>
+            <div class="skel-bone skel-block" style="border-radius:14px;"></div>
+            <div class="skel-bone skel-block" style="border-radius:14px;"></div>
+        </div>
+        <div class="ud3-row ud3-content-row skeleton">
+            <div class="skel-bone skel-block-lg" style="border-radius:16px;height:220px;"></div>
+        </div>
+    </div>
+
+    {{-- Real content - hidden until loaded --}}
+    <div class="ud3-real-content" id="dashContent" style="display:none;">
+
     {{-- Row 1: Hero — Next appointment (8 col) + Quick stats (4 col) --}}
     <div class="ud3-row ud3-hero-row fade-in">
         <div class="ud3-hero-main">
@@ -56,31 +83,31 @@
         </div>
 
         <div class="ud3-hero-side">
-            <div class="ud3-quick-stat">
+            <a href="{{ route('cars.index') }}" class="ud3-quick-stat">
                 <div class="ud3-quick-stat-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-3 3-3-3z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M5 17H3v-6l2-5h9l4 5h1a2 2 0 0 1 2 2v4h-2"/><path d="M9 17h6"/></svg>
                 </div>
                 <div class="ud3-quick-stat-info">
-                    <span class="ud3-quick-stat-value">{{ $inServiceCount }}</span>
-                    <span class="ud3-quick-stat-label">Szervizben</span>
+                    <span class="ud3-quick-stat-value">{{ $totalCarsCount }}</span>
+                    <span class="ud3-quick-stat-label">Járműveim</span>
                 </div>
-            </div>
-            <div class="ud3-quick-stat">
+            </a>
+            <a href="{{ route('appointments.index') }}" class="ud3-quick-stat">
                 <div class="ud3-quick-stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
                 </div>
                 <div class="ud3-quick-stat-info">
                     <span class="ud3-quick-stat-value">{{ $upcomingAppointmentsCount }}</span>
-                    <span class="ud3-quick-stat-label">Időpont</span>
+                    <span class="ud3-quick-stat-label">Közelgő időpont</span>
                 </div>
-            </div>
+            </a>
             <div class="ud3-quick-stat">
                 <div class="ud3-quick-stat-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 </div>
                 <div class="ud3-quick-stat-info">
-                    <span class="ud3-quick-stat-value">{{ $notificationsCount }}</span>
-                    <span class="ud3-quick-stat-label">Értesítés</span>
+                    <span class="ud3-quick-stat-value">{{ $completedServicesCount }}</span>
+                    <span class="ud3-quick-stat-label">Kész szerviz</span>
                 </div>
             </div>
         </div>
@@ -151,33 +178,24 @@
                 <p class="ud3-empty-text">Jelenleg nincs eladó autó.</p>
             @endif
         </section>
-
-        <section class="ud3-notif-card fade-in delay-2">
-            <div class="ud3-card-head">
-                <h2>Értesítések</h2>
-            </div>
-            @if($adminNotifications->count() > 0)
-                <div class="ud3-notif-list">
-                    @foreach($adminNotifications as $notification)
-                        <div class="ud3-notif-item">
-                            <div class="ud3-notif-dot"></div>
-                            <div class="ud3-notif-body">
-                                <strong>{{ $notification->title }}</strong>
-                                <span>{{ $notification->message }}</span>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <p class="ud3-empty-text">Még nincs értesítésed.</p>
-            @endif
-        </section>
     </div>
+
+    </div>{{-- /ud3-real-content --}}
 
 </section>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Swap skeleton for real content
+    const skel = document.getElementById('dashSkeleton');
+    const content = document.getElementById('dashContent');
+    if (skel && content) {
+        content.style.display = '';
+        skel.style.transition = 'opacity 0.25s ease';
+        skel.style.opacity = '0';
+        setTimeout(() => skel.remove(), 260);
+    }
+
     const slider = document.getElementById('salesSlider');
     if (!slider) return;
     const prev = document.getElementById('salesPrev');

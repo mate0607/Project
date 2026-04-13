@@ -86,6 +86,12 @@ class DashboardController extends Controller
             ->where('date', '>=', now()->toDateString())
             ->count();
 
+        $totalCarsCount = Car::where('user_id', $userId)->count();
+
+        $completedServicesCount = Appointment::where('user_id', $userId)
+            ->where('status', 'completed')
+            ->count();
+
         $notificationsCount = AdminNotification::where(function ($q) use ($userId) {
             $q->where('user_id', $userId)->orWhereNull('user_id');
         })->count();
@@ -111,6 +117,8 @@ class DashboardController extends Controller
             'appointments',
             'inServiceCount',
             'upcomingAppointmentsCount',
+            'totalCarsCount',
+            'completedServicesCount',
             'notificationsCount',
             'adminNotifications',
             'nextAppointment',

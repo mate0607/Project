@@ -9,13 +9,11 @@ use App\Http\Requests\UpdateIssueRequest;
 
 class IssueController extends Controller
 {
-    // Ellenorzi, hogy a felhasznalo admin jogosultsaggal rendelkezik-e.
     private function isAdmin(): bool
     {
         return auth()->check() && auth()->user()->role === 'admin';
     }
 
-    // A sajat auto listat adja vissza; adminnal teljes lista, usernel szurt lista.
     private function userCarsQuery()
     {
         $query = Car::orderBy('make_model');
@@ -27,41 +25,10 @@ class IssueController extends Controller
         return $query;
     }
 
-    // Karbantarthatosag miatt kulon metodusban kezeljuk az auto tulajdonjog-ellenorzest.
-    private function ensureCarOwnershipById(int $carId): void
-    {
-        if ($this->isAdmin()) {
-            return;
-        }
-
-        $ownsCar = Car::where('id', $carId)
-            ->where('user_id', auth()->id())
-            ->exists();
-
-        if (!$ownsCar) {
-            abort(403);
-        }
-    }
-
-    // A hiba megtekintese/szerkesztese csak a tulajdonosnak vagy adminnak engedelyezett.
-    private function ensureIssueOwnership(Issue $issue): void
-    {
-        if ($this->isAdmin()) {
-            return;
-        }
-
-        $ownsIssue = $issue->car()->where('user_id', auth()->id())->exists();
-
-        if (!$ownsIssue) {
-            abort(403);
-        }
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
+        $this->authorize('viewAny', Issue::class);
+
         $query = Issue::with('car')->latest();
 
         if (!$this->isAdmin()) {
@@ -75,24 +42,20 @@ class IssueController extends Controller
         return view('issues.index', compact('issues'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
+        $this->authorize('create', Issue::class);
+
         $cars = $this->userCarsQuery()->get();
 
         return view('issues.create', compact('cars'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreIssueRequest $request)
     {
-        $validated = $request->validated();
+        $this->authorize('create', Issue::class);
 
-        $this->ensureCarOwnershipById((int) $validated['car_id']);
+        $validated = $request->validated();
 
         Issue::create($validated);
 
@@ -100,40 +63,29 @@ class IssueController extends Controller
             ->with('success', 'Hiba sikeresen létrehozva!');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Issue $issue)
     {
-        $this->ensureIssueOwnership($issue);
+        $this->authorize('view', $issue);
 
         $issue->load('car');
 
         return view('issues.show', compact('issue'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Issue $issue)
     {
-        $this->ensureIssueOwnership($issue);
+        $this->authorize('update', $issue);
 
         $cars = $this->userCarsQuery()->get();
 
         return view('issues.edit', compact('issue', 'cars'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateIssueRequest $request, Issue $issue)
     {
-        $this->ensureIssueOwnership($issue);
+        $this->authorize('update', $issue);
 
         $validated = $request->validated();
-
-        $this->ensureCarOwnershipById((int) $validated['car_id']);
 
         $issue->update($validated);
 
@@ -141,12 +93,9 @@ class IssueController extends Controller
             ->with('success', 'Hiba sikeresen frissítve!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Issue $issue)
     {
-        $this->ensureIssueOwnership($issue);
+        $this->authorize('delete', $issue);
 
         $issue->delete();
 
