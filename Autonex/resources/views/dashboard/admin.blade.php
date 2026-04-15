@@ -83,7 +83,7 @@
 
     {{-- 2 identical action cards --}}
     <section class="ad-grid-2col">
-        <a href="{{ route('appointments.create') }}" class="ad-action-box">
+        <a href="{{ route('admin.appointments.create') }}" class="ad-action-box">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg>
             <span>Új időpont</span>
         </a>

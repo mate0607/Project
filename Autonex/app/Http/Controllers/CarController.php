@@ -3,22 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Http\Controllers\Traits\AdminHelpers;
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
 
 class CarController extends Controller
 {
-    // Ellenorzi, hogy a jelenlegi felhasznalo admin-e.
-    private function isAdmin(): bool
-    {
-        return auth()->check() && auth()->user()->role === 'admin';
-    }
-
-    // Egy helyen kezeljuk az aktualis user azonosito lekereset.
-    private function currentUserId(): ?int
-    {
-        return auth()->id();
-    }
+    use AdminHelpers;
 
     // Nem admin felhasznalo csak a sajat autojan vegezhet muveletet.
     private function ensureCarOwnership(Car $car): void

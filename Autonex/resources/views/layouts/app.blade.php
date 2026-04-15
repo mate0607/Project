@@ -6,6 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Autonex</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/light-mode.css') }}?v={{ time() }}">
+    @if(auth()->check() && auth()->user()->role === 'admin')
+        <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ time() }}">
+    @endif
     <script>if(localStorage.getItem('autonex-theme')==='light')document.documentElement.classList.add('light-mode');</script>
     @stack('styles')
 </head>

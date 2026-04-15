@@ -33,7 +33,7 @@ class AdminNotificationController extends Controller
 
     public function create(Request $request)
     {
-        $users = User::where('role', 'user')->orderBy('name')->get();
+        $users = User::where('role', '!=', 'admin')->orderBy('name')->get();
 
         return view('admin.notifications.create', compact('users'));
     }

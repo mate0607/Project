@@ -27,6 +27,13 @@ class Appointment extends Model
         'service_report',
         'issues_found',
         'critical_warning',
+        'customer_name',
+        'customer_phone',
+        'car_brand',
+        'car_model',
+        'car_year',
+        'car_engine',
+        'car_fuel_type',
     ];
 
     protected static function booted(): void

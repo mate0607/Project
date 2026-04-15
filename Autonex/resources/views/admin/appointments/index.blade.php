@@ -17,7 +17,7 @@
         <button type="button" id="searchToggleBtn" title="Keresés" style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:rgba(59,130,246,0.18);border:1px solid rgba(96,165,250,0.35);cursor:pointer;transition:background 0.2s;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         </button>
-        <a href="{{ route('appointments.create') }}" class="btn sale-btn-main">+ Új időpont</a>
+        <a href="{{ route('admin.appointments.create') }}" class="btn sale-btn-main">+ Új időpont</a>
     </div>
 </div>
 

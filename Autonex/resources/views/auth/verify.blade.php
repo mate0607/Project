@@ -1,28 +1,28 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Verify Your Email Address') }}</div>
-
-                <div class="card-body">
-                    @if (session('resent'))
-                        <div class="alert alert-success" role="alert">
-                            {{ __('A fresh verification link has been sent to your email address.') }}
-                        </div>
-                    @endif
-
-                    {{ __('Before proceeding, please check your email for a verification link.') }}
-                    {{ __('If you did not receive the email') }},
-                    <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('click here to request another') }}</button>.
-                    </form>
-                </div>
-            </div>
-        </div>
+<section class="anx-form-wrap">
+    <div class="anx-form-head">
+        <h1>Email cím megerősítése</h1>
+        <p>Kérjük, ellenőrizd a postaládádat.</p>
     </div>
-</div>
+
+    <div class="anx-form-card anx-form-card--sm">
+        @if (session('resent'))
+            <div class="anx-success-box">Új megerősítő link elküldve az email címedre.</div>
+        @endif
+
+        <p class="anx-info-text">
+            A folytatás előtt kérjük, kattints a megerősítő linkre, amelyet az email címedre küldtünk.
+            Ha nem kaptad meg az emailt:
+        </p>
+
+        <form method="POST" action="{{ route('verification.resend') }}">
+            @csrf
+            <div class="anx-actions">
+                <button type="submit" class="anx-btn-primary">Új link küldése</button>
+            </div>
+        </form>
+    </div>
+</section>
 @endsection

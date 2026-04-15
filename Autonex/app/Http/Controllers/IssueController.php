@@ -4,26 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use App\Models\Issue;
+use App\Http\Controllers\Traits\AdminHelpers;
 use App\Http\Requests\StoreIssueRequest;
 use App\Http\Requests\UpdateIssueRequest;
 
 class IssueController extends Controller
 {
-    private function isAdmin(): bool
-    {
-        return auth()->check() && auth()->user()->role === 'admin';
-    }
-
-    private function userCarsQuery()
-    {
-        $query = Car::orderBy('make_model');
-
-        if (!$this->isAdmin()) {
-            $query->where('user_id', auth()->id());
-        }
-
-        return $query;
-    }
+    use AdminHelpers;
 
     public function index()
     {

@@ -53,18 +53,31 @@
 
             <div class="ws-field">
                 <span class="ws-label">Ügyfél</span>
-                <span class="ws-value">{{ $appointment->user?->name ?? '—' }}</span>
+                <span class="ws-value">{{ $appointment->customer_name ?? $appointment->user?->name ?? '—' }}</span>
             </div>
 
             <div class="ws-field">
                 <span class="ws-label">Telefon</span>
-                <span class="ws-value">{{ $appointment->user?->phone ?? 'Nincs megadva' }}</span>
+                <span class="ws-value">{{ $appointment->customer_phone ?? $appointment->user?->phone ?? 'Nincs megadva' }}</span>
             </div>
 
             <div class="ws-field">
                 <span class="ws-label">Autó</span>
-                <span class="ws-value">{{ $appointment->car?->make_model ?? '—' }}</span>
+                <span class="ws-value">
+                    @if($appointment->car_brand)
+                        {{ $appointment->car_brand }} {{ $appointment->car_model }} ({{ $appointment->car_year }})
+                    @else
+                        {{ $appointment->car?->make_model ?? '—' }}
+                    @endif
+                </span>
             </div>
+
+            @if($appointment->car_engine || $appointment->car_fuel_type)
+            <div class="ws-field">
+                <span class="ws-label">Motor / Üzemanyag</span>
+                <span class="ws-value">{{ $appointment->car_engine ?? '' }} {{ $appointment->car_fuel_type ? '/ ' . $appointment->car_fuel_type : '' }}</span>
+            </div>
+            @endif
 
             <div class="ws-field">
                 <span class="ws-label">Rendszám</span>

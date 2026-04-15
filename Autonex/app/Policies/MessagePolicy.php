@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Message;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class MessagePolicy
 {
@@ -17,7 +16,7 @@ class MessagePolicy
     {
         return $user->id === $message->sender_id
             || $user->id === $message->receiver_id
-            || $user->role === 'admin';
+            || $user->isAdmin();
     }
 
     public function create(User $user): bool
@@ -32,16 +31,16 @@ class MessagePolicy
 
     public function delete(User $user, Message $message): bool
     {
-        return $user->id === $message->sender_id || $user->role === 'admin';
+        return $user->id === $message->sender_id || $user->isAdmin();
     }
 
     public function restore(User $user, Message $message): bool
     {
-        return $user->role === 'admin';
+        return $user->isAdmin();
     }
 
     public function forceDelete(User $user, Message $message): bool
     {
-        return $user->role === 'admin';
+        return $user->isAdmin();
     }
 }

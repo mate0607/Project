@@ -9,6 +9,7 @@ use App\Models\Appointment;
 use App\Models\Car;
 use App\Models\ServicePhoto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AppointmentManagementController extends Controller
 {
@@ -41,6 +42,41 @@ class AppointmentManagementController extends Controller
         $appointments = $query->get();
 
         return view('admin.appointments.index', compact('appointments'));
+    }
+
+    public function create()
+    {
+        return view('admin.appointments.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'customer_name'  => ['required', 'string', 'max:255'],
+            'customer_phone' => ['required', 'string', 'max:50'],
+            'car_brand'      => ['required', 'string', 'max:255'],
+            'car_model'      => ['required', 'string', 'max:255'],
+            'car_year'       => ['required', 'integer', 'min:1900', 'max:' . (date('Y') + 1)],
+            'car_engine'     => ['required', 'string', 'max:255'],
+            'car_fuel_type'  => ['required', 'string', 'max:100'],
+            'date'           => ['required', 'date'],
+            'time'           => ['required', 'date_format:H:i'],
+            'service'        => ['nullable', 'string', 'max:255'],
+            'description'    => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        if ($this->hasConfirmedConflict($validated['date'], $validated['time'])) {
+            return back()
+                ->withInput()
+                ->withErrors(['time' => 'Erre a dátumra és időpontra már van megerősített foglalás.']);
+        }
+
+        $validated['status'] = 'pending';
+
+        Appointment::create($validated);
+
+        return redirect()->route('admin.appointments.index')
+            ->with('success', 'Időpont sikeresen létrehozva.');
     }
 
     public function show(Appointment $appointment)
@@ -134,10 +170,7 @@ class AppointmentManagementController extends Controller
 
     public function destroyPhoto(ServicePhoto $photo)
     {
-        $storagePath = storage_path('app/public/' . $photo->path);
-        if (file_exists($storagePath)) {
-            unlink($storagePath);
-        }
+        Storage::disk('public')->delete($photo->path);
 
         $photo->delete();
 

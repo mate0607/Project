@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Traits\AdminHelpers;
 use App\Mail\AppointmentConfirmationMail;
 use App\Models\Appointment;
 use App\Models\Car;
@@ -12,17 +13,7 @@ use Illuminate\Validation\ValidationException;
 
 class AppointmentController extends Controller
 {
-    // Jogosultsag vizsgalat: admin felhasznalo tobb adathoz ferhet hozza.
-    private function isAdmin(): bool
-    {
-        return auth()->check() && auth()->user()->role === 'admin';
-    }
-
-    // A sajat user azonosito lekerese egy helyre kerul a jobb olvashatosagert.
-    private function currentUserId(): ?int
-    {
-        return auth()->id();
-    }
+    use AdminHelpers;
 
     // Megtekintesnel csak tulajdonos vagy admin lathatja az adott idopontot.
     private function ensureAppointmentOwnership(Appointment $appointment): void
@@ -33,16 +24,7 @@ class AppointmentController extends Controller
     }
 
     // Itt keszul a valaszthato auto lista: usernel sajat, adminnal teljes.
-    private function userCarsQuery()
-    {
-        $query = Car::orderBy('make_model');
-
-        if (!$this->isAdmin()) {
-            $query->where('user_id', $this->currentUserId());
-        }
-
-        return $query;
-    }
+    // userCarsQuery() is now provided by AdminHelpers trait.
 
     // Tarolt idopont adatok validalasa.
     private function validateStoreData(Request $request): array

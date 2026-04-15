@@ -46,6 +46,8 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     // Admin idopontkezelo modul dedikalt route nevekkel.
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('appointments', [AppointmentManagementController::class, 'index'])->name('appointments.index');
+        Route::get('appointments/create', [AppointmentManagementController::class, 'create'])->name('appointments.create');
+        Route::post('appointments', [AppointmentManagementController::class, 'store'])->name('appointments.store');
         Route::get('appointments/{appointment}', [AppointmentManagementController::class, 'show'])->name('appointments.show');
         Route::get('appointments/{appointment}/edit', [AppointmentManagementController::class, 'edit'])->name('appointments.edit');
         Route::put('appointments/{appointment}', [AppointmentManagementController::class, 'update'])->name('appointments.update');

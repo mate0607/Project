@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Issue;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class IssuePolicy
 {
@@ -15,7 +14,7 @@ class IssuePolicy
 
     public function view(User $user, Issue $issue): bool
     {
-        return $user->role === 'admin'
+        return $user->isAdmin()
             || $issue->car()->where('user_id', $user->id)->exists();
     }
 
@@ -26,23 +25,23 @@ class IssuePolicy
 
     public function update(User $user, Issue $issue): bool
     {
-        return $user->role === 'admin'
+        return $user->isAdmin()
             || $issue->car()->where('user_id', $user->id)->exists();
     }
 
     public function delete(User $user, Issue $issue): bool
     {
-        return $user->role === 'admin'
+        return $user->isAdmin()
             || $issue->car()->where('user_id', $user->id)->exists();
     }
 
     public function restore(User $user, Issue $issue): bool
     {
-        return $user->role === 'admin';
+        return $user->isAdmin();
     }
 
     public function forceDelete(User $user, Issue $issue): bool
     {
-        return $user->role === 'admin';
+        return $user->isAdmin();
     }
 }

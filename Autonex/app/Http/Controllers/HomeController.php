@@ -24,8 +24,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Szerepkor alapu atiranyitas: admin mas dashboardot kap, mint a normal user.
-        if (auth()->user()->role === 'admin') {
+        if (auth()->user()->isAdmin()) {
             return redirect('/admin-dashboard');
         }
 

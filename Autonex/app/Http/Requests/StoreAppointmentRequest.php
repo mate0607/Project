@@ -26,6 +26,7 @@ class StoreAppointmentRequest extends FormRequest
             'date' => ['required', 'date'],
             'time' => ['required', 'date_format:H:i'],
             'description' => ['nullable', 'string', 'max:1000'],
+            'service' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

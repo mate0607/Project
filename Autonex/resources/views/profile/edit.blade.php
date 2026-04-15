@@ -1,43 +1,44 @@
 @extends('layouts.app')
 
-
-
 @section('content')
-<div class="profile-container">
-    <h1>Profil beállítások</h1>
+<section class="anx-form-wrap">
+    <div class="anx-form-head">
+        <h1>Profil beállítások</h1>
+        <p>Frissítsd a személyes adataidat.</p>
+    </div>
 
-    @if(session('success'))
-        <div class="profile-success">{{ session('success') }}</div>
-    @endif
+    <div class="anx-form-card anx-form-card--sm">
+        @if(session('success'))
+            <div class="anx-success-box">{{ session('success') }}</div>
+        @endif
 
-    <div class="profile-card">
-        <form method="POST" action="{{ route('profile.update') }}" class="profile-form">
+        <form method="POST" action="{{ route('profile.update') }}">
             @csrf
             @method('PUT')
 
-            <div class="profile-field">
+            <div class="anx-field">
                 <label for="name">Név</label>
                 <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}">
-                @error('name') <div class="profile-error">{{ $message }}</div> @enderror
+                @error('name') <p class="field-error">{{ $message }}</p> @enderror
             </div>
 
-            <div class="profile-field">
+            <div class="anx-field">
                 <label for="email">Email</label>
                 <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}">
-                @error('email') <div class="profile-error">{{ $message }}</div> @enderror
+                @error('email') <p class="field-error">{{ $message }}</p> @enderror
             </div>
 
-            <div class="profile-field">
+            <div class="anx-field">
                 <label for="phone">Telefonszám</label>
                 <input type="text" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" placeholder="+36 30 123 4567">
-                @error('phone') <div class="profile-error">{{ $message }}</div> @enderror
+                @error('phone') <p class="field-error">{{ $message }}</p> @enderror
             </div>
 
-            <div class="profile-actions">
-                <button type="submit" class="profile-save">Mentés</button>
-                <a href="{{ url()->previous() }}" class="profile-back">Vissza</a>
+            <div class="anx-actions">
+                <button type="submit" class="anx-btn-primary">Mentés</button>
+                <a href="{{ url()->previous() }}" class="anx-btn-secondary">Vissza</a>
             </div>
         </form>
     </div>
-</div>
+</section>
 @endsection

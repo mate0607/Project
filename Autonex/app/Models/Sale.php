@@ -29,7 +29,6 @@ class Sale extends Model
         'car_condition',
         'mileage',
         'is_active',
-        'image',
     ];
 
     // Tipuskonverziok az egyseges, kiszamithato kezeleshez.

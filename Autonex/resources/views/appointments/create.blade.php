@@ -1,28 +1,26 @@
 @extends('layouts.app')
 
 @section('content')
-
-<section class="appointment-create-wrap">
-    <header class="appointment-create-head">
-        <p class="appointment-create-kicker">Szervizfoglalás</p>
-        <h1 class="page-title appointment-create-title">Új időpont</h1>
-        <p class="appointment-create-subtitle">Add meg az autót és az időpont részleteit.</p>
-    </header>
+<section class="anx-form-wrap">
+    <div class="anx-form-head">
+        <h1>Új időpont</h1>
+        <p>Add meg az autót és az időpont részleteit.</p>
+    </div>
 
     @if($cars->isEmpty())
-        <div class="card app-form-card appointment-create-card" style="text-align:center; padding:40px;">
-            <p style="color:#94a3b8; font-size:16px; margin-bottom:18px;">Időpont foglaláshoz először adj hozzá egy autót.</p>
-            <a href="{{ route('cars.create') }}" class="btn app-btn-main">Autó hozzáadása</a>
+        <div class="anx-form-card anx-form-card--md" style="text-align:center;">
+            <p class="anx-info-text" style="margin-bottom:18px;">Időpont foglaláshoz először adj hozzá egy autót.</p>
+            <a href="{{ route('cars.create') }}" class="anx-btn-primary">Autó hozzáadása</a>
         </div>
     @else
-        <div class="card app-form-card appointment-create-card">
-            <form method="POST" action="{{ route('appointments.store') }}" class="appointment-create-form">
+        <div class="anx-form-card anx-form-card--md">
+            <form method="POST" action="{{ route('appointments.store') }}">
                 @csrf
 
-                <div class="appointment-grid">
-                    <div class="appointment-field appointment-field-full">
+                <div class="anx-grid anx-grid--2">
+                    <div class="anx-field anx-field--full">
                         <label for="car_id">Autó</label>
-                        <select id="car_id" name="car_id" class="app-select">
+                        <select id="car_id" name="car_id">
                             <option value="">Válassz autót...</option>
                             @foreach($cars as $car)
                                 <option value="{{ $car->id }}" {{ (string) old('car_id') === (string) $car->id ? 'selected' : '' }}>
@@ -33,38 +31,37 @@
                         @error('car_id') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="appointment-field">
+                    <div class="anx-field">
                         <label for="date">Dátum</label>
                         <input id="date" type="date" name="date" value="{{ old('date') }}">
                         @error('date') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="appointment-field">
+                    <div class="anx-field">
                         <label for="time">Időpont</label>
                         <input id="time" type="time" name="time" value="{{ old('time') }}">
                         @error('time') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="appointment-field appointment-field-full">
+                    <div class="anx-field anx-field--full">
                         <label for="service">Szerviz típusa</label>
                         <input id="service" type="text" name="service" value="{{ old('service') }}" placeholder="Pl.: olajcsere, fékellenőrzés (opcionális)">
                         @error('service') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="appointment-field appointment-field-full">
+                    <div class="anx-field anx-field--full">
                         <label for="description">Megjegyzés</label>
-                        <textarea id="description" name="description" rows="4" class="app-textarea" placeholder="Írj megjegyzést az időponthoz (opcionális)">{{ old('description') }}</textarea>
+                        <textarea id="description" name="description" rows="4" placeholder="Írj megjegyzést az időponthoz (opcionális)">{{ old('description') }}</textarea>
                         @error('description') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
-                <div class="form-actions appointment-actions">
-                    <button type="submit" class="btn app-btn-main">Mentés</button>
-                    <a href="{{ route('appointments.index') }}" class="btn btn-muted">Mégse</a>
+                <div class="anx-actions">
+                    <button type="submit" class="anx-btn-primary">Mentés</button>
+                    <a href="{{ route('appointments.index') }}" class="anx-btn-secondary">Mégse</a>
                 </div>
             </form>
         </div>
     @endif
 </section>
-
 @endsection

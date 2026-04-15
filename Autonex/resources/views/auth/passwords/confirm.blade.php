@@ -1,49 +1,29 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Confirm Password') }}</div>
-
-                <div class="card-body">
-                    {{ __('Please confirm your password before continuing.') }}
-
-                    <form method="POST" action="{{ route('password.confirm') }}">
-                        @csrf
-
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Confirm Password') }}
-                                </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+<section class="anx-form-wrap">
+    <div class="anx-form-head">
+        <h1>Jelszó megerősítése</h1>
+        <p>A folytatáshoz kérjük, erősítsd meg a jelszavadat.</p>
     </div>
-</div>
+
+    <div class="anx-form-card anx-form-card--sm">
+        <form method="POST" action="{{ route('password.confirm') }}">
+            @csrf
+
+            <div class="anx-field">
+                <label for="password">Jelszó</label>
+                <input id="password" type="password" name="password" required autocomplete="current-password">
+                @error('password') <p class="field-error">{{ $message }}</p> @enderror
+            </div>
+
+            <div class="anx-actions">
+                <button type="submit" class="anx-btn-primary">Megerősítés</button>
+                @if (Route::has('password.request'))
+                    <a class="anx-btn-secondary" href="{{ route('password.request') }}">Elfelejtett jelszó</a>
+                @endif
+            </div>
+        </form>
+    </div>
+</section>
 @endsection

@@ -25,7 +25,7 @@ class StoreCarRequest extends FormRequest
             'make_model' => ['required', 'string', 'max:255'],
             'vin' => ['nullable', 'string', 'max:255'],
             'license_plate' => ['nullable', 'string', 'max:20'],
-            'year' => ['nullable', 'integer', 'between:1900,' . date('Y')],
+            'year' => ['nullable', 'integer', 'between:1920,' . date('Y')],
         ];
     }
 }
