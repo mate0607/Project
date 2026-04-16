@@ -19,24 +19,24 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Laravel alap auth route-ok (login, register, logout, email verification).
-Auth::routes(['verify' => true]);
+// Laravel alap auth route-ok (login, register, logout).
+Auth::routes();
 
 // Legacy home route: az auth scaffolding erre iranyit bejelentkezes utan.
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// Felhasznaloi dashboard (auth + verified kotelezett).
+// Felhasznaloi dashboard.
 Route::get('/dashboard', [DashboardController::class, 'user'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->name('user.dashboard');
 
 // Admin dashboard (kulon admin jogosultsag ellenorzessel).
 Route::get('/admin-dashboard', [DashboardController::class, 'admin'])
-    ->middleware(['auth', 'verified', 'admin'])
+    ->middleware(['auth', 'admin'])
     ->name('admin.dashboard');
 
 // Admin-only route csoport: mutalo jellegu, modosito muveletek.
-Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
     // Sales eroforrasbol csak admin altal vegezheto muveletek.
     Route::resource('sales', SaleController::class)->only([
         'create', 'store', 'edit', 'update', 'destroy',
@@ -62,7 +62,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
 });
 
 // Bejelentkezett felhasznalok altal elerheto route-ok.
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     // Profil beallitasok.
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');

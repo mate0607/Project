@@ -20,7 +20,7 @@ class SaleFactory extends Factory
         "car_id" => \App\Models\Car::factory(),
         "buyer_id" => \App\Models\User::inRandomOrder()->value('id') ?? \App\Models\User::factory(),
         "seller_id" => \App\Models\User::inRandomOrder()->value('id') ?? \App\Models\User::factory(),
-        "price" => fake()->numberBetween(5000, 50000),
+        "price" => fake()->numberBetween(500000, 5000000),
         "description" => fake()->paragraph(),
         "car_condition" => fake()->randomElement([
             "Excellent",
