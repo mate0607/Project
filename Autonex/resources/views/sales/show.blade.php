@@ -4,8 +4,8 @@
 
 <section class="sales-hero sales-hero-tight">
     <div>
-        <p class="sales-kicker">Sale Detail</p>
-        <h1 class="page-title">Eladás #{{ $sale->id }}</h1>
+        <p class="sales-kicker">{{ $sale->vehicle_type }}</p>
+        <h1 class="page-title">{{ $sale->brand }} {{ $sale->model }}</h1>
     </div>
     <div class="form-actions" style="margin-top: 0; display:flex; gap:8px; align-items:center;">
         @if(auth()->check() && auth()->user()->role === 'admin')
@@ -27,23 +27,38 @@
 </section>
 
 @if($sale->images->count())
-    <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;position:relative;">
-        <div class="sale-carousel" id="carousel-show">
+    <div class="sale-gallery" style="margin-bottom:16px;">
+        {{-- Thumbnail sidebar --}}
+        <div class="sale-gallery-thumbs" id="gallery-thumbs">
             @foreach($sale->images as $img)
-                <img src="{{ asset('storage/' . $img->path) }}" alt="{{ $sale->car?->make_model }}" class="sale-carousel-img" style="width:100%;max-height:520px;object-fit:contain;display:{{ $loop->first ? 'block' : 'none' }};background:#0b1220;">
+                <div class="sale-gallery-thumb {{ $loop->first ? 'active' : '' }}" data-index="{{ $loop->index }}" onclick="galleryGoTo({{ $loop->index }})">
+                    <img src="{{ asset('storage/' . $img->path) }}" alt="Kép {{ $loop->iteration }}">
+                </div>
             @endforeach
         </div>
-        @if($sale->images->count() > 1)
-            <button type="button" class="carousel-btn carousel-prev" onclick="slideCarousel('carousel-show',-1)">&#10094;</button>
-            <button type="button" class="carousel-btn carousel-next" onclick="slideCarousel('carousel-show',1)">&#10095;</button>
-            <div style="text-align:center;padding:8px 0;background:rgba(0,0,0,.03);">
-                <span class="carousel-counter" id="carousel-show-counter">1 / {{ $sale->images->count() }}</span>
-            </div>
-        @endif
+
+        {{-- Main image --}}
+        <div class="sale-gallery-main" id="gallery-main">
+            @foreach($sale->images as $img)
+                <img src="{{ asset('storage/' . $img->path) }}" alt="{{ $sale->brand }} {{ $sale->model }}" class="sale-gallery-img" data-index="{{ $loop->index }}" style="display:{{ $loop->first ? 'block' : 'none' }};">
+            @endforeach
+
+            @if($sale->images->count() > 1)
+                <button type="button" class="gallery-nav gallery-prev" onclick="gallerySlide(-1)">&#10094;</button>
+                <button type="button" class="gallery-nav gallery-next" onclick="gallerySlide(1)">&#10095;</button>
+                <span class="gallery-counter" id="gallery-counter">1 / {{ $sale->images->count() }}</span>
+            @endif
+        </div>
+    </div>
+
+    {{-- Lightbox --}}
+    <div class="gallery-lightbox" id="gallery-lightbox">
+        <button type="button" class="gallery-lightbox-close" id="lightbox-close">&times;</button>
+        <img id="lightbox-img" src="" alt="Nagyított kép">
     </div>
 @elseif($sale->image)
     <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;">
-        <img src="{{ asset('storage/' . $sale->image) }}" alt="{{ $sale->car?->make_model }}" style="width:100%;max-height:520px;object-fit:contain;display:block;background:#0b1220;">
+        <img src="{{ asset('storage/' . $sale->image) }}" alt="{{ $sale->brand }} {{ $sale->model }}" style="width:100%;max-height:520px;object-fit:contain;display:block;background:#0b1220;">
     </div>
 @endif
 
@@ -52,16 +67,28 @@
         <h3>Fő adatok</h3>
         <div class="sales-detail-grid">
             <div class="sales-detail-item">
-                <small>Autó</small>
-                <strong>{{ $sale->car?->make_model ?? '—' }}</strong>
+                <small>Típus</small>
+                <strong>{{ $sale->vehicle_type ?? '—' }}</strong>
             </div>
             <div class="sales-detail-item">
-                <small>Vevő</small>
-                <strong>{{ $sale->buyer?->name ?? '—' }}</strong>
+                <small>Márka</small>
+                <strong>{{ $sale->brand ?? '—' }}</strong>
             </div>
             <div class="sales-detail-item">
-                <small>Eladó</small>
-                <strong>{{ $sale->seller?->name ?? '—' }}</strong>
+                <small>Modell</small>
+                <strong>{{ $sale->model ?? '—' }}</strong>
+            </div>
+            <div class="sales-detail-item">
+                <small>Karosszéria</small>
+                <strong>{{ $sale->body_type ?? '—' }}</strong>
+            </div>
+            <div class="sales-detail-item">
+                <small>Üzemanyag</small>
+                <strong>{{ $sale->fuel_type ?? '—' }}</strong>
+            </div>
+            <div class="sales-detail-item">
+                <small>Köbcenti</small>
+                <strong>{{ $sale->engine_cc ? $sale->engine_cc . ' cm³' : '—' }}</strong>
             </div>
             <div class="sales-detail-item">
                 <small>Ár</small>
@@ -106,18 +133,77 @@
 
 
 <script>
-function slideCarousel(id, dir) {
-    var wrap = document.getElementById(id);
-    if (!wrap) return;
-    var imgs = wrap.querySelectorAll('.sale-carousel-img');
-    var idx = 0;
-    imgs.forEach(function(img, i) { if (img.style.display !== 'none') idx = i; });
-    imgs[idx].style.display = 'none';
-    idx = (idx + dir + imgs.length) % imgs.length;
-    imgs[idx].style.display = 'block';
-    var counter = document.getElementById(id + '-counter');
-    if (counter) counter.textContent = (idx + 1) + ' / ' + imgs.length;
-}
+(function() {
+    var current = 0;
+    var imgs = document.querySelectorAll('#gallery-main .sale-gallery-img');
+    var thumbs = document.querySelectorAll('#gallery-thumbs .sale-gallery-thumb');
+    var counter = document.getElementById('gallery-counter');
+    var total = imgs.length;
+
+    // Lightbox elements
+    var lightbox = document.getElementById('gallery-lightbox');
+    var lightboxImg = document.getElementById('lightbox-img');
+    var lightboxClose = document.getElementById('lightbox-close');
+
+    window.galleryGoTo = function(idx) {
+        if (idx < 0 || idx >= total) return;
+        imgs[current].style.display = 'none';
+        thumbs[current] && thumbs[current].classList.remove('active');
+        current = idx;
+        imgs[current].style.display = 'block';
+        thumbs[current] && thumbs[current].classList.add('active');
+        if (counter) counter.textContent = (current + 1) + ' / ' + total;
+
+        // Scroll thumbnail into view
+        if (thumbs[current]) {
+            thumbs[current].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    };
+
+    window.gallerySlide = function(dir) {
+        galleryGoTo((current + dir + total) % total);
+    };
+
+    // Click image → open lightbox
+    imgs.forEach(function(img) {
+        img.addEventListener('click', function() {
+            if (!lightbox) return;
+            lightboxImg.src = this.src;
+            lightbox.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    // Close lightbox on background click
+    if (lightbox) {
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+    }
+
+    // Close button
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightbox);
+    }
+
+    function closeLightbox() {
+        if (!lightbox) return;
+        lightbox.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (lightbox && lightbox.classList.contains('open')) {
+            if (e.key === 'Escape') closeLightbox();
+            return;
+        }
+        if (e.key === 'ArrowLeft') gallerySlide(-1);
+        if (e.key === 'ArrowRight') gallerySlide(1);
+    });
+})();
 </script>
 
 @endsection

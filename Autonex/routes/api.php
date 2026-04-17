@@ -1,7 +1,11 @@
 <?php
 
+use App\Http\Controllers\VehicleDataController;
 use Illuminate\Support\Facades\Route;
 
-// API routes are currently not in use.
-// Controllers return Blade views and are not suitable for API responses.
-// When API endpoints are needed, create dedicated API controllers that return JSON.
+Route::prefix('vehicles')->group(function () {
+    Route::get('types', [VehicleDataController::class, 'types']);
+    Route::get('brands', [VehicleDataController::class, 'brands']);
+    Route::get('models', [VehicleDataController::class, 'models']);
+    Route::get('body-types', [VehicleDataController::class, 'bodyTypes']);
+});

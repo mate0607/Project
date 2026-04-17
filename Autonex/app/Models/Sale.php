@@ -15,6 +15,7 @@ class Sale extends Model
     protected $fillable = [
         'car_id',
         'vehicle_type',
+        'brand',
         'model',
         'body_type',
         'engine_cc',

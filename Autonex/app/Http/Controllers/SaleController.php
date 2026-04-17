@@ -142,6 +142,10 @@ class SaleController extends Controller
         Storage::disk('public')->delete($image->path);
         $image->delete();
 
+        if (request()->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
+
         return back()->with('success', 'Kép törölve!');
     }
 }

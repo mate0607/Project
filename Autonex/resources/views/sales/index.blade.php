@@ -24,53 +24,105 @@
 
     <div id="marketSearchPanel" style="display:none;margin-bottom:12px;">
         <div class="market-toolbar">
-            <div class="market-search-wrap">
-                <span class="market-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.2-3.2"></path></svg>
-                </span>
-                <input id="market-search" type="text" placeholder="Keresés modell, leírás alapján...">
+            {{-- Row 1: Brand, Model, Body, Fuel, Condition --}}
+            <div class="mf-grid mf-grid--5">
+                <div class="mf-field">
+                    <label class="mf-label">Márka</label>
+                    <select id="filter-brand" class="mf-input">
+                        <option value="all">Mindegy</option>
+                        @foreach($allSalesForFilters->pluck('brand')->filter()->unique()->sort() as $b)
+                            <option value="{{ mb_strtolower($b) }}">{{ $b }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mf-field">
+                    <label class="mf-label">Kivitel</label>
+                    <select id="filter-body-type" class="mf-input">
+                        <option value="all">Mindegy</option>
+                        @foreach($allSalesForFilters->pluck('body_type')->filter()->unique()->sort() as $bt)
+                            <option value="{{ mb_strtolower($bt) }}">{{ $bt }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mf-field">
+                    <label class="mf-label">Üzemanyag</label>
+                    <select id="filter-fuel-type" class="mf-input">
+                        <option value="all">Mindegy</option>
+                        @foreach($allSalesForFilters->pluck('fuel_type')->filter()->unique()->sort() as $ft)
+                            <option value="{{ mb_strtolower($ft) }}">{{ $ft }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mf-field">
+                    <label class="mf-label">Állapot</label>
+                    <select id="filter-condition" class="mf-input">
+                        <option value="all">Mindegy</option>
+                        @foreach($allSalesForFilters->pluck('car_condition')->filter()->unique()->sort() as $cond)
+                            <option value="{{ mb_strtolower($cond) }}">{{ $cond }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mf-field">
+                    <label class="mf-label">Jármű típus</label>
+                    <select id="filter-vehicle-type" class="mf-input">
+                        <option value="all">Mindegy</option>
+                        @foreach($allSalesForFilters->pluck('vehicle_type')->filter()->unique()->sort() as $vt)
+                            <option value="{{ mb_strtolower($vt) }}">{{ $vt }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
-            <div class="market-filter-row" style="flex-wrap:wrap;">
-                <select id="filter-vehicle-type" class="market-select">
-                    <option value="all">Jármű típus: mind</option>
-                    @foreach($allSalesForFilters->pluck('vehicle_type')->filter()->unique() as $vt)
-                        <option value="{{ mb_strtolower($vt) }}">{{ $vt }}</option>
-                    @endforeach
-                </select>
-                <select id="filter-body-type" class="market-select">
-                    <option value="all">Karosszéria: mind</option>
-                    @foreach($allSalesForFilters->pluck('body_type')->filter()->unique() as $bt)
-                        <option value="{{ mb_strtolower($bt) }}">{{ $bt }}</option>
-                    @endforeach
-                </select>
-                <select id="filter-fuel-type" class="market-select">
-                    <option value="all">Üzemanyag: mind</option>
-                    @foreach($allSalesForFilters->pluck('fuel_type')->filter()->unique() as $ft)
-                        <option value="{{ mb_strtolower($ft) }}">{{ $ft }}</option>
-                    @endforeach
-                </select>
-                <select id="filter-condition" class="market-select">
-                    <option value="all">Állapot: mind</option>
-                    @foreach($allSalesForFilters->pluck('car_condition')->filter()->unique() as $cond)
-                        <option value="{{ mb_strtolower($cond) }}">{{ $cond }}</option>
-                    @endforeach
-                </select>
-                <select id="filter-price-range" class="market-select">
-                    <option value="all">Ár: mind</option>
-                    <option value="0-2000000">0 – 2 000 000 Ft</option>
-                    <option value="2000001-5000000">2 000 001 – 5 000 000 Ft</option>
-                    <option value="5000001-max">5 000 001+ Ft</option>
-                </select>
+            {{-- Row 2: Price range, Mileage range, Engine range, Sort --}}
+            <div class="mf-grid mf-grid--4">
+                <div class="mf-field">
+                    <label class="mf-label">Vételár</label>
+                    <div class="mf-range">
+                        <input id="filter-price-min" type="number" class="mf-input mf-input--sm" placeholder="-tól" min="0"> 
+                        <span class="mf-range-sep">–</span>
+                        <input id="filter-price-max" type="number" class="mf-input mf-input--sm" placeholder="-ig" min="0">
+                        <span class="mf-range-unit">Ft</span>
+                    </div>
+                </div>
+                <div class="mf-field">
+                    <label class="mf-label">Km. óra állás</label>
+                    <div class="mf-range">
+                        <input id="filter-km-min" type="number" class="mf-input mf-input--sm" placeholder="-tól" min="0">
+                        <span class="mf-range-sep">–</span>
+                        <input id="filter-km-max" type="number" class="mf-input mf-input--sm" placeholder="-ig" min="0">
+                        <span class="mf-range-unit">km</span>
+                    </div>
+                </div>
+                <div class="mf-field">
+                    <label class="mf-label">Hengerűrtartalom</label>
+                    <div class="mf-range">
+                        <input id="filter-cc-min" type="number" class="mf-input mf-input--sm" placeholder="-tól" min="0">
+                        <span class="mf-range-sep">–</span>
+                        <input id="filter-cc-max" type="number" class="mf-input mf-input--sm" placeholder="-ig" min="0">
+                        <span class="mf-range-unit">cm³</span>
+                    </div>
+                </div>
+                <div class="mf-field">
+                    <label class="mf-label">Rendezés</label>
+                    <select id="market-sort" class="mf-input">
+                        <option value="date-desc">Legújabb</option>
+                        <option value="price-asc">Ár: növekvő</option>
+                        <option value="price-desc">Ár: csökkenő</option>
+                    </select>
+                </div>
             </div>
 
-            <div style="display:flex;align-items:center;gap:6px;">
-                <label style="color:var(--text-muted);font-size:13px;">Rendezés:</label>
-                <select id="market-sort" class="market-select" style="min-width:140px;">
-                    <option value="date-desc">Legújabb</option>
-                    <option value="price-asc">Ár: növekvő</option>
-                    <option value="price-desc">Ár: csökkenő</option>
-                </select>
+            {{-- Row 3: Text search + action --}}
+            <div class="mf-grid mf-grid--search">
+                <div class="mf-field mf-field--grow">
+                    <div class="market-search-wrap">
+                        <span class="market-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.2-3.2"></path></svg>
+                        </span>
+                        <input id="market-search" type="text" placeholder="Keresés márka, modell, leírás alapján...">
+                    </div>
+                </div>
+                <button type="button" id="mf-reset" class="mf-btn-reset">Szűrők törlése</button>
             </div>
         </div>
     </div>
@@ -84,13 +136,16 @@
                     $imgCount = $sale->images->count();
                 @endphp
                 <a href="{{ route('sales.show', $sale) }}" class="market-card-item" data-market-item
+                    data-brand="{{ mb_strtolower($sale->brand ?? '') }}"
                     data-vehicle-type="{{ mb_strtolower($sale->vehicle_type ?? '') }}"
                     data-body-type="{{ mb_strtolower($sale->body_type ?? '') }}"
                     data-fuel-type="{{ mb_strtolower($sale->fuel_type ?? '') }}"
                     data-condition="{{ mb_strtolower($sale->car_condition ?? '') }}"
                     data-price="{{ (float) $sale->price }}"
+                    data-mileage="{{ (int) $sale->mileage }}"
+                    data-engine="{{ (int) $sale->engine_cc }}"
                     data-date="{{ $sale->created_at?->timestamp ?? 0 }}"
-                    data-search="{{ mb_strtolower(($sale->model ?? '') . ' ' . ($sale->vehicle_type ?? '') . ' ' . ($sale->description ?? '') . ' ' . ($sale->car_condition ?? '') . ' ' . ($sale->car?->make_model ?? '')) }}">
+                    data-search="{{ mb_strtolower(($sale->brand ?? '') . ' ' . ($sale->model ?? '') . ' ' . ($sale->vehicle_type ?? '') . ' ' . ($sale->description ?? '') . ' ' . ($sale->car_condition ?? '') . ' ' . ($sale->car?->make_model ?? '')) }}">
 
                     <div class="market-card-img">
                         @if($imgUrl)
@@ -107,7 +162,7 @@
                     </div>
 
                     <div class="market-card-body">
-                        <h3 class="market-card-title">{{ $sale->model ?? $sale->car?->make_model ?? 'Ismeretlen' }}</h3>
+                        <h3 class="market-card-title">{{ trim(($sale->brand ?? '') . ' ' . ($sale->model ?? $sale->car?->make_model ?? 'Ismeretlen')) }}</h3>
 
                         <div class="market-card-tags">
                             @if($sale->vehicle_type)
@@ -183,39 +238,55 @@
     var list = document.getElementById('market-list');
     var cards = Array.from(document.querySelectorAll('[data-market-item]'));
 
+    var filterBrand = document.getElementById('filter-brand');
     var filterVehicle = document.getElementById('filter-vehicle-type');
     var filterBody = document.getElementById('filter-body-type');
     var filterFuel = document.getElementById('filter-fuel-type');
     var filterCondition = document.getElementById('filter-condition');
-    var filterPrice = document.getElementById('filter-price-range');
+
+    var priceMin = document.getElementById('filter-price-min');
+    var priceMax = document.getElementById('filter-price-max');
+    var kmMin = document.getElementById('filter-km-min');
+    var kmMax = document.getElementById('filter-km-max');
+    var ccMin = document.getElementById('filter-cc-min');
+    var ccMax = document.getElementById('filter-cc-max');
+    var resetBtn = document.getElementById('mf-reset');
 
     toggleBtn.addEventListener('click', function() {
         panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
     });
 
-    function matchPrice(p, range) {
-        if (range === 'all') return true;
-        if (range === '5000001-max') return p >= 5000001;
-        var parts = range.split('-');
-        return p >= parseInt(parts[0]) && p <= parseInt(parts[1]);
+    function numVal(input) {
+        var v = parseFloat(input.value);
+        return isNaN(v) ? null : v;
+    }
+
+    function inRange(val, minInput, maxInput) {
+        var lo = numVal(minInput), hi = numVal(maxInput);
+        if (lo !== null && val < lo) return false;
+        if (hi !== null && val > hi) return false;
+        return true;
     }
 
     function applyFilters() {
         var term = (searchInput.value || '').trim().toLowerCase();
+        var br = filterBrand.value;
         var vt = filterVehicle.value;
         var bt = filterBody.value;
         var ft = filterFuel.value;
         var cond = filterCondition.value;
-        var price = filterPrice.value;
 
         cards.forEach(function(c) {
             var ok = true;
             if (term && (c.dataset.search || '').indexOf(term) === -1) ok = false;
+            if (br !== 'all' && c.dataset.brand !== br) ok = false;
             if (vt !== 'all' && c.dataset.vehicleType !== vt) ok = false;
             if (bt !== 'all' && c.dataset.bodyType !== bt) ok = false;
             if (ft !== 'all' && c.dataset.fuelType !== ft) ok = false;
             if (cond !== 'all' && c.dataset.condition !== cond) ok = false;
-            if (!matchPrice(Number(c.dataset.price || 0), price)) ok = false;
+            if (!inRange(Number(c.dataset.price || 0), priceMin, priceMax)) ok = false;
+            if (!inRange(Number(c.dataset.mileage || 0), kmMin, kmMax)) ok = false;
+            if (!inRange(Number(c.dataset.engine || 0), ccMin, ccMax)) ok = false;
             c.style.display = ok ? '' : 'none';
         });
     }
@@ -230,9 +301,21 @@
         sorted.forEach(function(c) { list.appendChild(c); });
     }
 
+    resetBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        [filterBrand, filterVehicle, filterBody, filterFuel, filterCondition].forEach(function(s) { s.value = 'all'; });
+        [priceMin, priceMax, kmMin, kmMax, ccMin, ccMax].forEach(function(i) { i.value = ''; });
+        sortSelect.value = 'date-desc';
+        applySort();
+        applyFilters();
+    });
+
     searchInput.addEventListener('input', applyFilters);
-    [filterVehicle, filterBody, filterFuel, filterCondition, filterPrice].forEach(function(el) {
+    [filterBrand, filterVehicle, filterBody, filterFuel, filterCondition].forEach(function(el) {
         el.addEventListener('change', applyFilters);
+    });
+    [priceMin, priceMax, kmMin, kmMax, ccMin, ccMax].forEach(function(el) {
+        el.addEventListener('input', applyFilters);
     });
     sortSelect.addEventListener('change', function() { applySort(); applyFilters(); });
 })();

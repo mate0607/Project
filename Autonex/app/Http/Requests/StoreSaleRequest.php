@@ -24,6 +24,7 @@ class StoreSaleRequest extends FormRequest
         return [
             'car_id' => ['nullable', 'integer', 'exists:cars,id'],
             'vehicle_type' => ['required', 'string', 'max:255'],
+            'brand' => ['required', 'string', 'max:255'],
             'model' => ['required', 'string', 'max:255'],
             'body_type' => ['nullable', 'string', 'max:255'],
             'engine_cc' => ['nullable', 'integer', 'min:0'],
