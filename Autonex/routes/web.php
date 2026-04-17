@@ -19,13 +19,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Laravel alap auth route-ok (login, register, logout, email verification).
-Auth::routes(['verify' => false]);
+// Laravel alap auth route-ok (login, register, logout).
+Auth::routes();
 
 // Legacy home route: az auth scaffolding erre iranyit bejelentkezes utan.
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// Felhasznaloi dashboard (auth + verified kotelezett).
+// Felhasznaloi dashboard.
 Route::get('/dashboard', [DashboardController::class, 'user'])
     ->middleware(['auth'])
     ->name('user.dashboard');

@@ -19,7 +19,6 @@ class UserSeeder extends Seeder
         'email' => 'admin@admin.com',
         'password' => Hash::make('admin123'),
         'role' => 'admin',
-        'email_verified_at' => now(),
         ]);
 
          User::factory()->count(10)->create();
