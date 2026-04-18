@@ -32,7 +32,6 @@
     <header class="apps-hero">
         <div>
             <h1 class="page-title">Időpontjaim</h1>
-            <p class="page-subtitle">Szerviz időpontjaid és azok aktuális állapota egy helyen.</p>
         </div>
 
         <a href="{{ route('appointments.create') }}" class="btn apps-book-btn">
@@ -44,22 +43,6 @@
             <span>Időpont foglalása</span>
         </a>
     </header>
-
-    @if($nextAppointment)
-        <a href="{{ route('appointments.show', $nextAppointment) }}" class="svc-next-card">
-            <div class="svc-next-label">Legközelebbi időpont</div>
-            <div class="svc-next-main">
-                <h2>{{ $nextAppointment->car?->make_model ?? 'Nincs autó' }}</h2>
-                <p>{{ $nextAppointment->service ?: 'Általános szerviz' }}</p>
-            </div>
-            <div class="svc-next-meta">
-                <span>{{ $toDateTime($nextAppointment)->format('Y.m.d H:i') }}</span>
-                @if($nextAppointment->service_stage)
-                    <span class="svc-stage-chip">{{ $stageLabels[$nextAppointment->service_stage] ?? $nextAppointment->service_stage }}</span>
-                @endif
-            </div>
-        </a>
-    @endif
 
     <div class="svc-table-wrap">
         <table class="svc-table svc-table-fixed">

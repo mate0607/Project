@@ -36,7 +36,6 @@
     <div class="ud3-row ud3-hero-row fade-in">
         <div class="ud3-hero-main">
             <div class="ud3-hero-greeting">
-                <span class="ud3-kicker">Dashboard</span>
                 <h1>Üdvözöljük, {{ auth()->user()->name }}!</h1>
             </div>
 

@@ -3441,6 +3441,13 @@ select.mf-input {
     transition: border-color 0.2s, background-color 0.2s;
 }
 
+.car-btn-search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 12px;
+}
+
 .car-btn-filter-toggle:hover,
 .car-btn-filter-toggle.active {
     border-color: rgba(85, 136, 255, 0.5);

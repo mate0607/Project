@@ -101,12 +101,6 @@
         <h3>Állapot</h3>
         <p><span class="sale-chip sale-chip-soft">{{ $sale->car_condition ?? 'n/a' }}</span></p>
         <p><strong>Kilométer:</strong> {{ $sale->mileage ?? 'n/a' }}</p>
-        <p>
-            <strong>Státusz:</strong>
-            <span class="sale-chip {{ $sale->is_active ? 'sale-chip-active' : 'sale-chip-inactive' }}">
-                {{ $sale->is_active ? 'AKTÍV' : 'INAKTÍV' }}
-            </span>
-        </p>
     </aside>
 </section>
 
