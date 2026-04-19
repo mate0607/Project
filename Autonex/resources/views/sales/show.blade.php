@@ -110,17 +110,103 @@
 </div>
 
 @auth
-    @if($sale->seller_id !== auth()->id())
-        <div class="card" style="margin-top: 16px;display:flex;align-items:center;justify-content:space-between;">
-            <div>
-                <h3 style="margin:0;">Érdeklődsz?</h3>
-                <p style="opacity:.6;margin:4px 0 0;">Írj az eladónak közvetlenül.</p>
+    @if($sale->car_id)
+        <div class="card" style="margin-top: 16px;padding:0;overflow:hidden;">
+            <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);">
+                <h3 style="margin:0;display:flex;align-items:center;gap:8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Üzenetek
+                </h3>
+                <p style="opacity:.6;margin:4px 0 0;font-size:.9rem;">Beszélgetés a szervizzel erről a hirdetésről.</p>
             </div>
-            <a href="{{ route('messages.show_conversation', $sale) }}" class="btn issue-btn-main">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;vertical-align:middle;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Üzenet küldése
-            </a>
+            <div id="saleMsgThread" style="max-height:360px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;">
+                <p style="text-align:center;opacity:.4;padding:20px 0;" id="saleMsgEmpty">Betöltés...</p>
+            </div>
+            <form method="POST" action="{{ route('cars.messages.store', $sale->car_id) }}" id="saleMsgForm" style="border-top:1px solid rgba(255,255,255,.06);padding:12px 16px;display:flex;gap:10px;">
+                @csrf
+                <input type="text" name="message" id="saleMsgInput" placeholder="Írj üzenetet..." required maxlength="2000"
+                    style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 14px;color:inherit;font-size:14px;">
+                <button type="submit" class="btn issue-btn-main" style="white-space:nowrap;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;vertical-align:middle;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Küldés
+                </button>
+            </form>
         </div>
+
+        <script>
+        (function() {
+            var thread = document.getElementById('saleMsgThread');
+            var form = document.getElementById('saleMsgForm');
+            var input = document.getElementById('saleMsgInput');
+            var messagesUrl = '{{ route("cars.messages.index", $sale->car_id) }}';
+            var storeUrl = '{{ route("cars.messages.store", $sale->car_id) }}';
+            var token = '{{ csrf_token() }}';
+
+            function renderMessages(msgs) {
+                thread.innerHTML = '';
+                if (msgs.length === 0) {
+                    thread.innerHTML = '<p style="text-align:center;opacity:.4;padding:20px 0;">Még nincs üzenet. Írj a szerviznek!</p>';
+                    return;
+                }
+                msgs.forEach(function(m) {
+                    var align = m.is_mine ? 'flex-end' : 'flex-start';
+                    var bg = m.is_mine ? 'rgba(59,130,246,.15)' : 'rgba(255,255,255,.05)';
+                    var border = m.is_mine ? 'rgba(59,130,246,.25)' : 'rgba(255,255,255,.08)';
+                    var html = '<div style="display:flex;flex-direction:column;align-items:' + align + ';max-width:80%;align-self:' + align + ';">'
+                        + '<div style="background:' + bg + ';border:1px solid ' + border + ';border-radius:12px;padding:10px 14px;word-break:break-word;">'
+                        + '<small style="opacity:.5;font-size:.75rem;">' + m.sender_name + '</small>'
+                        + '<p style="margin:4px 0 0;">' + m.message.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>'
+                        + '</div>'
+                        + '<small style="opacity:.35;font-size:.7rem;margin-top:2px;">' + m.created_at + '</small>'
+                        + '</div>';
+                    thread.insertAdjacentHTML('beforeend', html);
+                });
+                thread.scrollTop = thread.scrollHeight;
+            }
+
+            function loadMessages() {
+                fetch(messagesUrl, {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin'
+                })
+                .then(function(r) {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                })
+                .then(renderMessages)
+                .catch(function(err) {
+                    console.error('loadMessages error:', err);
+                    thread.innerHTML = '<p style="text-align:center;opacity:.4;padding:20px 0;">Még nincs üzenet. Írj a szerviznek!</p>';
+                });
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var msg = input.value.trim();
+                if (!msg) return;
+                fetch(storeUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': token,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ message: msg })
+                }).then(function(r) {
+                    if (!r.ok) return r.text().then(function(t) { throw new Error('HTTP ' + r.status + ': ' + t); });
+                    input.value = '';
+                    loadMessages();
+                }).catch(function(err) {
+                    console.error('sendMessage error:', err);
+                    alert('Hiba az üzenet küldésekor: ' + err.message);
+                });
+            });
+
+            loadMessages();
+        })();
+        </script>
     @endif
 @endauth
 

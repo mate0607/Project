@@ -51,8 +51,8 @@ Az **AutoNex** egy Laravel keretrendszerre épülő autószerviz ügyfélkezelő
 - **Időpont-foglalás:** szervizidőpont létrehozása, lemondása, átütemezése; ütközésvizsgálat; visszaigazoló e-mail küldése.
 - **Hibajegy-kezelés:** gépjárművekhez tartozó hibabejelentések nyilvántartása (kategória, leírás, sürgősség).
 - **Autópiactér:** eladásra kínált járművek listázása, többképes hirdetéskezelés, szűrés.
-- **Üzenetrendszer:** vevők és eladók közötti beszélgetések az egyes hirdetésekhez.
-- **Értesítési rendszer:** rendszerszintű értesítések (célzottan vagy broadcast módon).
+- **Üzenetrendszer:** autó-alapú inline chat az adminnal (hirdetés- és autóoldalon egyaránt), AJAX-alapú valós idejű betöltéssel.
+- **Értesítési rendszer:** rendszerszintű értesítések (célzottan vagy broadcast módon), új üzenet érkezésekor automatikus értesítés.
 - **Admin felület:** naptáras áttekintés, szervizfolyamat-követés, szervizfotók, költség- és jelentéskezelés.
 
 ## Környezet
@@ -152,14 +152,16 @@ Az alkalmazás alapértelmezetten a `http://localhost:8000` címen érhető el.
 - **Böngészés:** aktív hirdetések oldalankénti (10/oldal) megtekintése.
 - **Részletek:** hirdetés képei, jármű adatai, ár, állapot, futásteljesítmény, dokumentumok.
 
-#### Üzenetek (`/messages`)
-- **Beszélgetés indítása:** hirdetéshez tartozó üzenet küldése az eladónak.
-- **Beszélgetések:** hirdetésenkénti üzenetfolyamok áttekintése; beérkező üzenetek automatikusan olvasottá válnak.
-- **Szerkesztés / törlés:** saját üzenet módosítása vagy törlése.
+#### Üzenetek
+- **Inline chat:** az autó részleteknél (`/cars/{car}`) és a hirdetés részleteknél (`/sales/{sale}`) közvetlenül elérhető üzenetküldő felület.
+- **Automatikus betöltés:** az üzenetek AJAX-szal töltődnek be, küldés után azonnal megjelennek.
+- **Értesítés:** új üzenet érkezésekor a felhasználó a navigációs harang ikonban kap értesítést.
+- **Csak admin felé:** a felhasználó üzenetei az adminhoz érkeznek, az admin válaszol vissza.
 
 #### Értesítések
-- Az értesítések a vezérlőpulton és a navigációs sávon jelennek meg.
-- Egyes vagy összes értesítés olvasottá jelölhető.
+- Az értesítések a navigációs sáv harang ikonjában jelennek meg (olvasatlan szám badge-dzsel).
+- Egyes vagy összes értesítés olvasottá jelölhető (hover / „Összes olvasott" gomb).
+- Új üzenet érkezésekor automatikusan létrejön egy értesítés.
 
 #### Profil szerkesztése (`/profile`)
 - Név, e-mail cím, telefonszám módosítása.
@@ -186,6 +188,11 @@ Az admin felhasználók a fenti funkciókon túl az alábbiakhoz is hozzáférne
 - Új eladási hirdetés létrehozása (járműtípus, modell, karosszéria, motor, üzemanyag, dokumentumok, műszaki vizsga, ár, állapot, futásteljesítmény, több kép feltöltéssel).
 - Meglévő hirdetés szerkesztése / törlése.
 - Hirdetésképek egyenkénti törlése.
+
+#### Üzenetkezelés (`/admin/messages`)
+- Az összes autóhoz érkezett üzenetek listázása olvasatlan számmal.
+- Beszélgetés megtekintése és válasz küldése autónként.
+- Piros badge az „Üzenetek" menüponton az olvasatlan üzenetek számával.
 
 #### Értesítések kezelése (`/admin/notifications`)
 - Értesítés küldése egyedi felhasználónak vagy broadcast (minden felhasználónak).
@@ -225,7 +232,7 @@ Autószerviz ügyfélkezelő webalkalmazás fejlesztése Laravel keretrendszerbe
 - Időpont adatok: dátum, idő, autó, leírás, szerviz típusa
 - Hibajegy adatok: autó, kategória, leírás, sürgősség
 - Hirdetés adatok: járműtípus, modell, karosszéria, motor, üzemanyag, ár, állapot, futásteljesítmény, képek
-- Üzenet adatok: hirdetés, címzett, szöveg
+- Üzenet adatok: autó, szöveg (a címzett automatikusan meghatározott: user→admin, admin→utolsó küldő)
 
 **Kimenet:**
 - Vezérlőpult statisztikák (közelgő időpontok, szervizben lévő autók, stb.)
@@ -425,9 +432,10 @@ Az alkalmazás 12 táblát használ (a Laravel alapértelmezett tábláival egy�
 | Oszlop | Típus | Leírás |
 |---|---|---|
 | id | bigint (PK) | Elsődleges kulcs |
-| sale_id | bigint (FK → sales) | Hirdetés |
+| car_id | bigint (FK → cars, nullable) | Gépjármű (autó-alapú üzenet) |
+| sale_id | bigint (FK → sales, nullable) | Hirdetés (opcionális, visszafelé kompatibilis) |
 | sender_id | bigint (FK → users) | Küldő |
-| receiver_id | bigint (FK → users) | Címzett |
+| receiver_id | bigint (FK → users, nullable) | Címzett |
 | message | text | Üzenet szövege |
 | is_read | boolean (default: false) | Olvasott |
 | deleted_at | timestamp (nullable) | Soft delete |
@@ -539,8 +547,10 @@ Az alkalmazás az MVC (Model-View-Controller) architektúrát követi:
 | CRUD | `/issues` | Hibajegy kezelés (resource) |
 | GET | `/sales` | Piactér böngészése |
 | GET | `/sales/{sale}` | Hirdetés részletei |
-| GET/POST | `/messages` | Üzenetek |
-| GET | `/messages/conversation/{sale}` | Beszélgetés megtekintése |
+| GET/POST | `/messages` | Üzenetek (AJAX) |
+| GET | `/cars/{car}/messages` | Üzenetek betöltése autóhoz (AJAX JSON) |
+| POST | `/cars/{car}/messages` | Üzenet küldése autóhoz |
+| GET | `/messages/unread-count` | Olvasatlan üzenetek száma (JSON) |
 | PATCH | `/notifications/{notification}/read` | Értesítés olvasottá jelölése |
 | PATCH | `/notifications/read-all` | Összes értesítés olvasottá jelölése |
 
@@ -554,6 +564,8 @@ Az alkalmazás az MVC (Model-View-Controller) architektúrát követi:
 | CRUD | `/sales` (create/store/edit/update/destroy) | Hirdetés kezelés |
 | DELETE | `/sales/{sale}/images/{image}` | Hirdetéskép törlése |
 | CRUD | `/admin/notifications` | Értesítés kezelés |
+| GET | `/admin/messages` | Üzenetek listázása (admin) |
+| GET | `/admin/messages/car/{car}` | Beszélgetés megtekintése (admin) |
 
 ### Modellek és kapcsolatok
 
@@ -563,8 +575,8 @@ User ──< Car ──< Issue
   │        └──< Appointment ──< ServicePhoto
   │        │
   │        └──< Sale ──< SaleImage
-  │               │
-  │               └──< Message
+  │        │
+  │        └──< Message
   │
   └──< AdminNotification
 
@@ -584,6 +596,7 @@ Jelölés: ──< = egy-a-többhöz (hasMany / belongsTo)
 | Car | appointments | Appointment | hasMany |
 | Car | issues | Issue | hasMany |
 | Car | sales | Sale | hasMany |
+| Car | messages | Message | hasMany |
 | Appointment | user | User | belongsTo |
 | Appointment | car | Car | belongsTo |
 | Appointment | servicePhotos | ServicePhoto | hasMany |
@@ -593,7 +606,8 @@ Jelölés: ──< = egy-a-többhöz (hasMany / belongsTo)
 | Sale | buyer | User | belongsTo (buyer_id) |
 | Sale | images | SaleImage | hasMany |
 | Sale | messages | Message | hasMany |
-| Message | sale | Sale | belongsTo |
+| Message | car | Car | belongsTo (car_id) |
+| Message | sale | Sale | belongsTo (sale_id, nullable) |
 | Message | sender | User | belongsTo (sender_id) |
 | Message | receiver | User | belongsTo (receiver_id) |
 | SaleImage | sale | Sale | belongsTo |
@@ -625,8 +639,12 @@ Jelölés: ──< = egy-a-többhöz (hasMany / belongsTo)
 - `destroyImage()` – kép törlése a storage-ból
 
 #### MessageController
-- `conversation()` – üzenetfolyam megtekintése, olvasatlanok automatikus olvasottá jelölése
-- Policy-alapú jogosultság (küldő / címzett / admin)
+- `store(Request, Car)` – üzenet küldése autóhoz (AJAX JSON támogatás); jogosultság: autó tulajdonosa, admin, vagy aktív hirdetéssel rendelkező autó
+- `carMessages(Car)` – üzenetek lekérése JSON-ben (AJAX betöltés); olvasatlanok automatikus olvasottá jelölése
+- `adminIndex()` – admin nézet: autónkénti üzenetlista olvasatlan számmal
+- `adminConversation(Car)` – admin: beszélgetés megtekintése és válasz küldése
+- `unreadCount()` – olvasatlan üzenetek száma JSON-ben (badge-hez)
+- Automatikus értesítés: üzenet küldésekor `AdminNotification` jön létre a címzettnek
 
 #### Admin/AppointmentManagementController
 - Szervizfolyamat-követés (fázis, szerelő, költség, jelentés, szervizfotók)
@@ -693,7 +711,7 @@ A `php artisan migrate --seed` parancs az alábbi tesztadatokat tölti fel:
 | 5 | Időpont lemondása | Státusz: `cancelled`, értesítés létrejön |
 | 6 | Hibajegy létrehozása | Hibajegy megjelenik az autó hibái között |
 | 7 | Hirdetés böngészése | Aktív hirdetések oldalankénti megjelenítése |
-| 8 | Üzenet küldése hirdetéshez | Üzenet megjelenik a beszélgetésben |
+| 8 | Üzenet küldése autó/hirdetés oldalon | Üzenet megjelenik az inline chatben, értesítés létrejön |
 | 9 | Admin: időpont státusz módosítás | Státusz frissül (confirmed / cancelled / completed) |
 | 10 | Admin: értesítés küldése | Értesítés megjelenik a felhasználó vezérlőpultján |
 
@@ -708,7 +726,7 @@ A `php artisan migrate --seed` parancs az alábbi tesztadatokat tölti fel:
 | 5 | Nem admin felhasználó admin oldalra lép | Átirányítás a főoldalra |
 | 6 | Gépjármű mentése hiányzó mezőkkel | Validációs hibaüzenet |
 | 7 | E-mail hitelesítés nélkül belépés | Átirányítás a hitelesítési oldalra |
-| 8 | Üzenet szerkesztése nem saját üzenetnél | 403 Forbidden |
+| 8 | Üzenet küldése idegen autóhoz aktív hirdetés nélkül | 403 Forbidden |
 
 ### PHPUnit tesztek
 

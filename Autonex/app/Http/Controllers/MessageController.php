@@ -2,129 +2,149 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminNotification;
+use App\Models\Car;
 use App\Models\Message;
 use App\Models\Sale;
-use App\Http\Requests\StoreMessageRequest;
-use App\Http\Requests\UpdateMessageRequest;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * User or admin sends a message about a car.
      */
-    public function index()
+    public function store(Request $request, Car $car)
     {
-        $userId = auth()->id();
+        $request->validate([
+            'message' => ['required', 'string', 'max:2000'],
+        ]);
 
-        // Az osszes uzenetet lekerjuk, ahol a felhasznalo kuldo vagy fogado.
-        $messages = Message::with(['sale', 'sender', 'receiver'])
-            ->where('sender_id', $userId)
-            ->orWhere('receiver_id', $userId)
-            ->latest()
-            ->get()
-            ->groupBy('sale_id');
+        $user = auth()->user();
+        $isOwner = $car->user_id == $user->id;
+        $hasActiveSale = Sale::where('car_id', $car->id)->where('is_active', true)->exists();
 
-        return view('messages.index', compact('messages'));
+        if (!$user->isAdmin() && !$isOwner && !$hasActiveSale) {
+            abort(403);
+        }
+
+        if ($user->isAdmin()) {
+            // Admin válasza: az utolsó nem-admin üzenet küldőjének megy
+            $lastUserMessage = Message::where('car_id', $car->id)
+                ->whereHas('sender', fn ($q) => $q->where('role', '!=', 'admin'))
+                ->latest()
+                ->first();
+            $receiverId = $lastUserMessage ? $lastUserMessage->sender_id : $car->user_id;
+        } else {
+            $receiverId = User::where('role', 'admin')->value('id');
+        }
+
+        Message::create([
+            'car_id' => $car->id,
+            'sender_id' => $user->id,
+            'receiver_id' => $receiverId,
+            'message' => $request->input('message'),
+        ]);
+
+        // Értesítés a címzettnek
+        AdminNotification::create([
+            'user_id' => $receiverId,
+            'title' => 'Új üzenet érkezett',
+            'message' => $user->name . ' üzenetet küldött (' . $car->make_model . ')',
+            'is_read' => false,
+        ]);
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
+
+        return back()->with('success', 'Üzenet elküldve!');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Get messages for a car (JSON for AJAX).
      */
-    public function create()
+    public function carMessages(Car $car)
     {
-        $saleId = request('sale_id');
-        $sale = Sale::with('seller')->findOrFail($saleId);
+        $user = auth()->user();
+        $isOwner = $car->user_id == $user->id;
+        $hasActiveSale = Sale::where('car_id', $car->id)->where('is_active', true)->exists();
 
-        return view('messages.create', compact('sale'));
-    }
+        if (!$user->isAdmin() && !$isOwner && !$hasActiveSale) {
+            abort(403);
+        }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreMessageRequest $request)
-    {
-        $validated = $request->validated();
-        $validated['sender_id'] = auth()->id();
-
-        Message::create($validated);
-
-        return redirect()->route('messages.show_conversation', $validated['sale_id'])
-            ->with('success', 'Üzenet elküldve!');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Message $message)
-    {
-        $this->authorize('view', $message);
-
-        $message->load(['sale', 'sender', 'receiver']);
-
-        return view('messages.show', compact('message'));
-    }
-
-    /**
-     * Show conversation thread for a given sale.
-     */
-    public function conversation(Sale $sale)
-    {
-        $userId = auth()->id();
-
-        $messages = Message::with(['sender', 'receiver'])
-            ->where('sale_id', $sale->id)
-            ->where(function ($q) use ($userId) {
-                $q->where('sender_id', $userId)
-                  ->orWhere('receiver_id', $userId);
-            })
-            ->oldest()
-            ->get();
-
-        // Olvasatlan uzenetek megjelolese olvasottra.
-        Message::where('sale_id', $sale->id)
-            ->where('receiver_id', $userId)
+        Message::where('car_id', $car->id)
+            ->where('receiver_id', $user->id)
             ->where('is_read', false)
             ->update(['is_read' => true]);
 
-        $sale->load('seller');
+        $messages = Message::with('sender')
+            ->where('car_id', $car->id)
+            ->oldest()
+            ->get()
+            ->map(fn ($m) => [
+                'id' => $m->id,
+                'message' => $m->message,
+                'sender_name' => $m->sender->name,
+                'sender_id' => $m->sender_id,
+                'is_mine' => $m->sender_id === $user->id,
+                'created_at' => $m->created_at->format('Y.m.d H:i'),
+            ]);
 
-        return view('messages.conversation', compact('messages', 'sale'));
+        return response()->json($messages);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Admin: list all cars that have messages.
      */
-    public function edit(Message $message)
+    public function adminIndex()
     {
-        $this->authorize('update', $message);
+        $carsWithMessages = Car::with(['user', 'messages' => fn ($q) => $q->latest()])
+            ->whereHas('messages')
+            ->get()
+            ->map(function ($car) {
+                $car->unread_count = $car->messages
+                    ->where('receiver_id', auth()->id())
+                    ->where('is_read', false)
+                    ->count();
+                $car->last_message = $car->messages->first();
+                return $car;
+            })
+            ->sortByDesc('unread_count');
 
-        return view('messages.edit', compact('message'));
+        return view('messages.admin-index', compact('carsWithMessages'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Admin: view conversation for a specific car.
      */
-    public function update(UpdateMessageRequest $request, Message $message)
+    public function adminConversation(Car $car)
     {
-        $this->authorize('update', $message);
+        $messages = Message::with('sender')
+            ->where('car_id', $car->id)
+            ->oldest()
+            ->get();
 
-        $message->update($request->validated());
+        Message::where('car_id', $car->id)
+            ->where('receiver_id', auth()->id())
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
 
-        return redirect()->route('messages.show_conversation', $message->sale_id)
-            ->with('success', 'Üzenet frissítve!');
+        $car->load('user');
+
+        return view('messages.admin-conversation', compact('messages', 'car'));
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Unread count for badge.
      */
-    public function destroy(Message $message)
+    public function unreadCount()
     {
-        $this->authorize('delete', $message);
+        $count = Message::where('receiver_id', auth()->id())
+            ->where('is_read', false)
+            ->count();
 
-        $saleId = $message->sale_id;
-        $message->delete();
-
-        return redirect()->route('messages.show_conversation', $saleId)
-            ->with('success', 'Üzenet törölve!');
+        return response()->json(['count' => $count]);
     }
 }

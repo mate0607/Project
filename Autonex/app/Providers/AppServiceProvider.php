@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\AdminNotification;
+use App\Models\Message;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -35,6 +36,14 @@ class AppServiceProvider extends ServiceProvider
             } else {
                 $view->with('navNotifications', collect());
                 $view->with('navUnreadCount', 0);
+            }
+
+            if ($user && $user->isAdmin()) {
+                $adminUnreadMsgCount = Message::where('receiver_id', $user->id)
+                    ->where('is_read', false)->count();
+                $view->with('adminUnreadMsgCount', $adminUnreadMsgCount);
+            } else {
+                $view->with('adminUnreadMsgCount', 0);
             }
         });
     }

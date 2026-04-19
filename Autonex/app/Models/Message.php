@@ -12,6 +12,7 @@ class Message extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'car_id',
         'sale_id',
         'sender_id',
         'receiver_id',
@@ -20,11 +21,17 @@ class Message extends Model
     ];
 
     protected $casts = [
+        'car_id' => 'integer',
         'sale_id' => 'integer',
         'sender_id' => 'integer',
         'receiver_id' => 'integer',
         'is_read' => 'boolean',
     ];
+
+    public function car()
+    {
+        return $this->belongsTo(Car::class);
+    }
 
     public function sale()
     {

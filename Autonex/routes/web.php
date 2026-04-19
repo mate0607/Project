@@ -58,6 +58,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('notifications/create', [AdminNotificationController::class, 'create'])->name('notifications.create');
         Route::post('notifications', [AdminNotificationController::class, 'store'])->name('notifications.store');
         Route::delete('notifications/{notification}', [AdminNotificationController::class, 'destroy'])->name('notifications.destroy');
+
+        // Admin uzenetkezelo.
+        Route::get('messages', [MessageController::class, 'adminIndex'])->name('messages.index');
+        Route::get('messages/car/{car}', [MessageController::class, 'adminConversation'])->name('messages.conversation');
     });
 });
 
@@ -91,8 +95,9 @@ Route::middleware(['auth'])->group(function () {
     // Hibajegy (issue) teljes CRUD.
     Route::resource('issues', IssueController::class);
 
-    // Uzenetkezelo rendszer.
-    Route::resource('messages', MessageController::class)->except(['show']);
-    Route::get('messages/conversation/{sale}', [MessageController::class, 'conversation'])->name('messages.show_conversation');
+    // Uzenetkezelo rendszer (auto-alapu).
+    Route::post('cars/{car}/messages', [MessageController::class, 'store'])->name('cars.messages.store');
+    Route::get('cars/{car}/messages', [MessageController::class, 'carMessages'])->name('cars.messages.index');
+    Route::get('messages/unread-count', [MessageController::class, 'unreadCount'])->name('messages.unread-count');
 });
 

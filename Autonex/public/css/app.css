@@ -3136,6 +3136,18 @@ select.mf-input {
     padding: 4px 10px;
 }
 
+.car-msg-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, #5588ff, #3d6be6);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+}
+
 .car-entry-card h3 { color: #F8FAFC; font-size: 20px; }
 
 .car-entry-meta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }

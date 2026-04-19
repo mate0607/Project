@@ -5,35 +5,55 @@
 - PHP >= 8.2
 - Composer
 - Node.js + npm
+- MySQL / MariaDB
 
 ## Telepítés
 
 ```bash
-# 1. Függőségek telepítése és projekt beállítása (env, kulcs, migráció, Vite build)
-composer setup
+# 1. Függőségek telepítése
+composer install
+npm install
 
-# 2. Adatbázis feltöltése tesztadatokkal (opcionális)
-php artisan db:seed
+# 2. Környezeti fájl beállítása
+cp .env.example .env
+php artisan key:generate
+
+# 3. Adatbázis beállítása (.env fájlban)
+# DB_CONNECTION=mysql
+# DB_DATABASE=autonex
+# DB_USERNAME=root
+# DB_PASSWORD=
+
+# 4. Migrációk és tesztadatok
+php artisan migrate --seed
+
+# 5. Storage link (képfeltöltésekhez)
+php artisan storage:link
 ```
-
-> Az alapértelmezett adatbázis **SQLite** – nem kell MySQL-t konfigurálni.
 
 ## Futtatás
 
 ```bash
-composer dev
+php artisan serve
+npm run dev
 ```
 
-Ez egyszerre elindítja:
-- **Laravel szerver** – `http://localhost:8000`
-- **Vite** dev szerver (hot reload)
-- **Queue listener** (email küldéshez)
-- **Pail** (log figyelés)
+Az alkalmazás elérhető: `http://localhost:8000`
+
+## Funkciók
+
+- **Gépjármű-nyilvántartás** – saját autók CRUD kezelése
+- **Időpont-foglalás** – szervizidőpont létrehozás, ütközésvizsgálat, e-mail visszaigazolás
+- **Hibajegy-kezelés** – hibabejelentések járművenként
+- **Autópiactér** – többképes hirdetések, szűrés
+- **Üzenetrendszer** – autó-alapú inline chat az adminnal (autó- és hirdetésoldalon), AJAX betöltéssel, automatikus értesítéssel
+- **Értesítések** – rendszerszintű + üzenet értesítések (harang ikon)
+- **Admin felület** – naptár, szervizfolyamat, üzenetkezelés (piros badge), statisztikák
 
 ## Tesztek
 
 ```bash
-composer test
+php artisan test
 ```
 
 ## Bejelentkezés (seeder adatok)
@@ -42,20 +62,3 @@ composer test
 |-----------|-------------------|------------|
 | Admin     | admin@admin.com   | admin123   |
 | User      | *(seeder email)*  | password   |
-
-## Email setup (opcionális)
-
-Alapértelmezetten az emailek **log**-ba íródnak (`storage/logs/laravel.log`), nem kell SMTP-t konfigurálni.
-
-Ha valódi emaileket szeretnél küldeni, állítsd át a `.env`-ben:
-
-```env
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_ENCRYPTION=tls
-MAIL_USERNAME=your@gmail.com
-MAIL_PASSWORD=your-app-password
-MAIL_FROM_ADDRESS=your@gmail.com
-MAIL_FROM_NAME="Autonex"
-```

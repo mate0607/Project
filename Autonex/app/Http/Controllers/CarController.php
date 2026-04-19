@@ -24,7 +24,9 @@ class CarController extends Controller
      */
     public function index()
     {
-        $query = Car::with('appointments');
+        $query = Car::with('appointments')->withCount(['messages as unread_messages_count' => function ($q) {
+            $q->where('receiver_id', auth()->id())->where('is_read', false);
+        }]);
 
         if (!$this->isAdmin()) {
             $query->where('user_id', $this->currentUserId());
