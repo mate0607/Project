@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Hash;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -14,13 +13,19 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-        'name' => 'Admin',
-        'email' => 'admin@admin.com',
-        'password' => Hash::make('admin123'),
-        'role' => 'admin',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@admin.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('admin123'),
+                'role' => 'admin',
+            ]
+        );
 
-         User::factory()->count(10)->create();
+        // Only create factory users if we have fewer than 11 users total
+        if (User::count() < 11) {
+            $needed = 11 - User::count();
+            User::factory()->count($needed)->create();
+        }
     }
 }

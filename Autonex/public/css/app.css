@@ -4210,9 +4210,9 @@ a.ud-next-grid:hover .ud-next-item { border-color: rgba(85, 136, 255, 0.4); }
     border-radius: var(--radius-lg);
 }
 
-.ud3-hero-row { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: stretch; }
+.ud3-hero-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: stretch; }
 
-.ud3-hero-main { padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+.ud3-hero-main { padding: 32px; display: flex; flex-direction: column; gap: 24px; grid-column: span 2; }
 
 .ud3-hero-greeting { display: flex; flex-direction: column; gap: 4px; }
 

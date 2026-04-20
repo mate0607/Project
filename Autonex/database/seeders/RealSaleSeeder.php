@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Car;
 use App\Models\Sale;
 use App\Models\SaleImage;
 use App\Models\User;
@@ -13,8 +14,13 @@ class RealSaleSeeder extends Seeder
 {
     public function run(): void
     {
-        // Clean up previously seeded data (sales without a car_id are from this seeder)
-        $oldSales = Sale::whereNull('car_id')->get();
+        // Clean up previously seeded data
+        $oldSales = Sale::whereNotNull('car_id')
+            ->whereHas('images')
+            ->whereDoesntHave('car', fn($q) => $q->whereNotNull('user_id'))
+            ->get()
+            ->merge(Sale::whereNull('car_id')->get());
+
         foreach ($oldSales as $old) {
             foreach ($old->images as $img) {
                 Storage::disk('public')->delete($img->path);
@@ -33,8 +39,17 @@ class RealSaleSeeder extends Seeder
         $cars = $this->getCars();
 
         foreach ($cars as $i => $car) {
+            // Create a Car record so messaging works
+            $carRecord = Car::create([
+                'user_id'       => $seller->id,
+                'make_model'    => $car['brand'] . ' ' . $car['model'],
+                'vin'           => strtoupper(fake()->bothify('??#??##??########')),
+                'license_plate' => strtoupper(fake()->regexify('[A-Z]{3}-[0-9]{3}')),
+                'year'          => fake()->numberBetween(2018, 2025),
+            ]);
+
             $sale = Sale::create([
-                'car_id'               => null,
+                'car_id'               => $carRecord->id,
                 'seller_id'            => $seller->id,
                 'buyer_id'             => null,
                 'vehicle_type'         => $car['vehicle_type'],
@@ -62,30 +77,115 @@ class RealSaleSeeder extends Seeder
 
     private function attachImages(Sale $sale, string $brand, string $model, int $index): void
     {
-        // Download 2 car-related images per sale from loremflickr (keyword-based)
-        $keywords = urlencode(strtolower("{$brand} {$model} car"));
-        for ($img = 0; $img < 2; $img++) {
-            // loremflickr serves a random image matching the keywords each time
-            $url = "https://loremflickr.com/800/500/{$keywords}";
+        $imageUrls = $this->fetchCarImageUrls($brand, $model);
+        $created = 0;
 
+        foreach (array_slice($imageUrls, 0, 2) as $i => $imageUrl) {
             try {
-                $response = Http::timeout(20)->withOptions(['allow_redirects' => true])->get($url);
+                $response = Http::timeout(20)
+                    ->withHeaders(['User-Agent' => 'AutonexSeeder/1.0'])
+                    ->withOptions(['allow_redirects' => true])
+                    ->get($imageUrl);
+
                 if ($response->successful() && strlen($response->body()) > 1000) {
-                    $filename = 'sales/' . uniqid("sale_{$sale->id}_") . '.jpg';
+                    $contentType = $response->header('Content-Type') ?? '';
+                    $ext = match (true) {
+                        str_contains($contentType, 'png') => 'png',
+                        str_contains($contentType, 'webp') => 'webp',
+                        default => 'jpg',
+                    };
+                    $filename = 'sales/' . uniqid("sale_{$sale->id}_") . '.' . $ext;
                     Storage::disk('public')->put($filename, $response->body());
 
                     SaleImage::create([
                         'sale_id'    => $sale->id,
                         'path'       => $filename,
-                        'sort_order' => $img,
+                        'sort_order' => $created,
                     ]);
+                    $created++;
                     continue;
                 }
             } catch (\Exception $e) {
                 // fall through to placeholder
             }
-            $this->createPlaceholderImage($sale, $brand, $model, $img);
         }
+
+        // Fill remaining slots with placeholders
+        for ($i = $created; $i < 2; $i++) {
+            $this->createPlaceholderImage($sale, $brand, $model, $i);
+        }
+    }
+
+    private function fetchCarImageUrls(string $brand, string $model): array
+    {
+        $urls = [];
+
+        // 1. Get main image from Wikipedia article
+        try {
+            $response = Http::timeout(10)
+                ->withHeaders(['User-Agent' => 'AutonexSeeder/1.0'])
+                ->get('https://en.wikipedia.org/w/api.php', [
+                    'action' => 'query',
+                    'generator' => 'search',
+                    'gsrsearch' => "{$brand} {$model} car",
+                    'gsrlimit' => 1,
+                    'prop' => 'pageimages',
+                    'piprop' => 'thumbnail',
+                    'pithumbsize' => 800,
+                    'format' => 'json',
+                ]);
+
+            if ($response->successful()) {
+                foreach ($response->json('query.pages') ?? [] as $page) {
+                    if (isset($page['thumbnail']['source'])) {
+                        $urls[] = $page['thumbnail']['source'];
+                        break;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            //
+        }
+
+        // 2. Search Wikimedia Commons for additional images
+        try {
+            $response = Http::timeout(10)
+                ->withHeaders(['User-Agent' => 'AutonexSeeder/1.0'])
+                ->get('https://commons.wikimedia.org/w/api.php', [
+                    'action' => 'query',
+                    'generator' => 'search',
+                    'gsrsearch' => "{$brand} {$model}",
+                    'gsrnamespace' => 6,
+                    'gsrlimit' => 10,
+                    'prop' => 'imageinfo',
+                    'iiprop' => 'url|mime|size',
+                    'iiurlwidth' => 800,
+                    'format' => 'json',
+                ]);
+
+            if ($response->successful()) {
+                foreach ($response->json('query.pages') ?? [] as $page) {
+                    $info = $page['imageinfo'][0] ?? null;
+                    if (!$info) continue;
+
+                    $mime = $info['mime'] ?? '';
+                    $width = $info['width'] ?? 0;
+
+                    if (!in_array($mime, ['image/jpeg', 'image/png'])) continue;
+                    if ($width < 400) continue;
+
+                    $url = $info['thumburl'] ?? $info['url'] ?? null;
+                    if ($url && !in_array($url, $urls)) {
+                        $urls[] = $url;
+                        if (count($urls) >= 3) break;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            //
+        }
+
+        return $urls;
     }
 
     private function createPlaceholderImage(Sale $sale, string $brand, string $model, int $sortOrder): void

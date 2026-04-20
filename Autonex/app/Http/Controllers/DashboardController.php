@@ -9,7 +9,6 @@ use App\Models\Issue;
 use App\Models\Sale;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
 class DashboardController extends Controller
 {

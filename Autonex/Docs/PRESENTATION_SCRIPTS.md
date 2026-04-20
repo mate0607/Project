@@ -1,6 +1,6 @@
 ## Speaker 1 – Project Overview, Architecture & Core Modules (User, Cars, Issues)
 
-Hello everyone, my name is [Name], and today we're going to present **AutoNex** – a full-stack car service management web application built with Laravel.
+Hello everyone, my name is Karsai Márk, and today we're going to present **AutoNex** – a full-stack car service management web application built with Laravel.
 
 ### What is AutoNex?
 
@@ -38,7 +38,7 @@ That covers the foundation of the application. Now let me hand it over to [Speak
 
 ## Speaker 2 – Appointment System & Admin Panel
 
-Thank you, [Speaker 1]. My name is [Name], and I'll be presenting the **appointment booking system** and the **admin management panel**.
+Thank you, Márk. My name is Szabó Máté, and I'll be presenting the **appointment booking system** and the **admin management panel**.
 
 ### Appointment Booking
 
@@ -83,7 +83,7 @@ That's the appointment system and admin panel. Now I'll hand it over to [Speaker
 
 ## Speaker 3 – Marketplace, Messaging System & Notifications
 
-Thank you, [Speaker 2]. My name is [Name], and I'll present the **car marketplace**, the **messaging system**, and the **notification system**, as well as give a brief overview of the **database design** and **testing**.
+Thank you, Máté. My name is Nagy Zsolt, and I'll present the **car marketplace**, the **messaging system**, and the **notification system**, as well as give a brief overview of the **database design** and **testing**.
 
 ### Car Marketplace
 
