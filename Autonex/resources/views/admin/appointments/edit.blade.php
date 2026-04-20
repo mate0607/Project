@@ -11,17 +11,12 @@
         <form method="POST" action="{{ route('admin.appointments.update', $appointment) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+            <input type="hidden" name="status" value="{{ old('status', $appointment->status) }}">
 
             <div class="anx-grid anx-grid--2">
                 <div class="anx-field">
                     <label>Felhasználó</label>
                     <input type="text" value="{{ $appointment->user?->name ?? '—' }}" disabled>
-                </div>
-
-                <div class="anx-field">
-                    <label>Szerelő neve</label>
-                    <input type="text" value="{{ $appointment->mechanic_name ?? '—' }}" disabled>
-                    <input type="hidden" name="mechanic_name" value="{{ old('mechanic_name', $appointment->mechanic_name) }}">
                 </div>
 
                 <div class="anx-field">
@@ -49,21 +44,9 @@
                 </div>
 
                 <div class="anx-field">
-                    <label for="status">Státusz</label>
-                    <select id="status" name="status">
-                        @foreach(['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'] as $status)
-                            <option value="{{ $status }}" {{ old('status', $appointment->status) === $status ? 'selected' : '' }}>
-                                {{ strtoupper($status) }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('status') <p class="field-error">{{ $message }}</p> @enderror
-                </div>
-
-                <div class="anx-field">
                     <label for="service_stage">Szerviz állapot</label>
                     <select id="service_stage" name="service_stage">
-                        <option value="">— Nincs beállítva —</option>
+                        <option value=""> Előjegyezve </option>
                         @foreach(['received' => 'Átvéve', 'inspected' => 'Átvizsgálva', 'in_progress' => 'Szerelés alatt', 'ready' => 'Kész, elvihető'] as $val => $lbl)
                             <option value="{{ $val }}" {{ old('service_stage', $appointment->service_stage) === $val ? 'selected' : '' }}>
                                 {{ $lbl }}
@@ -112,17 +95,19 @@
             <hr class="anx-divider">
             <h3 class="anx-section-title">Szerviz fotók feltöltése</h3>
 
-            <div class="anx-grid anx-grid--2">
-                <div class="anx-field">
-                    <label for="photo_title">Fotó címe</label>
-                    <input id="photo_title" type="text" name="photo_title" placeholder="Pl. Műszaki vizsga">
+            <div class="anx-field">
+                <label>Fotók (max 10)</label>
+                <div class="anx-dropzone" id="dropzone">
+                    <input type="file" name="photos[]" multiple accept="image/jpeg,image/png,image/jpg,image/webp" id="file-input" style="display:none;">
+                    <div class="anx-dropzone-prompt" id="dropzone-prompt">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <p>Húzd ide a képeket vagy <span class="anx-dropzone-browse">tallózz</span></p>
+                        <small>JPG, PNG, WEBP — max 5 MB / kép</small>
+                    </div>
+                    <div class="anx-preview-grid" id="preview-grid"></div>
                 </div>
-
-                <div class="anx-field">
-                    <label for="photo">Fotó</label>
-                    <input id="photo" type="file" name="photo" accept="image/*">
-                    @error('photo') <p class="field-error">{{ $message }}</p> @enderror
-                </div>
+                @error('photos') <p class="field-error">{{ $message }}</p> @enderror
+                @error('photos.*') <p class="field-error">{{ $message }}</p> @enderror
             </div>
 
             @if($appointment->servicePhotos && $appointment->servicePhotos->count() > 0)
@@ -156,4 +141,93 @@
         @endif
     </div>
 </section>
+
+<script>
+(function() {
+    var fileInput = document.getElementById('file-input');
+    var dropzone = document.getElementById('dropzone');
+    var previewGrid = document.getElementById('preview-grid');
+    var prompt = document.getElementById('dropzone-prompt');
+    var collectedFiles = new DataTransfer();
+
+    function updateFileInput() {
+        fileInput.files = collectedFiles.files;
+        prompt.style.display = collectedFiles.files.length ? 'none' : '';
+    }
+
+    function addFiles(fileList) {
+        var maxFiles = 10;
+        for (var i = 0; i < fileList.length; i++) {
+            if (collectedFiles.files.length >= maxFiles) break;
+            if (!fileList[i].type.match(/^image\/(jpeg|png|jpg|webp)$/)) continue;
+            collectedFiles.items.add(fileList[i]);
+            addPreview(collectedFiles.files[i], collectedFiles.files.length - 1);
+        }
+        updateFileInput();
+    }
+
+    function addPreview(file, idx) {
+        var wrap = document.createElement('div');
+        wrap.className = 'anx-preview-item';
+        wrap.dataset.idx = idx;
+
+        var img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.onload = function() { URL.revokeObjectURL(this.src); };
+
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'anx-preview-remove';
+        btn.innerHTML = '&times;';
+        btn.addEventListener('click', function() {
+            removeFile(parseInt(wrap.dataset.idx));
+        });
+
+        wrap.appendChild(img);
+        wrap.appendChild(btn);
+        previewGrid.appendChild(wrap);
+    }
+
+    function removeFile(idx) {
+        var newDT = new DataTransfer();
+        for (var i = 0; i < collectedFiles.files.length; i++) {
+            if (i !== idx) newDT.items.add(collectedFiles.files[i]);
+        }
+        collectedFiles = newDT;
+        rebuildPreviews();
+        updateFileInput();
+    }
+
+    function rebuildPreviews() {
+        previewGrid.innerHTML = '';
+        for (var i = 0; i < collectedFiles.files.length; i++) {
+            addPreview(collectedFiles.files[i], i);
+        }
+    }
+
+    dropzone.addEventListener('click', function(e) {
+        if (e.target.closest('.anx-preview-remove')) return;
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function() {
+        if (this.files.length) addFiles(this.files);
+    });
+
+    dropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('anx-dropzone-active');
+    });
+
+    dropzone.addEventListener('dragleave', function() {
+        this.classList.remove('anx-dropzone-active');
+    });
+
+    dropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('anx-dropzone-active');
+        if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+    });
+})();
+</script>
 @endsection

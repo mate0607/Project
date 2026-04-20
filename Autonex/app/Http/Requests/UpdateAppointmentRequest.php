@@ -36,6 +36,8 @@ class UpdateAppointmentRequest extends FormRequest
             'critical_warning' => ['nullable', 'string', 'max:5000'],
             'photo' => ['nullable', 'image', 'max:5120'],
             'photo_title' => ['nullable', 'string', 'max:255'],
+            'photos' => ['nullable', 'array', 'max:10'],
+            'photos.*' => ['image', 'max:5120'],
         ];
     }
 }

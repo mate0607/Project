@@ -116,9 +116,8 @@ class AppointmentManagementController extends Controller
             $validated['service_stage'] = null;
         }
 
-        $photoFile = $request->file('photo');
-        $photoTitle = $validated['photo_title'] ?? null;
-        unset($validated['photo'], $validated['photo_title']);
+        $photoFiles = $request->file('photos', []);
+        unset($validated['photos'], $validated['photo'], $validated['photo_title']);
 
         $appointment->update($validated);
 
@@ -127,11 +126,11 @@ class AppointmentManagementController extends Controller
             $this->sendReadyNotification($appointment->user_id, $car);
         }
 
-        if ($photoFile) {
+        foreach ($photoFiles as $photoFile) {
             $path = $photoFile->store('service-photos', 'public');
             ServicePhoto::create([
                 'appointment_id' => $appointment->id,
-                'title' => $photoTitle ?: 'Szerviz fotó',
+                'title' => 'Szerviz fotó',
                 'path' => $path,
             ]);
         }
@@ -175,6 +174,14 @@ class AppointmentManagementController extends Controller
         $photo->delete();
 
         return back()->with('success', 'Fotó törölve.');
+    }
+
+    public function destroy(Appointment $appointment)
+    {
+        $appointment->delete();
+
+        return redirect()->route('admin.appointments.index')
+            ->with('success', 'Időpont sikeresen törölve.');
     }
 
     private function sendReadyNotification(int $userId, ?Car $car): void

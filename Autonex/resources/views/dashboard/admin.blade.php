@@ -45,7 +45,6 @@
                             </div>
                             <div class="ad-list-meta">
                                 <span>{{ \Carbon\Carbon::parse($apt->time)->format('H:i') }}</span>
-                                <span class="ad-badge ad-badge-{{ $apt->status }}">{{ strtoupper($apt->status) }}</span>
                             </div>
                         </a>
                     @endforeach
@@ -70,7 +69,6 @@
                             </div>
                             <div class="ad-list-meta">
                                 <span class="ad-badge ad-badge-completed">KÉSZ</span>
-                                <a href="{{ route('admin.notifications.create') }}?user_id={{ $apt->user_id }}&title={{ urlencode('Szerviz kész — ' . ($apt->car?->make_model ?? '')) }}" class="ad-list-action-btn">Értesítés küldése →</a>
                             </div>
                         </div>
                     @endforeach
@@ -160,7 +158,6 @@
                                         <a href="{{ route('admin.appointments.show', $apt) }}" class="ad-timeline-item">
                                             <strong>{{ $apt->car?->make_model ?? '—' }}</strong>
                                             <span>{{ $apt->user?->name ?? '—' }}</span>
-                                            <span class="ad-badge ad-badge-{{ $apt->status }}">{{ strtoupper($apt->status) }}</span>
                                         </a>
                                     @endforeach
                                 @endif

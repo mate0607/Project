@@ -50,12 +50,6 @@
     {{-- Fejléc --}}
     <article class="car-profile-hero">
         <div class="car-profile-main">
-            <span class="car-detail-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 16H9m10 0h2m-1-4 1 4-1 4h-1M3 16h2m0 0h4m-4 0a2 2 0 1 1-2 2 2 2 0 0 1 2-2Zm14 0a2 2 0 1 1-2 2 2 2 0 0 1 2-2ZM5 16l1.3-5.1A2 2 0 0 1 8.24 9.4h6.52a2 2 0 0 1 1.94 1.5L18 16"></path>
-                </svg>
-            </span>
-
             <div>
                 <h1 class="page-title car-detail-title">{{ $car->make_model }}</h1>
                 <div class="car-meta-chips">

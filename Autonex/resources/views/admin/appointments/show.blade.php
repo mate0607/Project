@@ -38,9 +38,6 @@
 
         {{-- Status badges row --}}
         <div class="ws-badges">
-            <span class="ad-badge ad-badge-{{ $appointment->status }}">
-                {{ $statusLabels[$appointment->status] ?? strtoupper($appointment->status) }}
-            </span>
             @if($appointment->service_stage)
                 <span class="ws-stage-badge ws-stage-{{ $appointment->service_stage }}">
                     {{ $stageLabels[$appointment->service_stage] ?? $appointment->service_stage }}
@@ -141,9 +138,6 @@
         @endif
 
     </div>
-
-    {{-- Back link --}}
-    <a href="{{ route('admin.dashboard') }}" class="ws-back">← Vissza a dashboardra</a>
 
 </section>
 

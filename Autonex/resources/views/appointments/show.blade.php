@@ -58,7 +58,6 @@
                 <p class="page-subtitle" style="margin:0;">{{ $appointment->car?->make_model ?? 'Ismeretlen autó' }}</p>
             </div>
         </div>
-        <span class="svc-badge svc-badge-{{ $appointment->status }} svc-badge-lg">{{ $statusLabels[$appointment->status] ?? strtoupper($appointment->status) }}</span>
     </div>
 
     {{-- Alap adatok --}}

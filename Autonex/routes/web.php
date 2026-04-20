@@ -52,6 +52,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::put('appointments/{appointment}', [AppointmentManagementController::class, 'update'])->name('appointments.update');
         Route::patch('appointments/{appointment}/update-status', [AppointmentManagementController::class, 'updateStatus'])->name('appointments.update-status');
         Route::delete('service-photos/{photo}', [AppointmentManagementController::class, 'destroyPhoto'])->name('service-photos.destroy');
+        Route::delete('appointments/{appointment}', [AppointmentManagementController::class, 'destroy'])->name('appointments.destroy');
 
         Route::get('notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
         Route::get('notifications/create', [AdminNotificationController::class, 'create'])->name('notifications.create');

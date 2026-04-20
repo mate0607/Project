@@ -144,7 +144,9 @@
         <section class="ud3-carousel-card fade-in delay-1">
             <div class="ud3-card-head">
                 <h2>Legújabb eladó autók</h2>
-                <a href="{{ route('sales.index') }}" class="ud3-card-link">Összes &rarr;</a>
+                <a href="{{ route('sales.index') }}" class="ud3-card-link">
+                    <img src="{{ asset('next.png') }}" alt="Összes" style="height:24px;width:24px;vertical-align:middle;filter:invert(40%) sepia(90%) saturate(600%) hue-rotate(200deg);">
+                </a>
             </div>
             @if($latestSales->count() > 0)
                 <div class="ud3-carousel-wrap">
