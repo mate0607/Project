@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
             SaleSeeder::class,
             RealSaleSeeder::class,
             IssueSeeder::class,
-            MessageSeeder::class,
             AppointmentSeeder::class,
         ]);
     }

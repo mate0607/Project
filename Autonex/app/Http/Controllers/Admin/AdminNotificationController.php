@@ -11,7 +11,9 @@ class AdminNotificationController extends Controller
 {
     public function index(Request $request)
     {
-        $query = AdminNotification::with('user')->latest();
+        $query = AdminNotification::with('user')
+            ->where('title', '!=', 'Új üzenet érkezett')
+            ->latest();
 
         if ($request->filled('filter_name')) {
             $query->whereHas('user', fn($q) => $q->where('name', 'like', '%' . $request->filter_name . '%'));

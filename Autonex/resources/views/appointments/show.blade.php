@@ -49,12 +49,14 @@
 
     {{-- Fejléc --}}
     <div class="svc-detail-head">
-        <div>
-            <a href="{{ route('appointments.index') }}" class="car-back-arrow" title="Vissza">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+            <a href="{{ route('appointments.index') }}" class="car-back-arrow" title="Vissza" style="margin-bottom:0;">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
             </a>
-            <h1 class="page-title">Szerviz #{{ $appointment->id }}</h1>
-            <p class="page-subtitle">{{ $appointment->car?->make_model ?? 'Ismeretlen autó' }}</p>
+            <div>
+                <h1 class="page-title" style="margin:0;">Szerviz #{{ $appointment->id }}</h1>
+                <p class="page-subtitle" style="margin:0;">{{ $appointment->car?->make_model ?? 'Ismeretlen autó' }}</p>
+            </div>
         </div>
         <span class="svc-badge svc-badge-{{ $appointment->status }} svc-badge-lg">{{ $statusLabels[$appointment->status] ?? strtoupper($appointment->status) }}</span>
     </div>
