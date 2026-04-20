@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Autonex</title>
+    @php
+        $appCssVersion = @filemtime(public_path('css/app.css')) ?: 1;
+        $lightCssVersion = @filemtime(public_path('css/light-mode.css')) ?: 1;
+        $adminCssVersion = @filemtime(public_path('css/admin.css')) ?: 1;
+    @endphp
     <link rel="icon" type="image/png" href="{{ asset('engine.png') }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ time() }}">
-    <link rel="stylesheet" href="{{ asset('css/light-mode.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ $appCssVersion }}">
+    <link rel="stylesheet" href="{{ asset('css/light-mode.css') }}?v={{ $lightCssVersion }}">
     @if(auth()->check() && auth()->user()->role === 'admin')
-        <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ time() }}">
+        <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ $adminCssVersion }}">
     @endif
     <script>if(localStorage.getItem('autonex-theme')==='light')document.documentElement.classList.add('light-mode');</script>
     @stack('styles')

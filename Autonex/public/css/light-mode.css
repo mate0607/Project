@@ -563,6 +563,71 @@ html.light-mode .svc-flash-error {
     color: var(--lm-red);
 }
 
+html.light-mode .issues-kicker {
+    background: rgba(85, 136, 255, 0.08);
+    border-color: rgba(85, 136, 255, 0.18);
+    color: var(--lm-indigo);
+}
+html.light-mode .issues-stat-card {
+    background: var(--lm-white);
+    border-color: var(--lm-border);
+    box-shadow: var(--lm-shadow);
+}
+html.light-mode .issues-stat-card:hover {
+    border-color: var(--lm-indigo-soft);
+    box-shadow: 0 12px 32px rgba(85, 136, 255, 0.12);
+}
+html.light-mode .issues-stat-card p { color: var(--lm-secondary); }
+html.light-mode .issues-stat-card strong { color: var(--lm-heading); }
+html.light-mode .issues-column {
+    background: var(--lm-white);
+    border-color: var(--lm-border);
+    box-shadow: var(--lm-shadow);
+}
+html.light-mode .issues-column-head {
+    background: var(--lm-surface);
+    border-bottom-color: var(--lm-border);
+}
+html.light-mode .issues-icon { color: var(--lm-indigo); }
+html.light-mode .issues-column-head h2 { color: var(--lm-heading); }
+html.light-mode .issues-column-head p { color: var(--lm-secondary); }
+html.light-mode .issues-column-count {
+    background: var(--glow-blue-soft);
+    border-color: rgba(85, 136, 255, 0.18);
+    color: var(--lm-indigo);
+}
+html.light-mode .issues-empty-column {
+    background: var(--lm-surface);
+    border-color: var(--lm-border-mid);
+    color: var(--lm-secondary);
+}
+html.light-mode .issue-item-card {
+    background: var(--lm-surface);
+    border-color: var(--lm-border);
+}
+html.light-mode .issue-item-card:hover {
+    border-color: var(--lm-indigo-soft);
+    box-shadow: 0 10px 20px rgba(85, 136, 255, 0.1);
+}
+html.light-mode .issue-item-head h3 { color: var(--lm-heading); }
+html.light-mode .issue-item-meta { color: var(--lm-secondary); }
+html.light-mode .issue-item-desc { color: var(--lm-body); }
+html.light-mode .issue-link-btn {
+    background: var(--glow-blue-soft);
+    border-color: rgba(85, 136, 255, 0.2);
+    color: var(--lm-indigo);
+}
+html.light-mode .issue-link-btn:hover {
+    background: var(--lm-hover);
+    box-shadow: 0 0 0 3px rgba(85, 136, 255, 0.1);
+}
+html.light-mode .issue-link-danger {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.22);
+    color: var(--lm-red);
+}
+html.light-mode .issue-link-danger:hover { background: rgba(239, 68, 68, 0.14); }
+
 html.light-mode .market-card-item {
     background: var(--lm-white);
     border-color: var(--lm-border);
@@ -739,10 +804,16 @@ html.light-mode .ud3-notif-body strong { color: var(--lm-heading); }
 html.light-mode .ud3-notif-body span { color: var(--lm-secondary); }
 html.light-mode .ud3-notif-list::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); }
 html.light-mode .ud3-empty-text { color: var(--lm-placeholder); }
-html.light-mode .lv2-bg-gradient { background:; }
+html.light-mode .lv2-bg-gradient {
+    background: radial-gradient(circle at 22% 18%, rgba(85, 136, 255, 0.12), transparent 34%), linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 0.98));
+}
 html.light-mode .lv2-bg-orb-1 { background: rgba(85, 136, 255, 0.06); opacity: 0.5; }
 html.light-mode .lv2-bg-orb-2 { background: rgba(85, 136, 255, 0.04); opacity: 0.5; }
-html.light-mode .lv2-bg-grid { background-image:; }
+html.light-mode .lv2-bg-grid {
+    background-image:
+        linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+}
 html.light-mode .lv2-badge {
     background: var(--glow-blue-soft);
     color: var(--secondary);

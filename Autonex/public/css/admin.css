@@ -1,6 +1,17 @@
 
 /* ==========  Admin: Calendar  ========== */
 
+:is(.ad-cal-nav, .ad-action-box-icon) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:is(.ad-timeline-item, .ad-action-box) {
+    text-decoration: none;
+    color: #e2e8f0;
+}
+
 .ad-calendar-box {
     margin-top: 40px;
     border: 2px solid rgba(30, 41, 59, 0.5);
@@ -16,9 +27,6 @@
 }
 .ad-calendar-header h2 { color: var(--text-main); font-size: 26px; margin: 0; flex: 1; text-align: center; }
 .ad-cal-nav {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: 42px;
     height: 42px;
     border-radius: var(--radius-sm);
@@ -125,8 +133,6 @@
     background: rgba(30, 31, 40, 0.5);
     border: 1px solid rgba(148, 163, 184, 0.1);
     border-radius: var(--radius-xs);
-    text-decoration: none;
-    color: #e2e8f0;
     transition: border-color 0.2s, background 0.2s;
 }
 .ad-timeline-item:hover {
@@ -145,8 +151,6 @@
     background: #1E2432cc;
     border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: var(--radius-card);
-    text-decoration: none;
-    color: #e2e8f0;
     transition: border-color 0.2s, background 0.2s;
 }
 .ad-action-box:hover { border-color: rgba(85, 136, 255, 0.4); background: rgba(30, 31, 40, 0.9); }
@@ -155,9 +159,6 @@
     height: 60px;
     border-radius: var(--radius-card);
     background: rgba(85, 136, 255, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-shrink: 0;
 }
 .ad-action-box-icon svg { width: 30px; height: 30px; stroke: var(--primary); }
