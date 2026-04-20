@@ -131,7 +131,7 @@ class MessageController extends Controller
             ->where('is_read', false)
             ->update(['is_read' => true]);
 
-        $car->load('user');
+        $car->load(['user', 'sales']);
 
         return view('messages.admin-conversation', compact('messages', 'car'));
     }
@@ -146,5 +146,94 @@ class MessageController extends Controller
             ->count();
 
         return response()->json(['count' => $count]);
+    }
+
+    /**
+     * User sends a message about a sale listing.
+     */
+    public function storeSaleMessage(Request $request, Sale $sale)
+    {
+        $request->validate([
+            'message' => ['required', 'string', 'max:2000'],
+        ]);
+
+        $user = auth()->user();
+
+        // The seller and admin can always message; other users can message if the sale is active.
+        if (!$user->isAdmin() && $sale->seller_id !== $user->id && !$sale->is_active) {
+            abort(403);
+        }
+
+        if ($user->isAdmin()) {
+            // Admin replies to the last non-admin sender
+            $lastUserMessage = Message::where('sale_id', $sale->id)
+                ->whereHas('sender', fn ($q) => $q->where('role', '!=', 'admin'))
+                ->latest()
+                ->first();
+            $receiverId = $lastUserMessage ? $lastUserMessage->sender_id : $sale->seller_id;
+        } elseif ($sale->seller_id === $user->id) {
+            // Seller replies to the last non-seller message sender
+            $lastBuyerMessage = Message::where('sale_id', $sale->id)
+                ->where('sender_id', '!=', $user->id)
+                ->latest()
+                ->first();
+            $receiverId = $lastBuyerMessage ? $lastBuyerMessage->sender_id : User::where('role', 'admin')->value('id');
+        } else {
+            // Buyer messages the seller
+            $receiverId = $sale->seller_id;
+        }
+
+        Message::create([
+            'sale_id' => $sale->id,
+            'car_id' => $sale->car_id,
+            'sender_id' => $user->id,
+            'receiver_id' => $receiverId,
+            'message' => $request->input('message'),
+        ]);
+
+        AdminNotification::create([
+            'user_id' => $receiverId,
+            'title' => 'Új üzenet érkezett',
+            'message' => $user->name . ' üzenetet küldött (' . ($sale->brand ?? '') . ' ' . ($sale->model ?? '') . ')',
+            'is_read' => false,
+        ]);
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
+
+        return back()->with('success', 'Üzenet elküldve!');
+    }
+
+    /**
+     * Get messages for a sale (JSON for AJAX).
+     */
+    public function saleMessages(Sale $sale)
+    {
+        $user = auth()->user();
+
+        if (!$user->isAdmin() && $sale->seller_id !== $user->id && !$sale->is_active) {
+            abort(403);
+        }
+
+        Message::where('sale_id', $sale->id)
+            ->where('receiver_id', $user->id)
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+        $messages = Message::with('sender')
+            ->where('sale_id', $sale->id)
+            ->oldest()
+            ->get()
+            ->map(fn ($m) => [
+                'id' => $m->id,
+                'message' => $m->message,
+                'sender_name' => $m->sender->name,
+                'sender_id' => $m->sender_id,
+                'is_mine' => $m->sender_id === $user->id,
+                'created_at' => $m->created_at->format('Y.m.d H:i'),
+            ]);
+
+        return response()->json($messages);
     }
 }

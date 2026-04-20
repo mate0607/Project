@@ -20,7 +20,6 @@ class User extends Authenticatable
         'name',
         'email',
         'phone',
-        'role',
         'password',
         'welcome_email_sent_at',
     ];
@@ -43,6 +42,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'email_verified_at' => 'datetime',
             'welcome_email_sent_at' => 'datetime',
             'password' => 'hashed',
         ];

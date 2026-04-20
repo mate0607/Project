@@ -91,10 +91,7 @@ class AppointmentManagementController extends Controller
         $appointment->load(['user', 'car', 'servicePhotos']);
         $cars = Car::orderBy('make_model')->get();
 
-        // Mechanic pool: pick a random mechanic if none assigned
-        $mechanicPool = self::MECHANIC_POOL;
-
-        return view('admin.appointments.edit', compact('appointment', 'cars', 'mechanicPool'));
+        return view('admin.appointments.edit', compact('appointment', 'cars'));
     }
 
     public function update(UpdateAppointmentRequest $request, Appointment $appointment)

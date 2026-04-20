@@ -23,8 +23,6 @@ class Sale extends Model
         'documents_available',
         'document_type',
         'technical_inspection',
-        'buyer_id',
-        'seller_id',
         'price',
         'description',
         'car_condition',

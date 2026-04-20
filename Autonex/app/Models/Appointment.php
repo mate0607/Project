@@ -15,7 +15,6 @@ class Appointment extends Model
     protected $fillable = [
         'user_id',
         'car_id',
-        'work_number',
         'date',
         'time',
         'description',
@@ -50,6 +49,8 @@ class Appointment extends Model
         'user_id' => 'integer',
         'car_id' => 'integer',
         'date' => 'date:Y-m-d',
+        'car_year' => 'integer',
+        'total_cost' => 'decimal:2',
     ];
 
     // Foglalo felhasznalo kapcsolata.

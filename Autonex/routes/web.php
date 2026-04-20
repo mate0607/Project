@@ -99,5 +99,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('cars/{car}/messages', [MessageController::class, 'store'])->name('cars.messages.store');
     Route::get('cars/{car}/messages', [MessageController::class, 'carMessages'])->name('cars.messages.index');
     Route::get('messages/unread-count', [MessageController::class, 'unreadCount'])->name('messages.unread-count');
+
+    // Uzenetkezelo rendszer (hirdetes-alapu).
+    Route::post('sales/{sale}/messages', [MessageController::class, 'storeSaleMessage'])->name('sales.messages.store');
+    Route::get('sales/{sale}/messages', [MessageController::class, 'saleMessages'])->name('sales.messages.index');
 });
 

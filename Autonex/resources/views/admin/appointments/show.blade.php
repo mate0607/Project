@@ -10,13 +10,6 @@
         'ready'       => 'Kész, elvihető',
     ];
 
-    $statusLabels = [
-        'pending'     => 'Függőben',
-        'confirmed'   => 'Megerősítve',
-        'in_progress' => 'Folyamatban',
-        'completed'   => 'Befejezve',
-        'cancelled'   => 'Lemondva',
-    ];
 @endphp
 
 <section class="ws-page">

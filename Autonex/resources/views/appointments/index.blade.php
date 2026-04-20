@@ -13,11 +13,6 @@
         return \Carbon\Carbon::parse($datePart . ' ' . $timePart);
     };
 
-    $nextAppointment = $appointments
-        ->filter(fn ($a) => $toDateTime($a)->greaterThanOrEqualTo($now) && !in_array($a->status, ['cancelled', 'completed']))
-        ->sortBy(fn ($a) => $toDateTime($a)->timestamp)
-        ->first();
-
     $sorted = $appointments->sortByDesc(fn ($a) => $toDateTime($a)->timestamp);
 
     $stageLabels = [

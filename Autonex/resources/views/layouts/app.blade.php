@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Autonex</title>
+    <link rel="icon" type="image/png" href="{{ asset('engine.png') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/light-mode.css') }}?v={{ time() }}">
     @if(auth()->check() && auth()->user()->role === 'admin')
@@ -134,12 +135,18 @@
     </nav>
 
     <main class="main-container">
+        @if(session('success'))
+            <div class="alert-success" style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#4ade80;padding:12px 18px;border-radius:10px;margin-bottom:16px;font-size:.95rem;">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="alert-error" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171;padding:12px 18px;border-radius:10px;margin-bottom:16px;font-size:.95rem;">
+                {{ session('error') }}
+            </div>
+        @endif
         @yield('content')
     </main>
-
-    @hasSection('page_footer')
-        @yield('page_footer')
-    @endif
 
     <footer class="site-footer">
         <div class="footer-inner">
@@ -211,7 +218,7 @@
         const readAllBtn = document.getElementById('notifReadAll');
         if (readAllBtn) {
             readAllBtn.addEventListener('click', function () {
-                fetch('/notifications/read-all', {
+                fetch('{{ route("notifications.read-all") }}', {
                     method: 'PATCH',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
@@ -238,7 +245,7 @@
                 const id = this.dataset.notifId;
                 if (!id || this.dataset.reading) return;
                 this.dataset.reading = '1';
-                fetch('/notifications/' + id + '/read', {
+                fetch('{{ route("notifications.read", ":id") }}'.replace(':id', id), {
                     method: 'PATCH',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',

@@ -13,6 +13,11 @@ class AdminNotification extends Model
         'is_read',
     ];
 
+    protected $casts = [
+        'user_id' => 'integer',
+        'is_read' => 'boolean',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

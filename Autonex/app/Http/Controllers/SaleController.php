@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Car;
 use App\Models\Sale;
 use App\Models\SaleImage;
-use App\Models\User;
 use App\Http\Requests\StoreSaleRequest;
 use App\Http\Requests\UpdateSaleRequest;
 use Illuminate\Support\Facades\Storage;
@@ -15,10 +13,7 @@ class SaleController extends Controller
     // Egy helyen tartjuk a create/edit nezethez szukseges valaszthato adatokat.
     private function getFormDependencies(): array
     {
-        return [
-            'cars' => Car::orderBy('make_model')->get(),
-            'users' => User::orderBy('name')->get(),
-        ];
+        return [];
     }
 
     /**
@@ -26,10 +21,10 @@ class SaleController extends Controller
      */
     public function index()
     {
-        $allSalesForFilters = Sale::select('vehicle_type', 'body_type', 'fuel_type', 'car_condition')->get();
         $sales = Sale::with(['car', 'buyer', 'seller', 'images'])->latest()->paginate(10);
+        $vehicleConfig = config('vehicles');
 
-        return view('sales.index', compact('sales', 'allSalesForFilters'));
+        return view('sales.index', compact('sales', 'vehicleConfig'));
     }
 
     /**

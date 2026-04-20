@@ -154,7 +154,7 @@
                         @foreach($latestSales as $sale)
                             @php
                                 $img = $sale->images->sortBy('sort_order')->first();
-                                $imgUrl = $img ? asset('storage/' . $img->path) : 'https://asset.hasznaltautocdn.com/skeletor/images/no-image.31cc7f70.svg';
+                                $imgUrl = $img ? asset('storage/' . $img->path) : asset('images/no-image.svg');
                             @endphp
                             <a href="{{ route('sales.show', $sale) }}" class="ud3-slide">
                                 <div class="ud3-slide-img">

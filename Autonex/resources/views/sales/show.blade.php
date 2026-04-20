@@ -56,10 +56,6 @@
         <button type="button" class="gallery-lightbox-close" id="lightbox-close">&times;</button>
         <img id="lightbox-img" src="" alt="Nagyított kép">
     </div>
-@elseif($sale->image)
-    <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;">
-        <img src="{{ asset('storage/' . $sale->image) }}" alt="{{ $sale->brand }} {{ $sale->model }}" style="width:100%;max-height:520px;object-fit:contain;display:block;background:#0b1220;">
-    </div>
 @endif
 
 <section class="sales-detail-layout">
@@ -110,19 +106,19 @@
 </div>
 
 @auth
-    @if($sale->car_id)
+    @if($sale->seller_id !== auth()->id())
         <div class="card" style="margin-top: 16px;padding:0;overflow:hidden;">
             <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);">
                 <h3 style="margin:0;display:flex;align-items:center;gap:8px;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     Üzenetek
                 </h3>
-                <p style="opacity:.6;margin:4px 0 0;font-size:.9rem;">Beszélgetés a szervizzel erről a hirdetésről.</p>
+                <p style="opacity:.6;margin:4px 0 0;font-size:.9rem;">Beszélgetés az eladóval erről a hirdetésről.</p>
             </div>
             <div id="saleMsgThread" style="max-height:360px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;">
                 <p style="text-align:center;opacity:.4;padding:20px 0;" id="saleMsgEmpty">Betöltés...</p>
             </div>
-            <form method="POST" action="{{ route('cars.messages.store', $sale->car_id) }}" id="saleMsgForm" style="border-top:1px solid rgba(255,255,255,.06);padding:12px 16px;display:flex;gap:10px;">
+            <form method="POST" action="{{ route('sales.messages.store', $sale->id) }}" id="saleMsgForm" style="border-top:1px solid rgba(255,255,255,.06);padding:12px 16px;display:flex;gap:10px;">
                 @csrf
                 <input type="text" name="message" id="saleMsgInput" placeholder="Írj üzenetet..." required maxlength="2000"
                     style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 14px;color:inherit;font-size:14px;">
@@ -138,14 +134,20 @@
             var thread = document.getElementById('saleMsgThread');
             var form = document.getElementById('saleMsgForm');
             var input = document.getElementById('saleMsgInput');
-            var messagesUrl = '{{ route("cars.messages.index", $sale->car_id) }}';
-            var storeUrl = '{{ route("cars.messages.store", $sale->car_id) }}';
+            var messagesUrl = '{{ route("sales.messages.index", $sale->id) }}';
+            var storeUrl = '{{ route("sales.messages.store", $sale->id) }}';
             var token = '{{ csrf_token() }}';
+
+            function esc(str) {
+                var d = document.createElement('div');
+                d.textContent = str;
+                return d.innerHTML;
+            }
 
             function renderMessages(msgs) {
                 thread.innerHTML = '';
                 if (msgs.length === 0) {
-                    thread.innerHTML = '<p style="text-align:center;opacity:.4;padding:20px 0;">Még nincs üzenet. Írj a szerviznek!</p>';
+                    thread.innerHTML = '<p style="text-align:center;opacity:.4;padding:20px 0;">Még nincs üzenet. Írj az eladónak!</p>';
                     return;
                 }
                 msgs.forEach(function(m) {
@@ -154,8 +156,8 @@
                     var border = m.is_mine ? 'rgba(59,130,246,.25)' : 'rgba(255,255,255,.08)';
                     var html = '<div style="display:flex;flex-direction:column;align-items:' + align + ';max-width:80%;align-self:' + align + ';">'
                         + '<div style="background:' + bg + ';border:1px solid ' + border + ';border-radius:12px;padding:10px 14px;word-break:break-word;">'
-                        + '<small style="opacity:.5;font-size:.75rem;">' + m.sender_name + '</small>'
-                        + '<p style="margin:4px 0 0;">' + m.message.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>'
+                        + '<small style="opacity:.5;font-size:.75rem;">' + esc(m.sender_name) + '</small>'
+                        + '<p style="margin:4px 0 0;">' + esc(m.message) + '</p>'
                         + '</div>'
                         + '<small style="opacity:.35;font-size:.7rem;margin-top:2px;">' + m.created_at + '</small>'
                         + '</div>';
@@ -176,7 +178,7 @@
                 .then(renderMessages)
                 .catch(function(err) {
                     console.error('loadMessages error:', err);
-                    thread.innerHTML = '<p style="text-align:center;opacity:.4;padding:20px 0;">Még nincs üzenet. Írj a szerviznek!</p>';
+                    thread.innerHTML = '<p style="text-align:center;opacity:.4;padding:20px 0;">Még nincs üzenet. Írj az eladónak!</p>';
                 });
             }
 
@@ -219,6 +221,8 @@
     var thumbs = document.querySelectorAll('#gallery-thumbs .sale-gallery-thumb');
     var counter = document.getElementById('gallery-counter');
     var total = imgs.length;
+
+    if (total === 0) return;
 
     // Lightbox elements
     var lightbox = document.getElementById('gallery-lightbox');

@@ -4,14 +4,6 @@
 @section('content')
 
 @php
-    $statusLabels = [
-        'pending' => 'Függőben',
-        'confirmed' => 'Megerősítve',
-        'in_progress' => 'Folyamatban',
-        'completed' => 'Befejezve',
-        'cancelled' => 'Törölve',
-    ];
-
     $stages = ['received', 'inspected', 'in_progress', 'ready'];
     $stageLabels = [
         'received' => 'Autó átvéve',
@@ -230,6 +222,9 @@
                         </div>
                     </div>
                     @error('time')
+                        <p class="svc-modal-error">{{ $message }}</p>
+                    @enderror
+                    @error('date')
                         <p class="svc-modal-error">{{ $message }}</p>
                     @enderror
                     <div class="svc-modal-actions">

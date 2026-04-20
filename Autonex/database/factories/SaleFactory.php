@@ -27,7 +27,7 @@ class SaleFactory extends Factory
         ],
         [
             'brand' => 'Volkswagen', 'model' => 'Golf', 'vehicle_type' => 'Autó',
-            'body_type' => 'Ferdehátú', 'engine_cc' => 1498, 'fuel_type' => 'Benzin',
+            'body_type' => 'Hatchback', 'engine_cc' => 1498, 'fuel_type' => 'Benzin',
             'price_min' => 3_800_000, 'price_max' => 6_500_000,
             'description' => 'Volkswagen Golf 1.5 TSI, DSG váltó, digitális műszerfal, Apple CarPlay, Android Auto, adaptív tempomat. Rendszeres karbantartás, minden szerviz elvégezve.',
         ],
@@ -38,14 +38,14 @@ class SaleFactory extends Factory
             'description' => 'Toyota Corolla 1.8 Hybrid, automata, adaptív tempomat, sávtartó, LED fényszórók. Rendkívül takarékos, 4.5l/100km vegyes fogyasztás.',
         ],
         [
-            'brand' => 'Skoda', 'model' => 'Octavia', 'vehicle_type' => 'Autó',
+            'brand' => 'Škoda', 'model' => 'Octavia', 'vehicle_type' => 'Autó',
             'body_type' => 'Kombi', 'engine_cc' => 1968, 'fuel_type' => 'Dízel',
             'price_min' => 4_500_000, 'price_max' => 7_800_000,
             'description' => 'Skoda Octavia Combi 2.0 TDI, DSG, Style felszereltség, Canton hangrendszer, elektromos csomagtér, fűthető ülések. Rendszeres szerviz, vezérlés cserélve.',
         ],
         [
             'brand' => 'Ford', 'model' => 'Focus', 'vehicle_type' => 'Autó',
-            'body_type' => 'Ferdehátú', 'engine_cc' => 1499, 'fuel_type' => 'Benzin',
+            'body_type' => 'Hatchback', 'engine_cc' => 1499, 'fuel_type' => 'Benzin',
             'price_min' => 3_200_000, 'price_max' => 5_500_000,
             'description' => 'Ford Focus 1.5 EcoBoost, ST-Line csomag, sportfutómű, SYNC 3 multimédia, hátsó parkolóradar, klíma. Megbízható, takarékos családi autó.',
         ],
@@ -57,7 +57,7 @@ class SaleFactory extends Factory
         ],
         [
             'brand' => 'Opel', 'model' => 'Astra', 'vehicle_type' => 'Autó',
-            'body_type' => 'Ferdehátú', 'engine_cc' => 1199, 'fuel_type' => 'Benzin',
+            'body_type' => 'Hatchback', 'engine_cc' => 1199, 'fuel_type' => 'Benzin',
             'price_min' => 2_800_000, 'price_max' => 5_000_000,
             'description' => 'Opel Astra 1.2 Turbo, Pure Panel digitális kijelző, LED IntelliLux, holttér-figyelő, sávtartó. Kis fogyasztás, megbízható mindennapi autó.',
         ],
@@ -72,11 +72,12 @@ class SaleFactory extends Factory
     public function definition(): array
     {
         $car = fake()->randomElement(self::$cars);
+        $sellerId = \App\Models\User::inRandomOrder()->value('id') ?? \App\Models\User::factory();
 
         return [
             'car_id' => \App\Models\Car::factory(),
-            'buyer_id' => \App\Models\User::inRandomOrder()->value('id') ?? \App\Models\User::factory(),
-            'seller_id' => \App\Models\User::inRandomOrder()->value('id') ?? \App\Models\User::factory(),
+            'buyer_id' => null,
+            'seller_id' => $sellerId,
             'vehicle_type' => $car['vehicle_type'],
             'brand' => $car['brand'],
             'model' => $car['model'],
@@ -92,7 +93,21 @@ class SaleFactory extends Factory
                 'Sérült',
             ]),
             'mileage' => fake()->numberBetween(5_000, 200_000),
-            'is_active' => fake()->boolean(80),
+            'is_active' => true,
+            'documents_available' => fake()->boolean(70),
+            'document_type' => fake()->randomElement(['Szervizkönyv', 'Tulajdoni lap', 'Forgalmi engedély', null]),
+            'technical_inspection' => fake()->boolean(60),
         ];
+    }
+
+    public function sold(): static
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'buyer_id' => \App\Models\User::where('id', '!=', $attributes['seller_id'])->inRandomOrder()->value('id')
+                    ?? \App\Models\User::factory(),
+                'is_active' => false,
+            ];
+        });
     }
 }

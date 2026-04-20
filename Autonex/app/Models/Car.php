@@ -20,6 +20,11 @@ class Car extends Model
         'year',
     ];
 
+    protected $casts = [
+        'user_id' => 'integer',
+        'year' => 'integer',
+    ];
+
     // Egy autohoz tobb idopont is tartozhat.
     public function appointments()
     {

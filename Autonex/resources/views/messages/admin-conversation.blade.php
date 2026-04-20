@@ -26,7 +26,7 @@
                 @php $isMine = $msg->sender_id === auth()->id(); @endphp
                 <div class="msg-conv-row {{ $isMine ? 'msg-conv-row-mine' : 'msg-conv-row-theirs' }}">
                     <div class="msg-conv-bubble {{ $isMine ? 'msg-conv-bubble-mine' : 'msg-conv-bubble-theirs' }}">
-                        <small class="msg-conv-sender">{{ $msg->sender->name }}</small>
+                        <small class="msg-conv-sender">{{ $msg->sender?->name ?? 'Törölt felhasználó' }}</small>
                         <p class="msg-conv-text">{{ $msg->message }}</p>
                     </div>
                     <small class="msg-conv-time">{{ $msg->created_at->format('Y.m.d H:i') }}</small>

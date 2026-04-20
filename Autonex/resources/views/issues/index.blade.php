@@ -114,7 +114,7 @@
                             <div class="issue-item-actions">
                                 <a href="{{ route('issues.show', $issue) }}" class="issue-link-btn">Megnyit</a>
                                 <a href="{{ route('issues.edit', $issue) }}" class="issue-link-btn">Szerkeszt</a>
-                                <form action="{{ route('issues.destroy', $issue) }}" method="POST" class="inline-form">
+                                <form action="{{ route('issues.destroy', $issue) }}" method="POST" class="inline-form" onsubmit="return confirm('Biztosan törölni szeretnéd ezt a hibajegyet?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="issue-link-btn issue-link-danger">Törlés</button>

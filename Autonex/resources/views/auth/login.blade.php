@@ -36,7 +36,7 @@
             </div>
         </form>
 
-        <p class="anx-auth-link">Nincs még fiókod?<a href="{{ route('register') }}">Regisztráció</a></p>
+        <p class="anx-auth-link">Nincs még fiókod? <a href="{{ route('register') }}">Regisztráció</a></p>
     </div>
 </section>
 @endsection

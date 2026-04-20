@@ -25,11 +25,13 @@ class AppServiceProvider extends ServiceProvider
         View::composer('layouts.app', function ($view) {
             $user = auth()->user();
             if ($user && !$user->isAdmin()) {
+                $navUnreadCount = AdminNotification::where(function ($q) use ($user) {
+                    $q->where('user_id', $user->id)->orWhereNull('user_id');
+                })->where('is_read', false)->count();
+
                 $navNotifications = AdminNotification::where(function ($q) use ($user) {
                     $q->where('user_id', $user->id)->orWhereNull('user_id');
                 })->latest()->limit(8)->get();
-
-                $navUnreadCount = $navNotifications->where('is_read', false)->count();
 
                 $view->with('navNotifications', $navNotifications);
                 $view->with('navUnreadCount', $navUnreadCount);

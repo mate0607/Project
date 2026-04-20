@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\AdminHelpers;
 use App\Mail\AppointmentConfirmationMail;
+use App\Models\AdminNotification;
 use App\Models\Appointment;
 use App\Models\Car;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -31,7 +33,7 @@ class AppointmentController extends Controller
     {
         return $request->validate([
             'car_id' => ['required', 'integer', 'exists:cars,id'],
-            'date' => ['required', 'date'],
+            'date' => ['required', 'date', 'after_or_equal:today'],
             'time' => ['required', 'date_format:H:i'],
             'description' => ['nullable', 'string', 'max:1000'],
             'service' => ['nullable', 'string', 'max:255'],
@@ -170,10 +172,10 @@ class AppointmentController extends Controller
         $appointment->update(['status' => 'cancelled']);
 
         // Értesítés küldése a felhasználónak
-        \App\Models\AdminNotification::create([
+        AdminNotification::create([
             'user_id' => $appointment->user_id,
             'title'   => 'Időpont lemondva',
-            'message' => 'A(z) ' . ($appointment->car?->make_model ?? 'ismeretlen autó') . ' szerviz időpontja (' . \Carbon\Carbon::parse($appointment->date)->format('Y.m.d') . ' ' . $appointment->time . ') lemondásra került.',
+            'message' => 'A(z) ' . ($appointment->car?->make_model ?? 'ismeretlen autó') . ' szerviz időpontja (' . Carbon::parse($appointment->date)->format('Y.m.d') . ' ' . $appointment->time . ') lemondásra került.',
         ]);
 
         return redirect()->route('appointments.show', $appointment)
@@ -200,7 +202,7 @@ class AppointmentController extends Controller
             return back()->withErrors(['time' => 'Erre az időpontra már van megerősített foglalás.']);
         }
 
-        $oldDate = \Carbon\Carbon::parse($appointment->date)->format('Y.m.d') . ' ' . $appointment->time;
+        $oldDate = Carbon::parse($appointment->date)->format('Y.m.d') . ' ' . $appointment->time;
 
         $appointment->update([
             'date'   => $validated['date'],
@@ -209,7 +211,7 @@ class AppointmentController extends Controller
         ]);
 
         // Értesítés küldése a felhasználónak
-        \App\Models\AdminNotification::create([
+        AdminNotification::create([
             'user_id' => $appointment->user_id,
             'title'   => 'Időpont átütemezve',
             'message' => 'A(z) ' . ($appointment->car?->make_model ?? 'ismeretlen autó') . ' szerviz időpontja átütemezésre került: ' . $oldDate . ' → ' . $validated['date'] . ' ' . $validated['time'] . '. Státusz: függőben.',

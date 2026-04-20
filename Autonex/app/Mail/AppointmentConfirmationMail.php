@@ -32,8 +32,8 @@ class AppointmentConfirmationMail extends Mailable
         return new Content(
             view: 'emails.AppointmentConfirmationMail',
             with: [
-                'userName' => $this->appointment->user->name,
-                'date' => $this->appointment->date->format('Y. m. d.'),
+                'userName' => $this->appointment->user?->name ?? 'Felhasználó',
+                'date' => $this->appointment->date ? $this->appointment->date->format('Y. m. d.') : '',
                 'time' => $this->appointment->time,
                 'service' => $this->appointment->service,
                 'car' => $this->appointment->car,

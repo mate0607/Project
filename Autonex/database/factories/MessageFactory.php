@@ -41,10 +41,13 @@ class MessageFactory extends Factory
 
     public function definition(): array
     {
+        $senderId = \App\Models\User::inRandomOrder()->value('id') ?? \App\Models\User::factory();
+
         return [
             'car_id' => \App\Models\Car::factory(),
-            'sender_id' => \App\Models\User::inRandomOrder()->value('id') ?? \App\Models\User::factory(),
-            'receiver_id' => \App\Models\User::inRandomOrder()->value('id') ?? \App\Models\User::factory(),
+            'sender_id' => $senderId,
+            'receiver_id' => \App\Models\User::where('id', '!=', $senderId)->inRandomOrder()->value('id')
+                ?? \App\Models\User::factory(),
             'message' => fake()->randomElement(self::$messages),
             'is_read' => fake()->boolean(),
         ];

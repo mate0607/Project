@@ -53,11 +53,23 @@
     }
 
     function render(list) {
-        let html = '<div class="anx-user-dropdown-item anx-user-dropdown-item--all" data-id="">Mindenki</div>';
+        dropdown.innerHTML = '';
+        var allItem = document.createElement('div');
+        allItem.className = 'anx-user-dropdown-item anx-user-dropdown-item--all';
+        allItem.dataset.id = '';
+        allItem.textContent = 'Mindenki';
+        dropdown.appendChild(allItem);
         list.forEach(u => {
-            html += '<div class="anx-user-dropdown-item" data-id="'+u.id+'">'+u.name+' <span class="anx-user-email">('+u.email+')</span></div>';
+            var item = document.createElement('div');
+            item.className = 'anx-user-dropdown-item';
+            item.dataset.id = u.id;
+            item.textContent = u.name + ' ';
+            var span = document.createElement('span');
+            span.className = 'anx-user-email';
+            span.textContent = '(' + u.email + ')';
+            item.appendChild(span);
+            dropdown.appendChild(item);
         });
-        dropdown.innerHTML = html;
         dropdown.style.display = list.length || search.value === '' ? 'block' : 'none';
         dropdown.querySelectorAll('.anx-user-dropdown-item').forEach(el => {
             el.addEventListener('mousedown', function(e) {

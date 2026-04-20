@@ -24,7 +24,7 @@ class StoreIssueRequest extends FormRequest
         return [
             'car_id' => ['required', 'integer', 'exists:cars,id'],
             'category' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
+            'description' => ['required', 'string', 'max:5000'],
             'urgency' => ['required', 'in:low,medium,high'],
         ];
     }

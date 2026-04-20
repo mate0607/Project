@@ -10,7 +10,6 @@
     <header class="market-hero">
         <div>
             <h1 class="page-title">Market</h1>
-            <p class="page-subtitle">Fedezd fel az autós ajánlatokat egy modern felületen.</p>
         </div>
         <div class="market-hero-actions" style="display:flex;gap:8px;align-items:center;">
             <button type="button" id="marketSearchToggle" title="Keresés" style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:rgba(59,130,246,0.18);border:1px solid rgba(96,165,250,0.35);cursor:pointer;transition:background 0.2s;">
@@ -24,22 +23,34 @@
 
     <div id="marketSearchPanel" style="display:none;margin-bottom:12px;">
         <div class="market-toolbar">
-            {{-- Row 1: Brand, Model, Body, Fuel, Condition --}}
+            {{-- Row 1: Vehicle Type, Brand, Model, Body, Fuel, Condition --}}
             <div class="mf-grid mf-grid--5">
+                <div class="mf-field">
+                    <label class="mf-label">Jármű típus</label>
+                    <select id="filter-vehicle-type" class="mf-input">
+                        <option value="all">Mindegy</option>
+                        @foreach(array_keys($vehicleConfig['types']) as $vt)
+                            <option value="{{ mb_strtolower($vt) }}">{{ $vt }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="mf-field">
                     <label class="mf-label">Márka</label>
                     <select id="filter-brand" class="mf-input">
                         <option value="all">Mindegy</option>
-                        @foreach($allSalesForFilters->pluck('brand')->filter()->unique()->sort() as $b)
-                            <option value="{{ mb_strtolower($b) }}">{{ $b }}</option>
-                        @endforeach
+                    </select>
+                </div>
+                <div class="mf-field">
+                    <label class="mf-label">Modell</label>
+                    <select id="filter-model" class="mf-input">
+                        <option value="all">Mindegy</option>
                     </select>
                 </div>
                 <div class="mf-field">
                     <label class="mf-label">Kivitel</label>
                     <select id="filter-body-type" class="mf-input">
                         <option value="all">Mindegy</option>
-                        @foreach($allSalesForFilters->pluck('body_type')->filter()->unique()->sort() as $bt)
+                        @foreach(collect($vehicleConfig['body_types'])->flatten()->unique()->sort() as $bt)
                             <option value="{{ mb_strtolower($bt) }}">{{ $bt }}</option>
                         @endforeach
                     </select>
@@ -48,27 +59,24 @@
                     <label class="mf-label">Üzemanyag</label>
                     <select id="filter-fuel-type" class="mf-input">
                         <option value="all">Mindegy</option>
-                        @foreach($allSalesForFilters->pluck('fuel_type')->filter()->unique()->sort() as $ft)
-                            <option value="{{ mb_strtolower($ft) }}">{{ $ft }}</option>
-                        @endforeach
+                        <option value="benzin">Benzin</option>
+                        <option value="dízel">Dízel</option>
+                        <option value="hibrid">Hibrid</option>
+                        <option value="elektromos">Elektromos</option>
+                        <option value="lpg">LPG</option>
                     </select>
                 </div>
+            </div>
+
+            <div class="mf-grid mf-grid--5" style="margin-top:0;">
                 <div class="mf-field">
                     <label class="mf-label">Állapot</label>
                     <select id="filter-condition" class="mf-input">
                         <option value="all">Mindegy</option>
-                        @foreach($allSalesForFilters->pluck('car_condition')->filter()->unique()->sort() as $cond)
-                            <option value="{{ mb_strtolower($cond) }}">{{ $cond }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="mf-field">
-                    <label class="mf-label">Jármű típus</label>
-                    <select id="filter-vehicle-type" class="mf-input">
-                        <option value="all">Mindegy</option>
-                        @foreach($allSalesForFilters->pluck('vehicle_type')->filter()->unique()->sort() as $vt)
-                            <option value="{{ mb_strtolower($vt) }}">{{ $vt }}</option>
-                        @endforeach
+                        <option value="újszerű">Újszerű</option>
+                        <option value="megkímélt">Megkímélt</option>
+                        <option value="normál">Normál</option>
+                        <option value="sérült">Sérült</option>
                     </select>
                 </div>
             </div>
@@ -137,6 +145,7 @@
                 @endphp
                 <a href="{{ route('sales.show', $sale) }}" class="market-card-item" data-market-item
                     data-brand="{{ mb_strtolower($sale->brand ?? '') }}"
+                    data-model="{{ mb_strtolower($sale->model ?? '') }}"
                     data-vehicle-type="{{ mb_strtolower($sale->vehicle_type ?? '') }}"
                     data-body-type="{{ mb_strtolower($sale->body_type ?? '') }}"
                     data-fuel-type="{{ mb_strtolower($sale->fuel_type ?? '') }}"
@@ -180,7 +189,6 @@
                         </div>
 
                         <div class="market-card-specs">
-                            @if($sale->fuel_type)<span>{{ $sale->fuel_type }}</span>@endif
                             @if($sale->engine_cc)<span>{{ number_format($sale->engine_cc, 0, ',', ' ') }} cm³</span>@endif
                             @if($sale->mileage)<span>{{ number_format($sale->mileage, 0, ',', ' ') }} km</span>@endif
                         </div>
@@ -231,6 +239,9 @@
 
 <script>
 (function () {
+    var vehicleConfig = @json($vehicleConfig['types']);
+    var bodyConfig = @json($vehicleConfig['body_types']);
+
     var toggleBtn = document.getElementById('marketSearchToggle');
     var panel = document.getElementById('marketSearchPanel');
     var searchInput = document.getElementById('market-search');
@@ -238,8 +249,9 @@
     var list = document.getElementById('market-list');
     var cards = Array.from(document.querySelectorAll('[data-market-item]'));
 
-    var filterBrand = document.getElementById('filter-brand');
     var filterVehicle = document.getElementById('filter-vehicle-type');
+    var filterBrand = document.getElementById('filter-brand');
+    var filterModel = document.getElementById('filter-model');
     var filterBody = document.getElementById('filter-body-type');
     var filterFuel = document.getElementById('filter-fuel-type');
     var filterCondition = document.getElementById('filter-condition');
@@ -251,6 +263,78 @@
     var ccMin = document.getElementById('filter-cc-min');
     var ccMax = document.getElementById('filter-cc-max');
     var resetBtn = document.getElementById('mf-reset');
+
+    function populateSelect(sel, items, placeholder) {
+        var prev = sel.value;
+        sel.innerHTML = '<option value="all">' + placeholder + '</option>';
+        items.forEach(function(item) {
+            var opt = document.createElement('option');
+            opt.value = item.toLowerCase();
+            opt.textContent = item;
+            sel.appendChild(opt);
+        });
+        if (prev !== 'all' && sel.querySelector('option[value="' + prev + '"]')) {
+            sel.value = prev;
+        } else {
+            sel.value = 'all';
+        }
+    }
+
+    function updateBrands() {
+        var vt = filterVehicle.value;
+        var brands = [];
+        if (vt !== 'all') {
+            var typeBrands = vehicleConfig[Object.keys(vehicleConfig).find(function(k) { return k.toLowerCase() === vt; }) || ''];
+            if (typeBrands) brands = Object.keys(typeBrands).sort();
+        } else {
+            var seen = {};
+            Object.keys(vehicleConfig).forEach(function(type) {
+                Object.keys(vehicleConfig[type]).forEach(function(b) { if (!seen[b]) { seen[b] = true; brands.push(b); } });
+            });
+            brands.sort();
+        }
+        populateSelect(filterBrand, brands, 'Mindegy');
+        updateModels();
+        updateBodyTypes();
+    }
+
+    function updateModels() {
+        var vt = filterVehicle.value;
+        var br = filterBrand.value;
+        var models = [];
+        if (br !== 'all') {
+            Object.keys(vehicleConfig).forEach(function(type) {
+                if (vt !== 'all' && type.toLowerCase() !== vt) return;
+                Object.keys(vehicleConfig[type]).forEach(function(b) {
+                    if (b.toLowerCase() === br) models = models.concat(vehicleConfig[type][b]);
+                });
+            });
+            models = models.filter(function(m, i, a) { return a.indexOf(m) === i; }).sort();
+        }
+        populateSelect(filterModel, models, 'Mindegy');
+    }
+
+    function updateBodyTypes() {
+        var vt = filterVehicle.value;
+        var bodies = [];
+        if (vt !== 'all') {
+            var key = Object.keys(bodyConfig).find(function(k) { return k.toLowerCase() === vt; });
+            if (key) bodies = bodyConfig[key];
+        } else {
+            var seen = {};
+            Object.keys(bodyConfig).forEach(function(type) {
+                bodyConfig[type].forEach(function(b) { if (!seen[b]) { seen[b] = true; bodies.push(b); } });
+            });
+            bodies.sort();
+        }
+        populateSelect(filterBody, bodies, 'Mindegy');
+    }
+
+    filterVehicle.addEventListener('change', function() { updateBrands(); applyFilters(); });
+    filterBrand.addEventListener('change', function() { updateModels(); applyFilters(); });
+
+    // Initialize cascading dropdowns
+    updateBrands();
 
     toggleBtn.addEventListener('click', function() {
         panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
@@ -271,6 +355,7 @@
     function applyFilters() {
         var term = (searchInput.value || '').trim().toLowerCase();
         var br = filterBrand.value;
+        var mdl = filterModel.value;
         var vt = filterVehicle.value;
         var bt = filterBody.value;
         var ft = filterFuel.value;
@@ -280,6 +365,7 @@
             var ok = true;
             if (term && (c.dataset.search || '').indexOf(term) === -1) ok = false;
             if (br !== 'all' && c.dataset.brand !== br) ok = false;
+            if (mdl !== 'all' && c.dataset.model !== mdl) ok = false;
             if (vt !== 'all' && c.dataset.vehicleType !== vt) ok = false;
             if (bt !== 'all' && c.dataset.bodyType !== bt) ok = false;
             if (ft !== 'all' && c.dataset.fuelType !== ft) ok = false;
@@ -303,15 +389,16 @@
 
     resetBtn.addEventListener('click', function() {
         searchInput.value = '';
-        [filterBrand, filterVehicle, filterBody, filterFuel, filterCondition].forEach(function(s) { s.value = 'all'; });
+        [filterVehicle, filterBrand, filterModel, filterBody, filterFuel, filterCondition].forEach(function(s) { s.value = 'all'; });
         [priceMin, priceMax, kmMin, kmMax, ccMin, ccMax].forEach(function(i) { i.value = ''; });
         sortSelect.value = 'date-desc';
+        updateBrands();
         applySort();
         applyFilters();
     });
 
     searchInput.addEventListener('input', applyFilters);
-    [filterBrand, filterVehicle, filterBody, filterFuel, filterCondition].forEach(function(el) {
+    [filterModel, filterBody, filterFuel, filterCondition].forEach(function(el) {
         el.addEventListener('change', applyFilters);
     });
     [priceMin, priceMax, kmMin, kmMax, ccMin, ccMax].forEach(function(el) {
