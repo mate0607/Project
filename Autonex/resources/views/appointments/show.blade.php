@@ -103,7 +103,7 @@
     @endif
 
     {{-- Befejezett szerviz részletei --}}
-    @if($isCompleted)
+    @if($isCompleted || $isInProgress)
         <div class="svc-completed-wrap">
             <h2 class="svc-section-title">Szerviz eredmény</h2>
 
