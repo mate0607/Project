@@ -24,7 +24,9 @@ class NotificationController extends Controller
 
         AdminNotification::where(function ($q) use ($userId) {
             $q->where('user_id', $userId)->orWhereNull('user_id');
-        })->where('is_read', false)->update(['is_read' => true]);
+        })
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
 
         return response()->json(['ok' => true]);
     }

@@ -1,44 +1,72 @@
 # Autonex
 
-## Követelmények
+## Mi szükséges az indításhoz
 
-- PHP >= 8.2
+- PHP 8.2 vagy újabb
 - Composer
-- Node.js + npm
-- MySQL / MariaDB
+- Node.js és npm
+- MySQL vagy MariaDB
+- Git (ajánlott)
 
-## Telepítés
+## Gyors telepítés és indítás
 
-```bash
-# 1. Függőségek telepítése
-composer install
-npm install
+1. Projekt letöltése és belépés a mappába.
 
-# 2. Környezeti fájl beállítása
-cp .env.example .env
-php artisan key:generate
+2. Függőségek telepítése.
 
-# 3. Adatbázis beállítása (.env fájlban)
-# DB_CONNECTION=mysql
-# DB_DATABASE=autonex
-# DB_USERNAME=root
-# DB_PASSWORD=
+	composer install
+	npm install
 
-# 4. Migrációk és tesztadatok
-php artisan migrate --seed
+3. Környezeti fájl létrehozása.
 
-# 5. Storage link (képfeltöltésekhez)
-php artisan storage:link
-```
+	Linux/macOS:
+	cp .env.example .env
 
-## Futtatás
+	Windows PowerShell:
+	Copy-Item .env.example .env
 
-```bash
-php artisan serve
-npm run dev
-```
+4. Kötelező .env beállítások megadása.
 
-Az alkalmazás elérhető: `http://localhost:8000`
+	DB_CONNECTION=mysql
+	DB_HOST=127.0.0.1
+	DB_PORT=3306
+	DB_DATABASE=autonex
+	DB_USERNAME=root
+	DB_PASSWORD=
+
+5. Alkalmazáskulcs generálása.
+
+	php artisan key:generate
+
+6. Adatbázis táblák és seed adatok létrehozása.
+
+	php artisan migrate --seed
+
+7. Storage link létrehozása (képekhez/fájlokhoz).
+
+	php artisan storage:link
+
+8. Projekt indítása két külön terminálban.
+
+	1. terminál:
+	php artisan serve
+
+	2. terminál:
+	npm run dev
+
+9. Ha a projekt queued feladatokat használ (pl. e-mail), indítsd el a queue workert is egy 3. terminálban.
+
+	php artisan queue:work
+
+Az oldal alapértelmezett címe: http://localhost:8000
+
+## Egyparancsos fejlesztői indítás
+
+Ha minden szükséges csomag telepítve van, futtathatod ezt is:
+
+composer run dev
+
+Ez egyszerre indítja a Laravel szervert, a queue figyelőt, a log figyelőt és a Vite-ot.
 
 ## Funkciók
 

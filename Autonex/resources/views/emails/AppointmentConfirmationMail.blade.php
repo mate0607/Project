@@ -67,7 +67,7 @@
     </style>
 </head>
 
-<body style="margin: 0; padding: 0; background-color: #f2f0ed; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;">
+<body style="margin: 0; padding: 0; background-color: #111218; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;">
 
     {{-- Preheader (rejtett preview szöveg) --}}
     <div style="display: none; font-size: 1px; line-height: 1px; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all;">
@@ -75,7 +75,7 @@
     </div>
 
     {{-- Külső wrapper --}}
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f2f0ed;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #111218;">
     <tr>
     <td align="center" style="padding: 30px 10px;">
 
@@ -84,25 +84,25 @@
 
             {{-- ===== HERO HEADER ===== --}}
             <tr>
-                <td style="background: linear-gradient(145deg, #1a1a1a 0%, #2d1215 40%, #8b1a1a 100%); border-radius: 12px 12px 0 0; overflow: hidden;">
+                <td style="background: linear-gradient(145deg, #111827 0%, #1a1b23 45%, #3d6be6 100%); border-radius: 12px 12px 0 0; overflow: hidden;">
                     <!--[if mso]>
                     <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;">
-                    <v:fill type="gradient" color="#8b1a1a" color2="#1a1a1a" angle="145"/>
+                    <v:fill type="gradient" color="#3d6be6" color2="#111827" angle="145"/>
                     <v:textbox style="mso-fit-shape-to-text:true" inset="0,0,0,0">
                     <![endif]-->
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
 
                         {{-- Piros akcentus csík --}}
                         <tr>
-                            <td style="height: 4px; background: linear-gradient(90deg, #cc2936 0%, #e84855 50%, #cc2936 100%);">
-                                <!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td style="height:4px;background-color:#cc2936;">&nbsp;</td></tr></table><![endif]-->
+                            <td style="height: 4px; background: linear-gradient(90deg, #5588ff 0%, #7aa8ff 50%, #5588ff 100%);">
+                                <!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td style="height:4px;background-color:#5588ff;">&nbsp;</td></tr></table><![endif]-->
                             </td>
                         </tr>
 
                         {{-- Brand --}}
                         <tr>
                             <td style="padding: 40px 40px 0 40px;">
-                                <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 24px; font-weight: bold; color: #ffffff; letter-spacing: 1px;">Auto<span style="color: #cc2936;">Nex</span></span>
+                                <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 24px; font-weight: bold; color: #ffffff; letter-spacing: 1px;">Auto<span style="color: #5588ff;">Nex</span></span>
                             </td>
                         </tr>
 
@@ -118,7 +118,7 @@
                         {{-- Alcím --}}
                         <tr>
                             <td style="padding: 16px 40px 0 40px;">
-                                <p style="margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 15px; color: #c4a6a8; line-height: 1.6; letter-spacing: 0.2px;">
+                                <p style="margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 15px; color: #cbd5e1; line-height: 1.6; letter-spacing: 0.2px;">
                                     A szerviz időpontod sikeresen rögzítésre került a rendszerünkben.
                                 </p>
                             </td>
@@ -129,8 +129,8 @@
                             <td style="padding: 32px 40px 0 40px;">
                                 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                                     <tr>
-                                        <td style="height: 1px; background: linear-gradient(90deg, rgba(204,41,54,0.6) 0%, rgba(204,41,54,0) 100%);">
-                                            <!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td style="height:1px;background-color:#cc2936;">&nbsp;</td></tr></table><![endif]-->
+                                        <td style="height: 1px; background: linear-gradient(90deg, rgba(85,136,255,0.6) 0%, rgba(85,136,255,0) 100%);">
+                                            <!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td style="height:1px;background-color:#5588ff;">&nbsp;</td></tr></table><![endif]-->
                                         </td>
                                     </tr>
                                 </table>
@@ -142,11 +142,11 @@
                             <td style="padding: 24px 40px 36px 40px;">
                                 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                                     <tr>
-                                        <td style="width: 8px; height: 8px; background-color: #cc2936; border-radius: 50%;">&nbsp;</td>
+                                        <td style="width: 8px; height: 8px; background-color: #5588ff; border-radius: 50%;">&nbsp;</td>
                                         <td style="width: 8px;">&nbsp;</td>
-                                        <td style="width: 8px; height: 8px; background-color: rgba(204,41,54,0.5); border-radius: 50%;">&nbsp;</td>
+                                        <td style="width: 8px; height: 8px; background-color: rgba(122,168,255,0.6); border-radius: 50%;">&nbsp;</td>
                                         <td style="width: 8px;">&nbsp;</td>
-                                        <td style="width: 8px; height: 8px; background-color: rgba(204,41,54,0.25); border-radius: 50%;">&nbsp;</td>
+                                        <td style="width: 8px; height: 8px; background-color: rgba(122,168,255,0.3); border-radius: 50%;">&nbsp;</td>
                                     </tr>
                                 </table>
                             </td>
@@ -186,7 +186,7 @@
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                         <tr>
                             <td style="padding: 32px 40px 0 40px;">
-                                <p style="margin: 0 0 4px 0; font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #cc2936; text-transform: uppercase; letter-spacing: 2px;">
+                                <p style="margin: 0 0 4px 0; font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #5588ff; text-transform: uppercase; letter-spacing: 2px;">
                                     Foglalás
                                 </p>
                                 <p style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 20px; color: #1a1a1a; font-weight: bold;">
@@ -200,7 +200,7 @@
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                         <tr>
                             <td style="padding: 24px 40px 0 40px;">
-                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #faf8f6; border-radius: 10px; border: 1px solid #f0ece8;">
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
                                     <tr>
                                         <td style="padding: 28px 28px 8px 28px;">
 
@@ -275,7 +275,7 @@
                                                     <td class="detail-label" width="140" style="vertical-align: top; padding: 0 0 4px 0; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #999999; text-transform: uppercase; letter-spacing: 0.5px;">
                                                         Munkalap szám
                                                     </td>
-                                                    <td class="detail-value" style="vertical-align: top; padding: 0 0 4px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 16px; color: #cc2936; font-weight: bold; letter-spacing: 0.5px;">
+                                                    <td class="detail-value" style="vertical-align: top; padding: 0 0 4px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 16px; color: #5588ff; font-weight: bold; letter-spacing: 0.5px;">
                                                         {{ $workNumber }}
                                                     </td>
                                                 </tr>
@@ -303,7 +303,7 @@
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                         <tr>
                             <td style="padding: 36px 40px 40px 40px;">
-                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #faf8f6; border-radius: 8px; border-left: 3px solid #e0d6d0;">
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f8fafc; border-radius: 8px; border-left: 3px solid #c7d2fe;">
                                     <tr>
                                         <td style="padding: 18px 20px;">
                                             <p style="margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #888888; line-height: 1.6;">
@@ -326,15 +326,15 @@
 
                         {{-- Piros akcentus --}}
                         <tr>
-                            <td style="height: 3px; background: linear-gradient(90deg, #cc2936 0%, #8b1a1a 100%);">
-                                <!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td style="height:3px;background-color:#cc2936;">&nbsp;</td></tr></table><![endif]-->
+                            <td style="height: 3px; background: linear-gradient(90deg, #5588ff 0%, #3d6be6 100%);">
+                                <!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td style="height:3px;background-color:#5588ff;">&nbsp;</td></tr></table><![endif]-->
                             </td>
                         </tr>
 
                         {{-- Footer brand --}}
                         <tr>
                             <td style="padding: 32px 40px 16px 40px;" align="center">
-                                <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 18px; font-weight: bold; color: #ffffff; letter-spacing: 1px;">Auto<span style="color: #cc2936;">Nex</span></span>
+                                <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 18px; font-weight: bold; color: #ffffff; letter-spacing: 1px;">Auto<span style="color: #5588ff;">Nex</span></span>
                             </td>
                         </tr>
 

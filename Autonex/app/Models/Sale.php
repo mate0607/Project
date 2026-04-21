@@ -14,6 +14,8 @@ class Sale extends Model
     // A piacteri listing alapadatai, amelyeket create/update soran engedelyezunk.
     protected $fillable = [
         'car_id',
+        'buyer_id',
+        'seller_id',
         'vehicle_type',
         'brand',
         'model',
