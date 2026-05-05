@@ -1,101 +1,101 @@
-﻿# Autonex
+# Autonex – Műszaki Dokumentáció
 
-## MŰSZAKI DOKUMENTÁCIÓ
-
-Patkos Dominik, Molnár Attila, Fodor Tamás
-
-Verzió: 1.0
-Dátum: 2026-04-20
+**Szerzők:** Patkos Dominik, Molnár Attila, Fodor Tamás  
+**Verzió:** 1.0  
+**Dátum:** 2026-04-20
 
 ---
 
 ## Tartalomjegyzék
 
-1. Projekt áttekintés
-2. Backend architektúra
-3. Backend autentikáció
-4. Backend fiókkezelés és e-mail folyamatok
-5. Backend adatmodellek
-6. Backend web + API referencia
-7. Backend hibakezelés
-8. Backend tranzakciós/fizetési folyamatok és piactéri állapotgép
-9. Backend keresés, szűrés és tömegés műveletek
-10. Backend munkafolyamatok
-11. Backend fájltárolás
-12. Backend üzenetsors, feladatok és ütemezés
-13. Jogosultságok és hozzáférési matrix
-14. Frontend architektúra
-15. Frontend autentikáció és munkamenet
-16. Frontend komponens- és nézettár
-17. Frontend útvonalkezelés és navigáció
-18. Frontend állapotkezelés és integráció
-19. Frontend betöltőrendszer és UX visszajelzések
-20. Frontend felhasználói folyamatok
-21. Frontend stílusrendszer
-22. Frontend űrlapok és validáció
-23. Frontend hibakezelés és hibaterületek
-24. Környezet és deployment
-25. Helyi fejlesztési környezet
-26. Hibaelhárítás
-27. Összefoglalás
-28. Melléklet A - Végpontmatrix
-29. Melléklet B - adatmodell szótár
-30. Melléklet C - Üzemeltetési ellenőrzőlisták
+1. [Projekt áttekintés](#1-projekt-áttekintés)
+2. [Backend architektúra](#2-backend-architektúra)
+3. [Backend autentikáció](#3-backend-autentikáció)
+4. [Backend fiókkezelés és e-mail folyamatok](#4-backend-fiókkezelés-és-e-mail-folyamatok)
+5. [Backend adatmodellek](#5-backend-adatmodellek)
+6. [Backend web és API referencia](#6-backend-web-és-api-referencia)
+7. [Backend hibakezelés](#7-backend-hibakezelés)
+8. [Backend piactéri állapotgép](#8-backend-piactéri-állapotgép)
+9. [Backend keresés, szűrés és tömeges műveletek](#9-backend-keresés-szűrés-és-tömeges-műveletek)
+10. [Backend munkafolyamatok](#10-backend-munkafolyamatok)
+11. [Backend fájltárolás](#11-backend-fájltárolás)
+12. [Backend üzenetsorok és ütemezés](#12-backend-üzenetsorok-és-ütemezés)
+13. [Jogosultságok és hozzáférési mátrix](#13-jogosultságok-és-hozzáférési-mátrix)
+14. [Frontend architektúra](#14-frontend-architektúra)
+15. [Frontend autentikáció és munkamenet](#15-frontend-autentikáció-és-munkamenet)
+16. [Frontend komponens- és nézettár](#16-frontend-komponens--és-nézettár)
+17. [Frontend útvonalkezelés és navigáció](#17-frontend-útvonalkezelés-és-navigáció)
+18. [Frontend állapotkezelés és integráció](#18-frontend-állapotkezelés-és-integráció)
+19. [Frontend betöltőrendszer és UX visszajelzések](#19-frontend-betöltőrendszer-és-ux-visszajelzések)
+20. [Frontend felhasználói folyamatok](#20-frontend-felhasználói-folyamatok)
+21. [Frontend stílusrendszer](#21-frontend-stílusrendszer)
+22. [Frontend űrlapok és validáció](#22-frontend-űrlapok-és-validáció)
+23. [Frontend hibakezelés](#23-frontend-hibakezelés)
+24. [Környezet és deployment](#24-környezet-és-deployment)
+25. [Helyi fejlesztési környezet](#25-helyi-fejlesztési-környezet)
+26. [Hibaelhárítás](#26-hibaelhárítás)
+27. [Összefoglalás](#27-összefoglalás)
+28. [A melléklet – Végpontmátrix](#28-a-melléklet--végpontmátrix)
+29. [B melléklet – Adatmodell-szótár](#29-b-melléklet--adatmodell-szótár)
+30. [C melléklet – Üzemeltetési ellenőrzőlisták](#30-c-melléklet--üzemeltetési-ellenőrzőlisták)
 
 ---
 
 ## 1. Projekt áttekintés
 
 ### 1.1 Célkitűzés
-Az Autonex egy integrált autós szerviz- és piactéri rendszer. A platform két kulcsoproblémát kezel egyetlen rendszerben:
+
+Az **Autonex** egy integrált autós szerviz- és piactéri rendszer. A platform két kulcsproblémát kezel egyetlen rendszerben:
 
 - jármű- és szervizfolyamatok adminisztrációja,
-- használt jármű hirdetések kezelése többképés piactéri funkcióval.
+- használt jármű hirdetések kezelése többképes piactéri funkcióval.
 
-A termék értéke az, hogy ugyanazon felhasználói fiókon belül egyesíti:
+A termék értéke abban rejlik, hogy ugyanazon felhasználói fiókon belül egyesíti:
 
 - a saját autó nyilvántartást,
-- a hibajegykezelést,
-- az időpontfoglalást,
-- a szerviz állapotkovétést,
+- a hibajegy-kezelést,
+- az időpont-foglalást,
+- a szervizállapot-követést,
 - a hirdetések kezelését,
-- a valós idejű üzenetváltás jellégű kommunikációt.
+- a valós idejű jellegű üzenetváltást.
 
-### 1.2 Rendszerhátár
-Az alkalmazás Laravel 12 alapú monolit webalkalmazás, Blade nézetekkel. A backend és frontend egy kódbázisban fut, külön SPA frontend jelenlegi nincs. A kitértség két rétegen történik:
+### 1.2 Rendszerhatár
+
+Az alkalmazás Laravel 12 alapú monolit webalkalmazás, Blade nézetekkel. A backend és a frontend egy kódbázisban fut, különálló SPA frontend jelenleg nincs. A kiszolgálás két rétegen történik:
 
 - web route-ok (főbb funkcionalitás),
-- egyszerű API route csoport a jármű tipízaló adatokhoz.
+- egyszerű API route csoport a jármű típusválasztó adatokhoz.
 
 ### 1.3 Fő modulok
 
-- Felhasználó- és szerepkörkezelés (`admin`, normal user).
-- Autó kezelés (CRUD, tulajdonosi kötés).
-- Szerviz időpont kezelés (felhasználói + admin workflow).
-- Hibajegy kezelés (issue modul).
-- Piactér/hirdets kezelés (sales + sale képek).
-- Üzenetzkelö (autóhoz és hirdetéshez kapcsolt beszélgetés).
-- Értesítsi modul (admin notification + olvasatlan állapotok).
-- Dashboardok (admin és user nézetek).
+- Felhasználó- és szerepkörkezelés (`admin`, normál felhasználó).
+- Autókezelés (CRUD, tulajdonosi kötés).
+- Szervizidőpont-kezelés (felhasználói + admin munkafolyamat).
+- Hibajegy-kezelés (issue modul).
+- Piactér/hirdetés-kezelés (eladási hirdetések + hirdetési képek).
+- Üzenetkezelő (autóhoz és hirdetéshez kapcsolt beszélgetés).
+- Értesítési modul (admin értesítés + olvasatlan állapotok).
+- Irányítópultok (admin és felhasználói nézetek).
 
 ### 1.4 Nem-célok
+
 A jelenlegi implementáció nem általános e-kereskedelmi rendszer:
 
-- nincs teljes kártyaprocesszor integrált checkout,
-- nincs külön mikrőszerviz architektúra,
-- nincs külön mobil API verziókezelés.
+- nincs teljes kártyafeldolgozó-integrációs fizetési folyamat,
+- nincs különálló mikroszerviz-architektúra,
+- nincs külön mobil API-verziókezelés.
 
-### 1.5 Repositórium szerkezet
+### 1.5 Repozitórium szerkezete
 
-- `app/` domain logika: kontrollerek, modellek, policy-k, middleware.
-- `routes/` web, api, console route definíciók.
-- `resources/views/` blade oldallak és résznézetek.
-- `database/` migrációk, factory-k, seederek.
-- `config/` alkalmazás- és domain konfiguráció (`vehicles.php`).
-- `public/` web root + statikus allományok.
-- `storage/` futási állapot, log, feltöltött tartalom.
+- `app/` – domain logika: kontrollerek, modellek, policy-k, middleware.
+- `routes/` – web, API, konzol route-definíciók.
+- `resources/views/` – Blade oldalak és résznézetek.
+- `database/` – migrációk, factory-k, seederek.
+- `config/` – alkalmazás- és domain-konfiguráció (`vehicles.php`).
+- `public/` – web root és statikus állományok.
+- `storage/` – futási állapot, naplók, feltöltött tartalom.
 
-### 1.6 Fő domain entitások
+### 1.6 Fő domain-entitások
 
 - User
 - Car
@@ -107,8 +107,9 @@ A jelenlegi implementáció nem általános e-kereskedelmi rendszer:
 - AdminNotification
 - ServicePhoto
 
-### 1.7 Üzleti képességek egy mondatban
-A felhasználó rögzít egy autót, bejelent hibákat, időpontot foglal, követi a szerviz állapottat, közben hirdetést adhat fel, és az adminnal vagy más érintettel beágyazott beszélgetésben tud egyeztetni.
+### 1.7 Üzleti képességek összefoglalva
+
+A felhasználó rögzít egy autót, bejelent hibákat, időpontot foglal, követi a szerviz állapotát, közben hirdetést adhat fel, és az adminnal vagy más érintettel beágyazott üzenetváltásban tud egyeztetni.
 
 ---
 
@@ -116,77 +117,104 @@ A felhasználó rögzít egy autót, bejelent hibákat, időpontot foglal, köve
 
 ### 2.1 Technológiai stack
 
-- PHP 8.2+
-- Laravel 12
-- MySQL/MariaDB (Eloquent ORM)
-- Blade templating
-- Laravel UI auth scaffold
-- Vite build pipeline
-- Bootstrap 5 + Sass
-- Queue: database driver (dev scriptben queue listener)
+| Technológia | Verzió / Típus |
+|---|---|
+| PHP | 8.2+ |
+| Laravel | 12 |
+| Adatbázis | MySQL / MariaDB (Eloquent ORM) |
+| Nézetek | Blade templating |
+| Auth | Laravel UI auth scaffold |
+| Build | Vite |
+| Stílus | Bootstrap 5 + Sass |
+| Üzenetsor | database driver (fejlesztői scriptben queue listener) |
 
 ### 2.2 Architektúrális modell
+
 A projekt klasszikus MVC-rétegekből épül fel:
 
 1. Route réteg (`routes/web.php`, `routes/api.php`)
 2. Middleware réteg (auth, admin alias)
-3. Controller réteg (Üzleti folyamatok koordinációja)
-4. Request validáció réteg (FormRequest osztályok)
-5. Model réteg (Eloquent relációk + castok + soft delete)
+3. Kontroller réteg (üzleti folyamatok koordinálása)
+4. Request validációs réteg (FormRequest osztályok)
+5. Model réteg (Eloquent relációk + cast-ok + soft delete)
 6. View réteg (Blade nézetek)
 
-### 2.3 Kulcs Architektúrális döntések
+### 2.3 Kulcs architektúrális döntések
 
-- Admin jogosultság custom middleware alapon (`admin` alias).
+- Admin jogosultság egyedi middleware alapon (`admin` alias).
 - Finomabb jogosultságok policy osztályokkal.
-- Resource route-okra épített konvenciónális CRUD.
-- hirdetési képek külön táblában (`sale_images`) rendezett `sort_order` mezővel.
+- Resource route-okra épített konvencionális CRUD.
+- Hirdetési képek külön táblában (`sale_images`), rendezett `sort_order` mezővel.
 - Soft delete több fő entitásnál (`cars`, `appointments`, `sales`, `messages`).
 
 ### 2.4 Integrációs pontok
 
-- E-mail küldés időpont visszaigaz oláshoz.
-- Kliens oldali aszinkrón üzenetfrissítés JSON endpointokon.
+- E-mail küldés időpont-visszaigazoláshoz.
+- Kliens oldali aszinkron üzenetfrissítés JSON endpontokon.
 - Konfigurált, de nem túlbonyolított API réteg jármű adatokhoz.
 
-### 2.5 Monolit előnyei
+### 2.5 A monolit előnyei
 
 - Egyszerű deployment.
-- Egyertélmű tranzakciós határok.
-- egyutas auth/session modell.
-- Kisebb konzisztencia-kár, mint szétszdett mikrószolgáltatóknál.
+- Egyértelmű tranzakciós határok.
+- Egyutas auth/session modell.
+- Kisebb konzisztenciaproblémák, mint szétszedett mikroszolgáltatóknál.
 
-### 2.6 Monolit korlátök
+### 2.6 A monolit korlátai
 
-- Frontend és backend release nem füeggetlen.
-- Nagyobb kódbázisnál erős modularizáció szukséges.
-- Horizontálskala MVC monolitnál korlátozöttabb, mint külön API + frontend architektúranál.
+- Frontend és backend release nem független egymástól.
+- Nagyobb kódbázisnál erős modularizáció szükséges.
+- Horizontális skálázás MVC monolitnál korlátozottabb, mint különálló API + frontend architektúránál.
 
 ---
 
 ## 3. Backend autentikáció
 
 ### 3.1 Alapmodell
-Az alkalmazás alapvetően session/cookie alapú web autentikációt használ (`Auth::routes()`), nem token-centric API authot.
 
-### 3.2 Route védelem
-A web route-ok a következkő mintát követik:
+Az alkalmazás alapvetően session/cookie alapú webes autentikációt használ (`Auth::routes()`), nem token-centrikus API autentikációt.
+
+### 3.2 Route-védelem
+
+A web route-ok a következő mintát követik:
 
 - nyitott route: `/`
-- auth protected: dashboard, profil, autók, időpontok, issue-k, üzenetek
-- admin protected: admin dashboard, admin appointment management, admin notification management, hirdets módosítasi route-ok
+- autentikáció-védett: irányítópult, profil, autók, időpontok, hibajegyek, üzenetek
+- admin-védett: admin irányítópult, admin időpontkezelés, admin értesítéskezelés, hirdetésmódosító route-ok
 
-### 3.3 Admin ellenőrzés
-Az admin hozzáférést a custom middleware kezeli:
+### 3.3 Admin-ellenőrzés
 
-- belépési feltétel: bejelentkezett user + `isAdmin() == true`
-- sikertelen esetben redirect `/` irányba
+Az admin hozzáférést az egyedi middleware kezeli:
 
-### 3.4 User modell szerepkör
-A User modell `isAdmin()` helper métoddaladja vissza a szerepkört (`role === 'admin'`).
+- belépési feltétel: bejelentkezett felhasználó + `isAdmin() === true`
+- sikertelen esetben átirányítás a `/` gyökérre
 
-### 3.5 Security megjegyzés
-Az admin middleware jelenleg redirectet ad nem jogosult esetben. API-jellégű végpontokknál hosszabb távon ajánlott lenne status code + JSON policy (403) fenntartása a következeteség miatt.
+**Admin middleware** (`bootstrap/app.php`):
+```php
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin-dashboard', [AdminDashboardController::class, 'index']);
+    Route::resource('sales', SaleController::class);
+});
+```
+
+**Middleware osztály** (`app/Http/Middleware/AdminMiddleware.php`):
+```php
+public function handle(Request $request, Closure $next)
+{
+    if (!auth()->user()?->isAdmin()) {
+        return redirect('/');
+    }
+    return $next($request);
+}
+```
+
+### 3.4 User modell – szerepkör
+
+A User modell `isAdmin()` helperrel adja vissza a szerepkört (`role === 'admin'`).
+
+### 3.5 Biztonsági megjegyzés
+
+Az admin middleware jelenleg átirányítást ad nem jogosult esetben. API-jellegű végpontoknál hosszabb távon ajánlott lenne státuszkód + JSON policy (403) fenntartása a következetesség miatt.
 
 ---
 
@@ -194,516 +222,698 @@ Az admin middleware jelenleg redirectet ad nem jogosult esetben. API-jellégű v
 
 ### 4.1 Fiókfunkciók
 
-- regisztráció / login / logout (Laravel UI auth)
-- profil szerkesztés (`ProfileController`)
-- felhasználói adatok kiegészítése (pl. telefon)
+- Regisztráció / bejelentkezés / kijelentkezés (Laravel UI auth)
+- Profil szerkesztése (`ProfileController`)
+- Felhasználói adatok kiegészítése (pl. telefonszám)
 
 ### 4.2 E-mail folyamat
-Az időpont foglalas utan a rendszer visszaigaz oló e-mailt probal küldeni (`AppointmentConfirmationMail`).
+
+Az időpont-foglalás után a rendszer visszaigazoló e-mailt próbál küldeni (`AppointmentConfirmationMail`).
 
 Folyamat:
 
-1. Appointment rekord letrejon.
-2. `Mail::to(...)->send(...)` meghivodik.
-3. Sikertelen küldés eseten log bejegyzés keszul, a foglalas nem vesz el.
+1. Az Appointment rekord létrejön.
+2. A `Mail::to(...)->send(...)` meghívódik.
+3. Sikertelen küldés esetén naplóbejegyzés készül, a foglalás nem veszik el.
 
-### 4.3 Robustág
-A mail küldés hibaturo modon mukodik:
+**Mailable osztály** (`app/Mail/AppointmentConfirmationMail.php`):
+```php
+class AppointmentConfirmationMail extends Mailable
+{
+    public function __construct(public Appointment $appointment) {}
 
-- ha a mail küldés hibazik, a foglalási tranzakció már megtortent,
-- a rendszer logban rögzíti a hibat (`APPOINTMENT_MAIL`).
+    public function envelope(): Envelope
+    {
+        return new Envelope(subject: 'Időpont-foglalás megerősítése');
+    }
 
-### 4.4 User experience hatasa
-A felhasználó nem vesziti el a foglalást akkor sem, ha eppen e-mail szolgaltato oldalrol hiba van.
+    public function content(): Content
+    {
+        return new Content(
+            view: 'emails.appointment-confirmation',
+            with: ['appointment' => $this->appointment],
+        );
+    }
+}
+```
+
+**E-mail küldés a kontrollerből**:
+```php
+try {
+    Mail::to(auth()->user()->email)->send(new AppointmentConfirmationMail($appointment));
+} catch (\Exception $e) {
+    \Log::error('APPOINTMENT_MAIL', ['error' => $e->getMessage()]);
+}
+```
+
+### 4.3 Hibatűrés
+
+Az e-mail küldés hibatűrő módon működik:
+
+- Ha az e-mail küldés hibázik, a foglalási tranzakció már megtörtént.
+- A rendszer a naplóba rögzíti a hibát (`APPOINTMENT_MAIL` címkével).
+
+### 4.4 Hatás a felhasználói élményre
+
+A felhasználó nem veszíti el a foglalást akkor sem, ha az e-mail-szolgáltató oldalán hiba lép fel.
 
 ---
 
 ## 5. Backend adatmodellek
 
 ### 5.1 User
-Kulcs mező-k:
 
-- name
-- email
-- phone
-- password
-- role
-- welcome_email_sent_at
+Kulcsmezők:
 
-Relaciok:
+- `name`, `email`, `phone`, `password`, `role`, `welcome_email_sent_at`
 
-- hasMany cars
-- hasMany appointments
-- hasMany sales (seller)
-- hasMany sentMessages
-- hasMany receivedMessages
+Relációk:
+
+- `hasMany` – cars, appointments, sales (eladó), sentMessages, receivedMessages
 
 ### 5.2 Car
-Kulcs mező-k:
 
-- user_id
-- make_model
-- vin
-- license_plate
-- year
+Kulcsmezők:
 
-Relaciok:
+- `user_id`, `make_model`, `vin`, `license_plate`, `year`
 
-- belongsTo user
-- hasMany appointments
-- hasMany issues
-- hasMany sales
-- hasMany messages
+Relációk:
+
+- `belongsTo` – user
+- `hasMany` – appointments, issues, sales, messages
 
 ### 5.3 Appointment
-Kulcs mező-k:
 
-- user_id
-- car_id
-- date
-- time
-- status (`pending`, `confirmed`, `in_progress`, `completed`, `cancelled` jellégű workflow)
-- service, service_stage
-- mechanic_name
-- total_cost
-- service_report
-- issues_found
-- critical_warning
-- work_number
+Kulcsmezők:
 
-Relaciok:
+- `user_id`, `car_id`, `date`, `time`
+- `status` (`pending`, `confirmed`, `in_progress`, `completed`, `cancelled`)
+- `service`, `service_stage`, `mechanic_name`, `total_cost`
+- `service_report`, `issues_found`, `critical_warning`, `work_number`
+- Admin-adatok: `customer_*`, `car_*` mezők
 
-- belongsTo user
-- belongsTo car
-- hasMany servicePhotos
+Relációk:
 
-Megjegyzés:
+- `belongsTo` – user, car
+- `hasMany` – servicePhotos
 
-- `booted()` creating hook automatikusan generál `work_number` értéket.
+> **Megjegyzés:** A `booted()` creating hook automatikusan generál `work_number` értéket.
+
+**Appointment model** (`app/Models/Appointment.php`):
+```php
+protected static function booted(): void
+{
+    static::creating(function (Appointment $appointment) {
+        if (!$appointment->work_number) {
+            $appointment->work_number = 'MNK-' . strtoupper(substr(uniqid(), -6));
+        }
+    });
+}
+
+protected $casts = [
+    'date' => 'date',
+    'created_at' => 'datetime',
+    'updated_at' => 'datetime',
+];
+```
 
 ### 5.4 Issue
-A hibajegy modul a jármuhoz kötött hibaleirásokat kezeli (CRUD), tulajdonosi/policy v\u00e9delmi logikval.
+
+A hibajegy-modul a járműhöz kötött hibaleírásokat kezeli (CRUD), tulajdonosi/policy védelmi logikával.
 
 ### 5.5 Sale
-Kulcs mező-k:
 
-- car_id (nullable-ra migralt)
-- seller_id
-- buyer_id
-- vehicle_type
-- brand
-- model
-- body_type
-- engine_cc
-- fuel_type
-- documents_available
-- document_type
-- technical_inspection
-- price
-- description
-- car_condition
-- mileage
-- is_active
+Kulcsmezők:
 
-Relaciók:
+- `car_id` (nullable-ra migrált), `seller_id`, `buyer_id`
+- `vehicle_type`, `brand`, `model`, `body_type`
+- `engine_cc`, `fuel_type`, `documents_available`, `document_type`
+- `technical_inspection`, `price`, `description`, `car_condition`, `mileage`, `is_active`
 
-- belongsTo car
-- belongsTo seller
-- belongsTo buyer
-- hasMany images
-- hasMany messages
+Relációk:
+
+- `belongsTo` – car, seller, buyer
+- `hasMany` – images, messages
 
 ### 5.6 SaleImage
-A hirdetési kép metadata külön tablaban tarolt:
 
-- sale_id
-- path
-- sort_order
+A hirdetési kép metaadatai külön táblában tárolva:
+
+- `sale_id`, `path`, `sort_order`
 
 ### 5.7 Message
-Kulcs mező-k:
 
-- car_id (optional kontextus)
-- sale_id (optional kontextus)
-- sender_id
-- receiver_id
-- message
-- is_read
+Kulcsmezők:
 
-Relaciók:
+- `car_id` (opcionális kontextus), `sale_id` (opcionális kontextus)
+- `sender_id`, `receiver_id`, `message`, `is_read`
 
-- belongsTo sender
-- belongsTo receiver
-- belongsTo car
-- belongsTo sale
+Relációk:
+
+- `belongsTo` – sender, receiver, car, sale
 
 ### 5.8 AdminNotification
+
 Felhasználóhoz kötött vagy globális értesítés:
 
-- user_id (nullable -> globalis)
-- title
-- message
-- is_read
+- `user_id` (nullable → globális), `title`, `message`, `is_read`
 
 ### 5.9 ServicePhoto
-Szervizfolyamat dokumentálása képés bizonyítékokkal:
 
-- appointment_id
-- title
-- path
+Szervizfolyamat dokumentálása képes bizonyítékokkal:
+
+- `appointment_id`, `title`, `path`
 
 ### 5.10 Soft delete stratégia
+
 A soft delete lehetővé teszi:
 
-- audit jellégű visszakövethetőséget,
-- véletlen törlések utólagos kezelhetőséget,
+- audit jellegű visszakövethetőséget,
+- véletlen törlések utólagos kezelhetőségét,
 - kapcsolt entitások konszolidált megőrzését.
 
 ---
 
-## 6. Backend web + API referencia
+## 6. Backend web és API referencia
 
-### 6.1 Web route szerkezet
-A rendszer gerincet a `web.php` adja. A route-ok 3 nagy blokkban rendezettek:
+### 6.1 Web route-struktúra
 
-1. publikus/legacy route-ok,
-2. admin-only route csoport,
-3. auth user route csoport.
+A rendszer gerincét a `web.php` adja. A route-ok három nagy blokkban rendezettek:
 
-### 6.2 fő web endpoint csoportok
+1. Nyilvános/legacy route-ok
+2. Admin-only route csoport
+3. Bejelentkezett felhasználói route csoport
 
-#### Publikus
+### 6.2 Főbb web endpoint csoportok
 
-- `GET /` -> nyitóoldal
-- Laravel auth oldalak (`/login`, `/register`, stb.)
-- `GET /home` -> legacy home
+#### Nyilvános
 
-#### Auth user
+- `GET /` – nyitóoldal
+- Laravel auth oldalak (`/login`, `/register` stb.)
+- `GET /home` – legacy home
 
-- `GET /dashboard` (user dashboard)
-- profile edit/update
-- cars resource CRUD
-- appointments (index/create/store/show + cancel/reschedule)
-- sales (index/show)
-- issues resource CRUD
-- messaging endpointok autohoz és hirdetéshez
-- notification read/read-all endpointok
+#### Bejelentkezett felhasználó
+
+- `GET /dashboard` – felhasználói irányítópult
+- Profil szerkesztése és frissítése
+- Cars resource CRUD
+- Appointments (index / create / store / show + cancel / reschedule)
+- Sales (index / show)
+- Issues resource CRUD
+- Üzenetküldő endpontok autóhoz és hirdetéshez
+- Értesítés olvasása / összes olvasása endpontok
 
 #### Admin
 
 - `GET /admin-dashboard`
-- sales create/store/edit/update/destroy
-- sale image törlés
-- admin appointments teljes menedzment
-- admin notifications teljes menedzment
-- admin message center
+- Sales create / store / edit / update / destroy
+- Hirdetési kép törlése
+- Admin appointments – teljes kezelés
+- Admin notifications – teljes kezelés
+- Admin üzenetközpont
 
 ### 6.3 API endpoint csoport
+
 `/api/vehicles/*`:
 
-- `types`
-- `brands`
-- `models`
-- `body-types`
+- `types` – jármű típusok
+- `brands` – márkák
+- `models` – modellek
+- `body-types` – karosszériatípusok
 
-Ez az API csoport jelenlegi a frontend űrlapok dinamikus választóit tamogatja.
+Ez az API csoport a frontend űrlapok dinamikus típusválasztóit támogatja.
 
-### 6.4 Resource + custom endpoint minta
-A projekt egyensulyoz:
+### 6.4 Resource + egyedi endpoint minta
 
-- resource route (konvencionalis CRUD)
-- custom route (uzleti folyamat endpointok: cancel, reschedule, update-status)
+A projekt egyensúlyoz a következők között:
 
-### 6.5 API szerzödési forma
+- resource route (konvencionális CRUD),
+- egyedi route (üzleti folyamat endpontok: cancel, reschedule, update-status).
+
+### 6.5 API szerződési forma
+
 A web route-ok vegyesen adnak vissza:
 
 - Blade view-t,
-- JSON payloadot (fokent messaging/notification async endpointok).
+- JSON payload-ot (főként üzenetküldő / értesítési aszinkron endpontoknál).
 
-### 6.6 Konszolidacios javaslat
-Hosszu tavon erdemés lehet endpoint szerződésekét explicit retegbe szervezni:
+### 6.6 Konszolidációs javaslat
 
-- tiszta web response profile,
-- tiszta JSON API profile,
-- uniform error envelope.
+Hosszú távon érdemes lehet az endpoint szerződéseket explicit rétegbe szervezni:
+
+- tiszta web response profil,
+- tiszta JSON API profil,
+- egységes hibaburkoló.
 
 ---
 
 ## 7. Backend hibakezelés
 
 ### 7.1 Validációs hibakezelés
+
 A rendszer több helyen request validációval dolgozik:
 
-- FormRequest (`StoreSaleRequest`, `UpdateSaleRequest`, stb.)
-- inline controller validáció (`$request->validate(...)`)
+- FormRequest (`StoreSaleRequest`, `UpdateSaleRequest` stb.)
+- Inline kontroller validáció (`$request->validate(...)`)
 
-### 7.2 Üzleti ütközésketzelés
-Időpontnal külön konfliktusvizsgalat fut:
+**FormRequest validáció** (`app/Http/Requests/StoreSaleRequest.php`):
+```php
+public function rules(): array
+{
+    return [
+        'brand'    => 'required|string|max:255',
+        'model'    => 'required|string|max:255',
+        'price'    => 'required|numeric|min:0',
+        'images'   => 'array|max:10',
+        'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+    ];
+}
 
-- ugyanarra a datum+idő slotra ne legyen két `confirmed` foglalas.
+public function authorize(): bool
+{
+    return auth()->user()->isAdmin();
+}
+```
 
-### 7.3 jogosultsági hibak
-Tipikus hibaforrasok:
+### 7.2 Üzleti ütközéskezelés
 
-- idegen autohoz tartozas
-- inAktív hirdetéshez kuldes
-- nem cimzett notification olvasas
+Időpontnál külön konfliktusvizsgálat fut: ugyanarra a dátum + idő slotra ne lehessen két `confirmed` foglalás.
 
-### 7.4 Messaging védelmi esetek
-A message endpointok explicit ellenőrzik:
+### 7.3 Jogosultsági hibák
 
-- tulajdonos-e,
-- admin-e,
-- hirdetés aktiv-e,
-- jogosult-e a beszelgetesre.
+Tipikus hibaforrásoк:
 
-### 7.5 Fájlmuõveleti hibak
-hirdetési/szerviz kép törlésnél a rendszer storage oldali torles-t is vegez; uzemeltetesi oldalon ajánlott rendszerés orphan-file ellenőrzes.
+- idegen autóhoz való tartozás,
+- inaktív hirdetéshez való üzenetküldés,
+- nem címzett értesítés olvasása.
 
-### 7.6 Megfigyelhetoőség
-Mail kuldesnel logolt exception metadata segiti a hibafeltarast.
+### 7.4 Üzenetküldési védelmi esetek
+
+Az üzenet endpontok explicit ellenőrzik:
+
+- hogy a felhasználó tulajdonos-e,
+- hogy admin-e,
+- hogy a hirdetés aktív-e,
+- hogy jogosult-e a beszélgetésre.
+
+### 7.5 Fájlkezelési hibák
+
+Hirdetési/szervizképek törlésekor a rendszer a storage oldali törlést is elvégzi. Üzemeltetési oldalon ajánlott rendszeres árva fájl ellenőrzés.
+
+### 7.6 Megfigyelhetőség
+
+E-mail küldésnél naplózott kivétel-metaadatok segítik a hibafeltárást.
 
 ---
 
-## 8. Backend tranzakciós/fizetési folyamatok és piactéri állapotgép
+## 8. Backend piactéri állapotgép
 
 ### 8.1 Jelenlegi állapot
-Az Autonex piactéri modul jelenlegi nem Stripe jellégű payment checkout pipeline-ra épul, hanem hirdetés állapot- és tulajdonosi workflow-ra.
+
+Az Autonex piactéri modul jelenleg nem Stripe-jellegű fizetési folyamatra épül, hanem hirdetési állapot- és tulajdonosi munkafolyamatra.
 
 ### 8.2 Sale állapotlogika
-Kulcs állapotjelzo: `is_active`.
 
-- `true`: hirdetés aktiv, nyilvanos kommunikacio engedett.
-- `false`: hirdetés zart/inaktiv, kulso user számára kommunikacio korlatozott.
+Kulcs állapotjelző: `is_active`.
+
+- `true` – a hirdetés aktív, nyilvános kommunikáció engedett.
+- `false` – a hirdetés zárva/inaktív, külső felhasználó számára a kommunikáció korlátozott.
 
 ### 8.3 Tranzakció helyett folyamatkontroll
-A hangsuly a k\u00f6vetkezokon van:
 
-- ki hozhat letre hirdetést,
-- ki modosithet,
-- ki torolhet,
-- ki uzenhet adott hirdetésrol.
+A hangsúly a következőkön van:
 
-### 8.4 Buyer/seller modellezese
-A modell tamogatja a buyer_id mezőt is, ami jovobeli teljes adasveteli folyamat alapja lehet.
+- Ki hozhat létre hirdetést?
+- Ki módosíthat?
+- Ki törölhet?
+- Ki üzenhet adott hirdetésről?
 
-### 8.5 Kiterjesztés i pontok
-k\u00f6vetkezo iteracióban integráció valósíhato meg:
+### 8.4 Vevő/eladó modellezése
 
-- foglalasi állapot,
-- fizetesi állapot,
-- tranzakcios naplo,
-- birtokbaadasi workflow.
+A modell támogatja a `buyer_id` mezőt is, ami egy jövőbeli teljes adásvételi folyamat alapja lehet.
+
+### 8.5 Kiterjesztési pontok
+
+Következő iterációban integrálható:
+
+- foglalási állapot,
+- fizetési állapot,
+- tranzakciós napló,
+- birtokbaadási munkafolyamat.
 
 ---
 
-## 9. Backend keresés, szűrés és tömegés műveletek
+## 9. Backend keresés, szűrés és tömeges műveletek
 
-### 9.1 sales listázás
-A piacter listázás lapozott (`paginate(10)`), és betölti a kapcsolt entitásokat (`car`, `buyer`, `seller`, `images`).
+### 9.1 Hirdetéslista
 
-### 9.2 Admin appointment szűrok
-Az admin időpontlista több mezőre szűr:
+A piactéri listázás lapozott (`paginate(10)`), és betölti a kapcsolt entitásokat (`car`, `buyer`, `seller`, `images`).
 
-- ugyfel nev,
-- auto marka/modell,
-- rendszam,
-- datum.
+### 9.2 Admin időpontszűrők
 
-### 9.3 Vehicle konfiguracio mint domain dictionary
-A `config/vehicles.php` több szaz marka/modell elemet tartalmaz. Ez gyakorlatilag egy domain szotar:
+Az admin időpontlistán több mezőre lehet szűrni:
 
-- vehicle_type -> brand -> model
-- body_type listak vehicle_type szerint.
+- ügyfél neve,
+- autó márka/modell,
+- rendszám,
+- dátum.
 
-### 9.4 Tömegés jellégű műveletek
-A kódban explicit bulk endpoint nincs minden modulban, de seederek szintjén jelentkezik tömegés adatbetöltés:
+### 9.3 Járműkonfiguráció mint domain-szótár
 
-- auto + hirdetés + kép csomagolt eloallitas.
+A `config/vehicles.php` több száz márka/modell elemet tartalmaz. Gyakorlatilag egy domain-szótár:
 
-### 9.5 keresési fejlesztési lehetőségek
+- vehicle_type → brand → model
+- body_type listák vehicle_type szerint.
 
-- fulltext index a hirdetés leirasokra,
-- facetszeru szűrés (ar, marka, uzemanyag, állapot),
-- elore indexelt dashboard mutatok.
+### 9.4 Tömeges jellegű műveletek
+
+A kódban explicit bulk endpoint nincs minden modulban, de a seederek szintjén jelentkezik tömeges adatbetöltés:
+
+- autó + hirdetés + kép csomagolt előállítása.
+
+### 9.5 Keresési fejlesztési lehetőségek
+
+- Teljes szöveges index a hirdetés-leírásokra.
+- Facet-szerű szűrés (ár, márka, üzemanyag, állapot).
+- Előre indexelt irányítópult-mutatók.
 
 ---
 
 ## 10. Backend munkafolyamatok
 
-### 10.1 User auto felvetele workflow
+### 10.1 Felhasználói autófelvételi munkafolyamat
 
-1. user belep
-2. `cars.create` oldalon adatrögzites
-3. validáció
-4. `cars.store`
-5. user sajat listaban megjelenik
+1. A felhasználó bejelentkezik.
+2. A `cars.create` oldalon rögzíti az adatokat.
+3. Validáció lefut.
+4. `cars.store` végrehajtódik.
+5. Az autó megjelenik a saját listában.
 
-### 10.2 User időpontfoglalás workflow
+### 10.2 Felhasználói időpont-foglalási munkafolyamat
 
-1. user saját auto valaszt
-2. datum+idő megadas
-3. konfliktusellenőrzes
-4. appointment `pending` statusszal letrejon
-5. visszaigaz oló e-mail kiserlet
+1. A felhasználó kiválaszt egy saját autót.
+2. Megadja a dátumot és az időpontot.
+3. Konfliktusellenőrzés fut.
+4. Az appointment `pending` státusszal létrejön.
+5. Visszaigazoló e-mail küldési kísérlet.
 
-### 10.3 User időpont atuőtemezés/lemondas
+**Konfliktusellenőrzés** (`app/Http/Controllers/AppointmentController.php`):
+```php
+public function store(StoreAppointmentRequest $request)
+{
+    $conflict = Appointment::where('car_id', $request->car_id)
+        ->where('date', $request->date)
+        ->where('time', $request->time)
+        ->where('status', 'confirmed')
+        ->exists();
 
-- csak `pending/confirmed` állapotban engedett,
-- status és datum/idő frissites,
-- admin notification letrehozas.
+    if ($conflict) {
+        return back()->withErrors(['time' => 'Ez az idő már foglalt.']);
+    }
 
-### 10.4 Admin időpontkezelés workflow
+    $appointment = Appointment::create([
+        'user_id' => auth()->id(),
+        'car_id'  => $request->car_id,
+        'date'    => $request->date,
+        'time'    => $request->time,
+        'status'  => 'pending',
+    ]);
 
-1. admin listaz szűrőkkel
-2. reszletek + szerkesztes
-3. status update (`confirmed/cancelled/completed`)
-4. szerviz stage kezelés
-5. service photo feltoltes/torles
-6. `completed + ready` eseten user értesítéss
+    Mail::to(auth()->user()->email)->send(new AppointmentConfirmationMail($appointment));
+    return back()->with('success', 'Időpont foglalva.');
+}
+```
 
-### 10.5 sales CRUD workflow
+### 10.3 Felhasználói időpont-átütemezés és lemondás
 
-- admin letrehoz hirdetést,
-- több képet tolthet fel,
-- utolag képenkent torolhet,
-- policy alapú update/delete.
+- Csak `pending` / `confirmed` állapotban engedett.
+- Státusz és dátum/idő frissítése.
+- Admin értesítés létrehozása.
 
-### 10.6 Üzenet workflow auto kontextusban
+### 10.4 Admin időpontkezelési munkafolyamat
 
-- user/admin kuld üzenetet,
-- receiver feloldas automatikusan megtortenik,
-- read/unread állapot endpointokkal frissul,
-- admin oldalon osszegzett unread badge.
+1. Az admin szűrőkkel listázza az időpontokat.
+2. Megtekinti a részleteket és szerkeszti.
+3. Státuszfrissítés (`confirmed` / `cancelled` / `completed`).
+4. Szervizszakasz kezelése.
+5. Szervizfotók feltöltése / törlése.
+6. `completed + ready` esetén felhasználói értesítés küldése.
 
-### 10.7 Üzenet workflow hirdets kontextusban
+### 10.5 Hirdetés CRUD munkafolyamata
 
-- admin, seller, buyer szerepkor külön agon,
-- inAktív hirdetésnel korlatozott kuldes,
-- értesítés automatikus generalasa.
+- Az admin létrehozza a hirdetést.
+- Több képet tölthet fel.
+- Utólag képenként törölhet.
+- Policy alapú frissítés / törlés.
+
+### 10.6 Üzenet munkafolyamat autókontextusban
+
+- A felhasználó vagy az admin üzenetet küld.
+- A fogadó feloldása automatikusan megtörténik.
+- Az olvasott/olvasatlan állapot endpontokon frissül.
+- Admin oldalon összegzett olvasatlan badge jelenik meg.
+
+**Üzenet küldése** (`app/Http/Controllers/MessageController.php`):
+```php
+public function store(Car $car, StoreMessageRequest $request)
+{
+    $this->authorize('create', [Message::class, $car]);
+
+    Message::create([
+        'car_id'      => $car->id,
+        'sender_id'   => auth()->id(),
+        'receiver_id' => $this->resolveReceiver($car),
+        'message'     => $request->message,
+        'is_read'     => false,
+    ]);
+
+    return back()->with('success', 'Üzenet elküldve.');
+}
+
+private function resolveReceiver(Car $car)
+{
+    // Ha admin küldi, a tulajdonosnak; ha felhasználó, akkor az adminnak
+    return auth()->user()->isAdmin() ? $car->user_id : 1;
+}
+```
+
+### 10.7 Üzenet munkafolyamat hirdetési kontextusban
+
+- Az admin, az eladó és a vevő szerepköre külön ágon fut.
+- Inaktív hirdetésnél korlátozott az üzenetküldés.
+- Értesítés automatikusan generálódik.
 
 ---
 
 ## 11. Backend fájltárolás
 
-### 11.1 Storage modell
-A rendszer a Laravel `public` diskét hasznalja:
+### 11.1 Tárolási modell
 
-- hirdetés képek: `sales/...`
-- szerviz fotok: `service-photos/...`
+A rendszer a Laravel `public` lemezét használja:
 
-### 11.2 Szinikronizacio
-A publikus kiszolgalashoz kotelezo:
+- hirdetési képek: `sales/...`
+- szervizfotók: `service-photos/...`
 
-`php artisan storage:link`
+### 11.2 Szimbolikus link
 
-### 11.3 Képtárolás és metadata
-Maga a binaris tartalom a storage-ban van, az adatbazisban metadata:
+A nyilvános kiszolgáláshoz kötelező:
 
-- relatv path
-- rendezés (`sort_order`)
-- tulajdonosi kotés (`sale_id`, `appointment_id`)
+```bash
+php artisan storage:link
+```
+
+### 11.3 Képtárolás és metaadatok
+
+Maga a bináris tartalom a storage-ban van, az adatbázisban csak metaadat tárolódik:
+
+- relatív elérési út
+- rendezési sorrend (`sort_order`)
+- tulajdonosi kötés (`sale_id`, `appointment_id`)
+
+**Képfeltöltés** (`app/Http/Controllers/SaleController.php`):
+```php
+public function store(StoreSaleRequest $request)
+{
+    $sale = Sale::create($request->validated());
+
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $index => $image) {
+            $path = $image->store('sales', 'public');
+            SaleImage::create([
+                'sale_id'    => $sale->id,
+                'path'       => $path,
+                'sort_order' => $index + 1,
+            ]);
+        }
+    }
+
+    return back()->with('success', 'Hirdetés létrehozva.');
+}
+```
 
 ### 11.4 Seeder képforrás
-A hirdetés seed `képek` mappabol olvas prefix alapú egyeztetessel, majd a `public` diskre masol.
 
-### 11.5 Típusok
-Aktív seed logika avif képekre optimalizált, de request validáció oldalon jpeg/png/jpg/webp elfogadott.
+A hirdetési seeder a `képek` mappából olvas prefix alapú egyeztetéssel, majd a `public` lemezre másol.
 
-### 11.6 Fájlrendszer köckazátok
+### 11.5 Fájltípusok
 
-- torolt DB rekord utan ott maradt f\u00e1jlok,
-- manualis storage torlés utan DB-ben maradt path,
-- nagy mennyisegu kép eseten tarhely menedzsment igeny.
+Az aktív seeder logika AVIF képekre optimalizált, de a request validáció oldalán jpeg / png / jpg / webp elfogadott.
+
+### 11.6 Fájlrendszer kockázatok
+
+- Törölt DB rekord után ottmaradt fájlok.
+- Manuális storage törlés után DB-ben maradt elérési utak.
+- Nagy mennyiségű kép esetén tárhelymenedzselési igény.
 
 ---
 
-## 12. Backend üzenetsorok, feladatok és ütemezes
+## 12. Backend üzenetsorok és ütemezés
 
-### 12.1 Queue
-A composer dev script futtat `queue:listen` folyamatot:
+### 12.1 Üzenetsor
+
+A composer dev script futtatja a `queue:listen` folyamatot:
 
 - `--tries=1`
 - `--timeout=0`
 
-Ez egyszeru lokalis hibaturo modot ad, de produkcios worker manager (supervisor/systemd) javasolt.
+Ez egyszerű helyi hibatűrő módot ad, de éles környezetben worker manager (Supervisor / systemd) javasolt.
 
-### 12.2 Scheduler
-külön custom scheduler parancs jelenleg nincs a kodban olyan mértékben, mint egy reservation expiry rendszerben, de a Laravel scheduler infrastruktura rendelkezésre all.
+### 12.2 Ütemező
 
-### 12.3 Log stream
-`php artisan pail` benne van a dev orchestration scriptben, ez gyors hibakeresést ad helyi fejlesztéskor.
+Külön egyedi ütemező parancs jelenleg nincs a kódban (pl. lejárt foglalások kezelése), de a Laravel ütemező infrastruktúra rendelkezésre áll.
 
-### 12.4 Javasolt uzemeltetes
+### 12.3 Naplóstream
 
-- queue worker process monitorozasa,
-- failed_jobs periodikus kezelése,
-- log retention policy bevezetlese.
+A `php artisan pail` benne van a fejlesztői orchestration scriptben – ez gyors hibakeresést ad helyi fejlesztéskor.
+
+### 12.4 Üzemeltetési javaslatok
+
+- Queue worker folyamat monitorozása.
+- Sikertelen feladatok (`failed_jobs`) rendszeres kezelése.
+- Naplórotációs policy bevezetése.
 
 ---
 
-## 13. Jogosultságok és hozzáférési matrix
+## 13. Jogosultságok és hozzáférési mátrix
 
-### 13.1 rétegek
+### 13.1 Rétegek
 
 1. Route middleware (`auth`, `admin`)
-2. Policy osztalyok (`CarPolicy`, `SalePolicy`, `AppointmentPolicy`, `MessagePolicy`, `IssuePolicy`)
-3. Controller szintu egyedi guardok
+2. Policy osztályok (`CarPolicy`, `SalePolicy`, `AppointmentPolicy`, `MessagePolicy`, `IssuePolicy`)
+3. Kontroller szintű egyedi ellenőrzők
 
-### 13.2 Role matrix osszefoglalas
+### 13.2 Szerepkör-mátrix összefoglalása
 
-- Admin:
-  - teljes admin dashboard,
-  - appointment management,
-  - sales management,
-  - globalis message center,
-  - notification management.
+**Admin:**
+- Teljes admin irányítópult
+- Időpontkezelés
+- Hirdetéskezelés
+- Globális üzenetközpont
+- Értesítéskezelés
 
-- bejelentkezett user:
-  - sajat profile,
-  - sajat auto CRUD,
-  - sajat időpontok,
-  - issue-k,
-  - sales listing megtekintes,
-  - üzenetküldés a feltételek szerint.
+**Bejelentkezett felhasználó:**
+- Saját profil
+- Saját autó CRUD
+- Saját időpontok
+- Hibajegyek
+- Hirdetéslista megtekintése
+- Üzenetküldés a feltételek szerint
 
-- Vendeg:
-  - nyitóoldal,
-  - auth oldalak.
+**Vendég:**
+- Nyitóoldal
+- Auth oldalak
 
 ### 13.3 Policy minták
 
-- `SalePolicy::create` -> admin-only.
-- `SalePolicy::update/delete` -> admin vagy seller.
-- `CarPolicy::update/delete` -> admin vagy tulajdonos.
-- `MessagePolicy::view` -> sender/receiver/admin.
+- `SalePolicy::create` → csak admin.
+- `SalePolicy::update/delete` → admin vagy eladó.
+- `CarPolicy::update/delete` → admin vagy tulajdonos.
+- `MessagePolicy::view` → feladó / fogadó / admin.
 
-### 13.4 Defense in depth
-A kodban több ponton redundans vedelem van:
+**CarPolicy** (`app/Policies/CarPolicy.php`):
+```php
+public function update(User $user, Car $car): bool
+{
+    return $user->isAdmin() || $user->id === $car->user_id;
+}
+
+public function delete(User $user, Car $car): bool
+{
+    return $user->isAdmin() || $user->id === $car->user_id;
+}
+```
+
+**SalePolicy** (`app/Policies/SalePolicy.php`):
+```php
+public function create(User $user): bool
+{
+    return $user->isAdmin();
+}
+
+public function update(User $user, Sale $sale): bool
+{
+    return $user->isAdmin() || $user->id === $sale->seller_id;
+}
+```
+
+**Kontroller alkalmazása** (`app/Http/Controllers/CarController.php`):
+```php
+public function update(Request $request, Car $car)
+{
+    $this->authorize('update', $car);
+    $car->update($request->validated());
+    return back()->with('success', 'Autó frissítve.');
+}
+```
+
+### 13.4 Mélységi védelem (defense in depth)
+
+A kódban több ponton redundáns védelem van:
 
 - policy,
-- controller feltételek,
+- kontroller feltételek,
 - route middleware.
 
-Ez csokkenti a jogosulatlan hozzaferés kockázatat route-level hibakonfiguracio eseten is.
+Ez csökkenti a jogosulatlan hozzáférés kockázatát route-szintű hibakonfiguráció esetén is.
+
+**Többszintű védelem** (`app/Http/Controllers/SaleController.php`):
+```php
+public function destroy(Sale $sale)
+{
+    // 1. Route middleware: auth
+    // 2. Policy: csak admin vagy eladó törölhet
+    $this->authorize('delete', $sale);
+
+    // 3. Extra tulajdonos-ellenőrzés
+    if (!auth()->user()->isAdmin() && auth()->user()->id !== $sale->seller_id) {
+        return response()->json(['message' => 'Forbidden'], 403);
+    }
+
+    // 4. Soft delete
+    $sale->delete();
+    return back()->with('success', 'Hirdetés törölve.');
+}
+```
 
 ---
 
 ## 14. Frontend architektúra
 
-### 14.1 Altalanos kép
-A frontend server-side renderelt Blade rendszer, amelyet kis mértéku JS egeszit ki aszinkron üzenetfrissiteshez és dinamikus interakciokhoz.
+### 14.1 Általános kép
 
-### 14.2 Technologiak
+A frontend szerver oldali renderelésű Blade rendszer, amelyet kis mértékű JavaScript egészít ki aszinkron üzenetfrissítéshez és dinamikus interakciókhoz.
+
+### 14.2 Technológiák
 
 - Blade templating
 - Bootstrap 5
 - Sass
 - Vite
-- minimalis `resources/js/app.js`
+- Minimális `resources/js/app.js`
 
 ### 14.3 Oldalszerkezet
-főbb nezetmappak:
+
+Főbb nézetmappák:
 
 - `layouts/`
 - `dashboard/`
@@ -714,947 +924,612 @@ főbb nezetmappak:
 - `messages/`
 - `admin/`
 
-### 14.4 Layout komponenselv
-A közös oldalfej/menuszerkezet centralizalt layoutban van, ahol AppServiceProvider view composer injektalja a szükségés értesítéssi adatokat.
+### 14.4 Layout komponensek
 
-### 14.5 Frontend retegzes
+A közös oldalfej/menüszerkezet centralizált layoutban van, ahol az AppServiceProvider view composer injektálja a szükséges értesítési adatokat.
 
-- teljes oldalas navigation (klasszikus web app)
-- endpoint szintu AJAX a chat/notification helyzetekben
-- progressziv enhancement megkozelites
+### 14.5 Frontend rétegzés
+
+- Teljes oldalas navigáció (klasszikus webalkalmazás)
+- Endpoint szintű AJAX a chat/értesítés helyzetekben
+- Progresszív fejlesztési (progressive enhancement) megközelítés
 
 ---
 
 ## 15. Frontend autentikáció és munkamenet
 
 ### 15.1 Session modell
+
 A frontend auth állapota klasszikus Laravel session cookie alapú.
 
 ### 15.2 Auth UX folyamat
 
-1. user login oldalon hitelesit
-2. session letrejon
-3. auth middleware vedi a route-okat
-4. kijelentkezeskor session ervenytelenedik
+1. A felhasználó a bejelentkezési oldalon hitelesít.
+2. Session létrejön.
+3. Az auth middleware védi a route-okat.
+4. Kijelentkezéskor a session érvénytelenedik.
 
-### 15.3 Navigacios elkülönites
+### 15.3 Navigációs elkülönítés
 
-- admin dashboard külön endpoint,
-- user dashboard külön endpoint,
-- route-level auth guard.
+- Admin irányítópult – külön endpoint.
+- Felhasználói irányítópult – külön endpoint.
+- Route-szintű auth guard.
 
-### 15.4 Authorization feedback
-Nem admin user admin route-ra lepve visszairanyitast kap gyokerre.
+### 15.4 Jogosultsági visszajelzés
+
+Nem admin felhasználó admin route-ra lépve átirányítást kap a gyökérre.
 
 ---
 
-## 16. Frontend komponens- és nezetkonyvtar
+## 16. Frontend komponens- és nézettár
 
-### 16.1 Nezet-tipusok
+### 16.1 Nézettípusok
 
-- listazo oldalak (`index`)
-- letrehozo oldalak (`create`)
-- szerkeszto oldalak (`edit`)
-- reszletoldalak (`show`)
+- Listázó oldalak (`index`)
+- Létrehozó oldalak (`create`)
+- Szerkesztő oldalak (`edit`)
+- Részletoldalak (`show`)
 
 ### 16.2 Modulonkénti sablonok
 
-- sales: `index/create/edit/show`
-- appointments: user oldali flow oldalak
-- admin appointments: külön mappa, külön UX
-- messages: admin index + conversation
+- Sales: `index / create / edit / show`
+- Appointments: felhasználói oldali folyamatoldalak
+- Admin appointments: külön mappa, külön UX
+- Messages: admin index + conversation
 
-### 16.3 Ujrafelhasznalhatosag
-A Blade resznézetekkel és közös layouttal a tipikus navigacios és visszajelzesi pattern ujrafelhasznalhato.
+### 16.3 Újrafelhasználhatóság
 
----
-
-## 17. Frontend utvonalkezelés és navigacio
-
-### 17.1 Navigacios topologia
-
-- nyitóoldal -> login/register
-- login utan role-fuggo dashboard
-- dashboardról tematikus modulok
-
-### 17.2 Legacy route tamogatas
-`/home` route fenntartott kompatibilitasi celbol az auth scaffolding alap redirect miatt.
-
-### 17.3 Contextual nav
-A felhasználó a jármu, időpont, issue, sales modulok kozott válthat; admin oldalon külön menupontok adnak workflow központú navigációt.
+A Blade résznézetekkel és a közös layouttal a tipikus navigációs és visszajelzési minták újrafelhasználhatók.
 
 ---
 
-## 18. Frontend állapotkezelés és integracio
+## 17. Frontend útvonalkezelés és navigáció
 
-### 18.1 SSR állapotforras
-Az állapot tobbnyire szerverrol renderelt adat: Blade template valtozok.
+### 17.1 Navigációs topológia
+
+- Nyitóoldal → bejelentkezés / regisztráció
+- Bejelentkezés után szerepkör-függő irányítópult
+- Irányítópultról tematikus modulok
+
+### 17.2 Legacy route-támogatás
+
+A `/home` route fenntartott kompatibilitási célból az auth scaffolding alapértelmezett átirányítása miatt.
+
+### 17.3 Kontextuális navigáció
+
+A felhasználó a jármű, időpont, hibajegy és hirdetés modulok között válthat; admin oldalon külön menüpontok adnak munkafolyamat-központú navigációt.
+
+---
+
+## 18. Frontend állapotkezelés és integráció
+
+### 18.1 SSR állapotforrás
+
+Az állapot többnyire szerver oldalon renderelt adat: Blade template változók.
 
 ### 18.2 AJAX állapot
-Ahol valós idejű erzet kell:
 
-- üzenetek olvasasa/kuldese,
-- olvasatlan darabszam frissitese,
-- notification read állapot.
+Ahol valós idejű érzet kell:
 
-### 18.3 API integracio tipusok
+- üzenetek olvasása / küldése,
+- olvasatlan darabszám frissítése,
+- értesítés olvasott állapota.
 
-- web form submit (redirect + flash message)
-- JSON endpoint hivas (`expectsJson` esetek)
+### 18.3 API integrációs típusok
 
-### 18.4 adatbetöltési minta
-A kontrollerek jellemzoen eager loadingot hasznalnak (`with(...)`) a N+1 csokkentesere.
+- Webes form submit (redirect + flash üzenet)
+- JSON endpoint hívás (`expectsJson` esetekben)
+
+### 18.4 Adatbetöltési minta
+
+A kontrollerek jellemzően eager loadingot használnak (`with(...)`) az N+1 probléma csökkentésére.
 
 ---
 
-## 19. Frontend betöltőrendszer és UX visszajelzesek
+## 19. Frontend betöltőrendszer és UX visszajelzések
 
-### 19.1 Visszajelzesi forma
-A rendszer fő visszajelzesi csatornai:
+### 19.1 Visszajelzési formák
 
-- success flash üzenetek
-- validation error blokkok
-- inline állapotjelzesek
-- badge/unread számlálótk
+A rendszer fő visszajelzési csatornái:
 
-### 19.2 Admin valós idejű jelzes
-Az admin navbarban olvasatlan üzenetszam jelenik meg, amit a view composer tolt fel.
+- Success flash üzenetek
+- Validációs hibabiokkok
+- Inline állapotjelzések
+- Badge / olvasatlan számlálók
 
-### 19.3 User notification UX
-felhasználói oldalon a nav értesítéssek user-specifikus és globalis (user_id null) elemekét egyesítenek.
+### 19.2 Admin valós idejű jelzés
 
-### 19.4 konzisztencia
-A redirect + flash mintazat egyszeru, konzisztens, tanulhato felhasználói folyamatot ad.
+Az admin navbarban az olvasatlan üzenetek száma jelenik meg, amelyet a view composer tölt fel.
+
+### 19.3 Felhasználói értesítési UX
+
+Felhasználói oldalon a navigációs értesítések felhasználóspecifikus és globális (user_id NULL) elemeket egyesítenek.
+
+### 19.4 Konzisztencia
+
+A redirect + flash minta egyszerű, konzisztens és tanulható felhasználói folyamatot ad.
 
 ---
 
 ## 20. Frontend felhasználói folyamatok
 
-### 20.1 fő flow: jármu rögzites
+### 20.1 Fő folyamat: jármű rögzítése
 
-1. user beloginol
-2. auto letrehozas
-3. auto megjelenik sajat listaban
+1. A felhasználó bejelentkezik.
+2. Autót hoz létre.
+3. Az autó megjelenik a saját listában.
 
-### 20.2 fő flow: időpont foglalas
+### 20.2 Fő folyamat: időpont-foglalás
 
-1. user valaszt sajat autot
-2. foglalasi urlap kitoltese
-3. konfliktusellenőrzes
-4. pending időpont letrejon
-5. e-mail visszaigazolas kiserlet
+1. A felhasználó kiválaszt egy saját autót.
+2. Kitölti a foglalási űrlapot.
+3. Konfliktusellenőrzés fut.
+4. Pending időpont létrejön.
+5. E-mail visszaigazolási kísérlet.
 
-### 20.3 fő flow: admin szervizkezelés
+### 20.3 Fő folyamat: admin szervizkezelés
 
-1. admin szuri/listazza időpontokat
-2. szerkeszti statuszt és szerviz adatokat
-3. service fotok csatolasa
-4. kész állapotnal user értesítéss
+1. Az admin szűri / listázza az időpontokat.
+2. Szerkeszti a státuszt és a szervizadatokat.
+3. Szervizfotókat csatol.
+4. Kész állapotban felhasználói értesítést küld.
 
-### 20.4 fő flow: piacter
+### 20.4 Fő folyamat: piactér
 
-1. user megtekinti sales listat
-2. hirdetés reszlet oldalon képgaleria + adatok
-3. kapcsolodo kommunikacio sale message endpointon
+1. A felhasználó megtekinti a hirdetéslistát.
+2. A hirdetés részletoldalán képgaléria + adatok láthatók.
+3. Kapcsolódó kommunikáció a sale message endponton.
 
-### 20.5 fő flow: üzenet
+### 20.5 Fő folyamat: üzenetküldés
 
-- auto kontextusban vagy sale kontextusban indul,
-- rendszer automatikusan feloldja a cimzettet,
-- olvasatlan számlálótk frissulnek.
+- Autókontextusban vagy hirdetési kontextusban indul.
+- A rendszer automatikusan feloldja a fogadót.
+- Az olvasatlan számlálók frissülnek.
 
-### 20.6 fő flow: értesítéss
+### 20.6 Fő folyamat: értesítések
 
-- user olvassa az egyedi és globalis notification-t,
-- read-all endpointtal egyszerre zarhatja.
+- A felhasználó olvassa az egyedi és globális értesítéseket.
+- A „Mindet olvasottnak jelöl" endponttal egyszerre zárható az összes.
 
 ---
 
-## 21. Frontend stilusrendszer
+## 21. Frontend stílusrendszer
 
 ### 21.1 Alapelvek
 
-- bootstrap utility-first szerkezetek
-- sajat sass/css kiegeszitesek
-- blade oldalszintu stilusreszek
+- Bootstrap utility-first szerkezetek
+- Saját Sass/CSS kiegészítések
+- Blade oldal szintű stílusrészek
 
-### 21.2 konzisztencia
-A rendszer legnagyobb erőssege a konvencionalis, ismerős admin panel jellegu UI, amely gyors betanulast ad.
+### 21.2 Konzisztencia
 
-### 21.3 Tovabblepesi iranyok
+A rendszer legnagyobb erőssége a konvencionális, ismerős admin panel jellegű UI, amely gyors betanulást tesz lehetővé.
 
-- design tokenek formalizalasa,
-- komponensszintu stilus standardok,
-- sotet/vilagos tema opcio.
+### 21.3 Továbbfejlesztési irányok
+
+- Design tokenek formalizálása.
+- Komponensszintű stílusstandardok.
+- Sötét / világos témaopció.
 
 ---
 
 ## 22. Frontend űrlapok és validáció
 
-### 22.1 validációs rétegek
+### 22.1 Validációs rétegek
 
-- szerver oldali validáció (fő)
-- request osztalyok egyes moduloknal
-- inline validáció más moduloknal
+- Szerver oldali validáció (elsődleges)
+- Request osztályok egyes moduloknál
+- Inline validáció más moduloknál
 
-### 22.2 sales validáció
-A sales store/update validáció kezeli:
+### 22.2 Hirdetési validáció
 
-- közös domain mezőkét,
-- képfeltoltés korlatot (max 10),
-- tamogatott mime tipusokat,
-- meretlimitet.
+A hirdetés store / update validáció kezeli:
 
-### 22.3 Appointment validáció
-Az időpont modulban datum, idő, auto ownership, állapot-átmenet és konfliktus logika egyszerre érvényesül.
+- Közös domain mezőket.
+- Képfeltöltési korlátot (max. 10).
+- Támogatott MIME-típusokat.
+- Méretlimitet.
 
-### 22.4 Admin appointment validáció
-Az admin oldal kibovitett mezőkét kezel (ugyfel + auto technikai adatok), és külön status update endpoint is van.
+### 22.3 Időpont validáció
 
-### 22.5 Hiba megjelenites
-A validációs hibak tipikusan redirect + oldalon megjelenített error blokkokon keresztul látszanak.
+Az időpont modulban dátum, idő, autó tulajdonjog, állapotátmenet és konfliktusellenőrzés egyszerre érvényesül.
+
+### 22.4 Admin időpont validáció
+
+Az admin oldal kibővített mezőket kezel (ügyfél + autó technikai adatok), és külön státuszfrissítési endpoint is van.
+
+### 22.5 Hibamegjelenítés
+
+A validációs hibák tipikusan redirect + oldalon megjelenített hibabiokkon keresztül látszanak.
 
 ---
 
-## 23. Frontend hibakezel\u00e9s és hibateruletek
+## 23. Frontend hibakezelés
 
-### 23.1 Hibateruletek
+### 23.1 Hibaterületek
 
 - URL validációs hiba
-- jogosultsági hiba (403/redirect)
-- uzleti konfliktus (időpont overlap)
-- f\u00e1jlmuveleti hiba
-- mail küldés hiba (degradalt uzemmod)
+- Jogosultsági hiba (403 / átirányítás)
+- Üzleti konfliktus (időpont ütközés)
+- Fájlkezelési hiba
+- E-mail küldési hiba (csökkentett üzemmód)
 
 ### 23.2 UX szempont
-A rendszer altalaban nem "hard fail" modon viselkedik; a kritikus uzleti adat mentesre kerul, majd optional szolgaltatas (mail) hibaja logolodik.
 
-### 23.3 Logging
-E-mail kuldesnel explicit log metadata segit root-cause elemezni.
+A rendszer általában nem „hard fail" módon viselkedik: a kritikus üzleti adat mentésre kerül, az opcionális szolgáltatás (e-mail) hibája naplózódik.
 
-### 23.4 Javasolt tovabbi erősítéss
+### 23.3 Naplózás
 
-- egyssegés hibakod-konvencio,
-- centralis exception mapping,
-- strukturalt audit log.
+E-mail küldésnél explicit naplómetaadat segít a kiváltó ok elemzésében.
+
+### 23.4 Javasolt további erősítések
+
+- Egységes hibakód-konvenció.
+- Centrális kivételleképzés.
+- Strukturált audit napló.
 
 ---
 
-## 24. környezet és deployment
+## 24. Környezet és deployment
 
-### 24.1 Kotelezo komponensek
+### 24.1 Kötelező komponensek
 
 - PHP 8.2+
 - Composer
-- Node + npm
-- MySQL/MariaDB
+- Node.js + npm
+- MySQL / MariaDB
 
-### 24.2 Build és futtatas
-Backend + frontend assetek egyutt futnak a Laravel appon belül.
+### 24.2 Build és futtatás
 
-### 24.3 Storage elofeltétel
-A képés funkciokhoz kotelezo `storage:link`.
+A backend + frontend assetek együtt futnak a Laravel alkalmazáson belül.
 
-### 24.4 Queue/log folyamatok
-Dev script parhuzamosan futtat:
+### 24.3 Storage előfeltétel
+
+A képes funkciókhoz kötelező a storage link létrehozása:
+
+```bash
+php artisan storage:link
+```
+
+### 24.4 Queue / napló folyamatok
+
+A dev script párhuzamosan futtatja:
 
 - `php artisan serve`
 - `php artisan queue:listen`
 - `php artisan pail`
 - `npm run dev`
 
-### 24.5 Production checklist
+### 24.5 Éles környezeti ellenőrzőlista
 
-- APP_KEY/APP_ENV helyes
-- DB connection rendben
-- MAIL konfiguracio rendben
-- FILESYSTEM diszk beallitas
-- queue worker daemonized
-- log rotacio beallitva
-- backup policy letrehozva
+- [ ] `APP_KEY` és `APP_ENV` helyes
+- [ ] DB-kapcsolat rendben
+- [ ] `MAIL_*` konfiguráció rendben
+- [ ] Fájlrendszer lemez beállítása
+- [ ] Queue worker démonizálva
+- [ ] Naplórotáció beállítva
+- [ ] Backup policy létrehozva
 
 ---
 
 ## 25. Helyi fejlesztési környezet
 
-### 25.1 Gyors setup
+### 25.1 Gyors beállítás
 
 1. `composer install`
 2. `npm install`
-3. `.env` letrehozas `.env.example` alapjan
+3. `.env` létrehozása `.env.example` alapján
 4. `php artisan key:generate`
 5. `php artisan migrate --seed`
 6. `php artisan storage:link`
 
-### 25.2 Napi futtatas
+### 25.2 Napi futtatás
 
-- `php artisan serve`
-- `npm run dev`
+Két külön terminálban:
 
-vagy osszevontan:
+```bash
+php artisan serve
+npm run dev
+```
 
-- `composer run dev`
+Vagy összevontan:
+
+```bash
+composer run dev
+```
 
 ### 25.3 Seeder adatok
-A seederek demo tartalommal toltik fel:
+
+A seederek demótartalommal töltik fel az adatbázist:
 
 - felhasználók,
-- autok,
-- hirdetések (lokalis képforrasbol),
-- issue-k,
+- autók,
+- hirdetések (helyi képforrásból),
+- hibajegyek,
 - időpontok,
 - üzenetek.
 
 ### 25.4 Tesztek
-A standard tesztfuttatas a Laravel/PHPUnit pipeline-on keresztul tortenik.
+
+A standard tesztfuttatás a Laravel / PHPUnit pipeline-on keresztül történik:
+
+```bash
+php artisan test
+```
 
 ---
 
-## 26. hibaelh\u00e1r\u00edt\u00e1s
+## 26. Hibaelhárítás
 
-### 26.1 Storage képek nem látszanak
-Tuenetek:
+### 26.1 A storage képek nem látszanak
 
-- 404 kép URL-ek,
-- hirdetés galeria ures.
+Tünetek: 404-es képURL-ek, üres hirdetésgaléria.
 
-Lepesek:
+Lépések:
+1. Futtasd: `php artisan storage:link`
+2. Ellenőrizd, hogy a `storage/app/public/sales` tartalmaz-e fájlokat.
+3. Ellenőrizd a fájlrendszer jogosultságokat.
 
-1. `php artisan storage:link`
-2. ellenorizd, hogy a `storage/app/public/sales` tartalmaz-e f\u00e1jlokat
-3. jogosultságok ellenőrzese
+### 26.2 Időpont-foglalás sikertelen
 
-### 26.2 időpont foglalas sikertelen
-Tipikus ok:
+Tipikus okok:
 
-- datum/idő konfliktus megerősítéstt foglalassal,
-- idegen autohoz torteno foglalasi kiserlet.
+- Dátum/idő ütközés egy megerősített foglalással.
+- Idegen autóhoz való foglalási kísérlet.
 
-### 26.3 üzenetküldés tiltva
-Tipikus ok:
+### 26.3 Üzenetküldés tiltva
 
-- user nem tulajdonos,
-- hirdetés inaktiv,
-- nincs jogosultság a kontextushoz.
+Tipikus okok:
 
-### 26.4 Mail nem megy ki
+- A felhasználó nem tulajdonos.
+- A hirdetés inaktív.
+- Nincs jogosultság a kontextushoz.
 
-1. ellenorizd a `MAIL_*` env valtozokat
-2. futtass config clear-t
-3. nezd meg a logot az `APPOINTMENT_MAIL` cimkere
+### 26.4 E-mail nem megy ki
 
-### 26.5 Admin dashboard nem erheto el
+1. Ellenőrizd a `MAIL_*` környezeti változókat.
+2. Futtasd: `php artisan config:clear`
+3. Nézd meg a naplót az `APPOINTMENT_MAIL` címkére szűrve.
 
-- ellenorizd a user role mezőjet (`admin`)
-- ellenorizd, hogy auth session aktiv
+### 26.5 Admin irányítópult nem érhető el
 
-### 26.6 Migration/Seeder hibak
+- Ellenőrizd a felhasználó `role` mezőjét (`admin`).
+- Ellenőrizd, hogy az auth session aktív-e.
 
-- FK konfliktus -> migrate fresh + seed
-- képek hianya -> ellenorizd a `képek` mappat
+### 26.6 Migráció / seeder hibák
 
-### 26.7 Valtozo route viselkedes
-Ha egy endpoint maskent viselkedik, ellenorizd:
+- FK-konfliktus → `php artisan migrate:fresh --seed`
+- Képek hiánya → ellenőrizd a `képek` mappát.
 
-- middleware csoportot,
-- policy-t,
-- controller egyedi guardot.
+### 26.7 Változó route-viselkedés
+
+Ha egy endpoint másként viselkedik, ellenőrizd:
+
+- a middleware csoportot,
+- a policy-t,
+- a kontroller egyedi ellenőrzőjét.
 
 ---
 
-## 27. Osszefoglalas
+## 27. Összefoglalás
 
-### 27.1 fő eredmeny
-Az Autonex egy jol strukturalt, uzletileg hasznalhato Laravel monolit, amely:
+### 27.1 Fő eredmény
 
-- lefedi a jármu + szerviz + piacter főbb use-case-eit,
-- role alapú jogosultsággal dolgozik,
-- külön admin operacios workflow-t ad,
-- képekét és kommunikaciot valós rendszerfunkciokkal kezel.
+Az Autonex egy jól strukturált, üzletileg használható Laravel monolit, amely:
 
-### 27.2 Legfontosabb erőssegek
+- lefedi a jármű + szerviz + piactér főbb use case-eit,
+- szerepköralapú jogosultságokkal dolgozik,
+- különálló admin operációs munkafolyamatot ad,
+- képeket és kommunikációt valós rendszerfunkciókkal kezel.
 
-- tiszta MVC modulrendszer,
-- eletszeru domain modellek,
-- valós admin workflow-k,
-- hibaturo e-mail kezelés,
-- egyszeru, gyorsan telepitheto dev pipeline.
+### 27.2 Legfontosabb erősségek
+
+- Tiszta MVC modulrendszer.
+- Életszerű domain modellek.
+- Valós admin munkafolyamatok.
+- Hibatűrő e-mail kezelés.
+- Egyszerű, gyorsan telepíthető fejlesztői pipeline.
 
 ### 27.3 Legfontosabb kockázatok
 
-- vegyes validációs megkozelités (FormRequest + inline),
-- web/API response forma nem teljesen homogen,
-- payment workflow nincs teljesen kiemelve külön modulba,
-- üzenetfolyamatok komplexitasa novekedessel nehezebben karbantarthato lehet.
+- Vegyes validációs megközelítés (FormRequest + inline).
+- Web / API response forma nem teljesen homogén.
+- Fizetési munkafolyamat nincs teljesen külön modulba kiemelve.
+- Az üzenetfolyamatok komplexitása növekedéssel nehezebben karbantarthatóvá válhat.
 
-### 27.4 Prioritaslista tovabbfejlesztéshez
+### 27.4 Prioritáslista a továbbfejlesztéshez
 
-1. Egyssegés API/hiba envelope policy.
-2. külön service layer a komplex controller workflow-kra.
-3. Teszt lefedettseg novelese (feature + policy + integration).
-4. üzenetmodul audit/monitoring bovitese.
-5. Optional valós idejű csatorna (websocket) a polling jelleg helyett.
+1. Egységes API / hiba envelope policy.
+2. Különálló service réteg a komplex kontroller munkafolyamatokhoz.
+3. Tesztlefedettség növelése (feature + policy + integráció).
+4. Üzenetmodul audit / monitoring bővítése.
+5. Opcionális valós idejű csatorna (WebSocket) a polling jellegű megközelítés helyett.
 
 ---
 
-## 28. Melleklet A - Vegpontmatrix
+## 28. A melléklet – Végpontmátrix
 
-### A.1 Public + auth alap
+### A.1 Nyilvános + auth alap
 
-- GET /
-- Auth::routes() altal adott auth endpointok
-- GET /home
+- `GET /`
+- `Auth::routes()` által adott auth endpontok
+- `GET /home`
 
-### A.2 User dashboard + profile
+### A.2 Felhasználói irányítópult + profil
 
-- GET /dashboard
-- GET /profile
-- PUT /profile
+- `GET /dashboard`
+- `GET /profile`
+- `PUT /profile`
 
-### A.3 Notification
+### A.3 Értesítések
 
-- PATCH /notifications/{notification}/read
-- PATCH /notifications/read-all
+- `PATCH /notifications/{notification}/read`
+- `PATCH /notifications/read-all`
 
-### A.4 Cars
+### A.4 Cars (autók)
 
-- resource: cars (index/create/store/show/edit/update/destroy)
+- Resource: `cars` (index / create / store / show / edit / update / destroy)
 
-### A.5 Appointments (user)
+### A.5 Appointments (időpontok – felhasználói)
 
-- GET /appointments
-- GET /appointments/create
-- POST /appointments
-- GET /appointments/{appointment}
-- PATCH /appointments/{appointment}/cancel
-- PATCH /appointments/{appointment}/reschedule
+- `GET /appointments`
+- `GET /appointments/create`
+- `POST /appointments`
+- `GET /appointments/{appointment}`
+- `PATCH /appointments/{appointment}/cancel`
+- `PATCH /appointments/{appointment}/reschedule`
+- `GET /appointments/{appointment}/work-order-pdf`
 
-### A.6 Sales
+### A.6 Sales (hirdetések)
 
-- User oldali: GET /sales, GET /sales/{sale}
-- Admin oldali: create/store/edit/update/destroy
-- DELETE /sales/{sale}/images/{image}
+- Felhasználói: `GET /sales`, `GET /sales/{sale}`
+- Admin: create / store / edit / update / destroy
+- `DELETE /sales/{sale}/images/{image}`
 
-### A.7 Issues
+### A.7 Issues (hibajegyek)
 
-- resource: issues
+- Resource: `issues`
 
-### A.8 Messages
+### A.8 Messages (üzenetek)
 
-Auto kontextus:
+Autókontextus:
+- `POST /cars/{car}/messages`
+- `GET /cars/{car}/messages`
 
-- POST /cars/{car}/messages
-- GET /cars/{car}/messages
-
-hirdetés kontextus:
-
-- POST /sales/{sale}/messages
-- GET /sales/{sale}/messages
+Hirdetési kontextus:
+- `POST /sales/{sale}/messages`
+- `GET /sales/{sale}/messages`
 
 Badge:
+- `GET /messages/unread-count`
 
-- GET /messages/unread-count
-
-Admin message center:
-
-- GET /admin/messages
-- GET /admin/messages/car/{car}
+Admin üzenetközpont:
+- `GET /admin/messages`
+- `GET /admin/messages/car/{car}`
 
 ### A.9 Admin appointments
 
-- GET /admin/appointments
-- GET /admin/appointments/create
-- POST /admin/appointments
-- GET /admin/appointments/{appointment}
-- GET /admin/appointments/{appointment}/edit
-- PUT /admin/appointments/{appointment}
-- PATCH /admin/appointments/{appointment}/update-status
-- DELETE /admin/service-photos/{photo}
-- DELETE /admin/appointments/{appointment}
+- `GET /admin/appointments`
+- `GET /admin/appointments/create`
+- `POST /admin/appointments`
+- `GET /admin/appointments/{appointment}`
+- `GET /admin/appointments/{appointment}/edit`
+- `PUT /admin/appointments/{appointment}`
+- `PATCH /admin/appointments/{appointment}/update-status`
+- `DELETE /admin/service-photos/{photo}`
+- `DELETE /admin/appointments/{appointment}`
 
-### A.10 Admin notifications
+### A.10 Admin notifications (értesítések)
 
-- GET /admin/notifications
-- GET /admin/notifications/create
-- POST /admin/notifications
-- DELETE /admin/notifications/{notification}
+- `GET /admin/notifications`
+- `GET /admin/notifications/create`
+- `POST /admin/notifications`
+- `DELETE /admin/notifications/{notification}`
 
-### A.11 API vehicles
+### A.11 API vehicles (jármű adatok)
 
-- GET /api/vehicles/types
-- GET /api/vehicles/brands
-- GET /api/vehicles/models
-- GET /api/vehicles/body-types
+- `GET /api/vehicles/types`
+- `GET /api/vehicles/brands`
+- `GET /api/vehicles/models`
+- `GET /api/vehicles/body-types`
 
 ---
 
-## 29. Melleklet B - adatmodell szotar
+## 29. B melléklet – Adatmodell-szótár
 
 ### B.1 users
-Felelos: autentikáció, szerepkor, alap profil.
+**Felelős:** autentikáció, szerepkör, alap profil.
 
-fő mezők:
-
-- id
-- name
-- email
-- phone
-- password
-- role
-- email_verified_at
-- welcome_email_sent_at
-- created_at/updated_at
+Főbb mezők: `id`, `name`, `email`, `phone`, `password`, `role`, `email_verified_at`, `welcome_email_sent_at`, `created_at`, `updated_at`
 
 ### B.2 cars
-Felelos: felhasználói jármu torzs.
+**Felelős:** felhasználói jármű törzs.
 
-fő mezők:
-
-- id
-- user_id
-- make_model
-- vin
-- license_plate
-- year
-- deleted_at
+Főbb mezők: `id`, `user_id`, `make_model`, `vin`, `license_plate`, `year`, `deleted_at`
 
 ### B.3 appointments
-Felelos: szerviz foglalas + uzemeltetesi állapotok.
+**Felelős:** szervizfoglalás + üzemeltetési állapotok.
 
-fő mezők:
-
-- id
-- user_id
-- car_id
-- date
-- time
-- status
-- service
-- description
-- service_stage
-- mechanic_name
-- total_cost
-- service_report
-- issues_found
-- critical_warning
-- work_number
-- customer_* / car_* admin adatok
-- deleted_at
+Főbb mezők: `id`, `user_id`, `car_id`, `date`, `time`, `status`, `service`, `description`, `service_stage`, `mechanic_name`, `total_cost`, `service_report`, `issues_found`, `critical_warning`, `work_number`, `customer_*` / `car_*` admin adatok, `deleted_at`
 
 ### B.4 issues
-Felelos: hibajegy nyilvantartas.
+**Felelős:** hibajegy-nyilvántartás.
 
-fő mezők:
-
-- id
-- user_id
-- car_id
-- title/leiras/status jellegu mezők (a konkret migracio szerint)
-- deleted_at
+Főbb mezők: `id`, `user_id`, `car_id`, `title`, leírás, státusz jellegű mezők, `deleted_at`
 
 ### B.5 sales
-Felelos: piacteri hirdetés.
+**Felelős:** piactéri hirdetés.
 
-fő mezők:
-
-- id
-- car_id
-- seller_id
-- buyer_id
-- vehicle_type
-- brand
-- model
-- body_type
-- engine_cc
-- fuel_type
-- documents_available
-- document_type
-- technical_inspection
-- price
-- description
-- car_condition
-- mileage
-- is_active
-- deleted_at
+Főbb mezők: `id`, `car_id`, `seller_id`, `buyer_id`, `vehicle_type`, `brand`, `model`, `body_type`, `engine_cc`, `fuel_type`, `documents_available`, `document_type`, `technical_inspection`, `price`, `description`, `car_condition`, `mileage`, `is_active`, `deleted_at`
 
 ### B.6 sale_images
-Felelos: hirdetéshez tartozo több kép metadata.
+**Felelős:** hirdetéshez tartozó több kép metaadata.
 
-fő mezők:
-
-- id
-- sale_id
-- path
-- sort_order
-- timestamps
+Főbb mezők: `id`, `sale_id`, `path`, `sort_order`, `created_at`, `updated_at`
 
 ### B.7 messages
-Felelos: autohoz/hirdetéshez kötött üzenetek.
+**Felelős:** autóhoz / hirdetéshez kötött üzenetek.
 
-fő mezők:
-
-- id
-- car_id
-- sale_id
-- sender_id
-- receiver_id
-- message
-- is_read
-- deleted_at
+Főbb mezők: `id`, `car_id`, `sale_id`, `sender_id`, `receiver_id`, `message`, `is_read`, `deleted_at`
 
 ### B.8 admin_notifications
-Felelos: rendszerüzenetek, olvasottsag.
+**Felelős:** rendszerüzenetek, olvasottság.
 
-fő mezők:
-
-- id
-- user_id (nullable)
-- title
-- message
-- is_read
-- timestamps
+Főbb mezők: `id`, `user_id` (nullable), `title`, `message`, `is_read`, `created_at`, `updated_at`
 
 ### B.9 service_photos
-Felelos: szerviz folyamat dokumentacio.
+**Felelős:** szervizfolyamat dokumentálása.
 
-fő mezők:
-
-- id
-- appointment_id
-- title
-- path
-- timestamps
+Főbb mezők: `id`, `appointment_id`, `title`, `path`, `created_at`, `updated_at`
 
 ---
 
-## 30. Melleklet C - Uzemeltetesi ellenőrzolistak
+## 30. C melléklet – Üzemeltetési ellenőrzőlisták
 
-### C.1 Release elotti ellenőrzes
+### C.1 Kiadás előtti ellenőrzés
 
-- [ ] env valtozok megfelelnek
-- [ ] migration lefutott
-- [ ] seed (ha demo környezet)
-- [ ] storage link megvan
-- [ ] queue worker fut
-- [ ] logok tisztak kritikus exception nelkul
-- [ ] admin és user login tesztelve
-- [ ] képfeltoltés + torlés tesztelve
-- [ ] időpont workflow tesztelve
-- [ ] messaging workflow tesztelve
+- [ ] Környezeti változók megfelelőek
+- [ ] Migráció lefutott
+- [ ] Seed lefutott (demo környezetben)
+- [ ] Storage link megvan
+- [ ] Queue worker fut
+- [ ] A naplók tiszták, kritikus kivétel nélkül
+- [ ] Admin és felhasználói bejelentkezés tesztelve
+- [ ] Képfeltöltés + törlés tesztelve
+- [ ] Időpont munkafolyamat tesztelve
+- [ ] Üzenetküldési munkafolyamat tesztelve
 
-### C.2 Smoke teszt forgatokonyv
+### C.2 Füstteszt forgatókönyv
 
-1. Login admin és user szerepkorral.
-2. User letrehoz autot.
-3. User foglal időpontot.
-4. Admin megerősiti majd completed+ready állapotba teszi.
-5. User oldalon notification ellenőrzes.
-6. Admin letrehoz/modosit hirdetést több képpel.
-7. User megtekinti hirdetést és üzenetet kuld.
-8. Admin valaszol, unread badge ellenőrzes.
+1. Bejelentkezés admin és felhasználó szerepkörrel.
+2. Felhasználó létrehoz egy autót.
+3. Felhasználó időpontot foglal.
+4. Admin megerősíti, majd `completed + ready` állapotba teszi.
+5. Felhasználói oldalon értesítés ellenőrzése.
+6. Admin létrehoz / módosít hirdetést több képpel.
+7. Felhasználó megtekinti a hirdetést és üzenetet küld.
+8. Admin válaszol, olvasatlan badge ellenőrzése.
 
-### C.3 Incident kezelés mini runbook
+### C.3 Incidens-kezelési mini runbook
 
-- Lepés 1: reprodukalhatosag ellenőrzese.
-- Lepés 2: route + middleware + policy harmás ellenőrzese.
-- Lepés 3: DB állapot ellenőrzés (`appointments`, `sales`, `messages`).
-- Lepés 4: storage állapot ellenőrzés (`sales`, `service-photos`).
-- Lepés 5: log elemés (`laravel.log`, pail stream).
-- Lepés 6: hotfix vagy rollback dontes.
+1. Reprodukálhatóság ellenőrzése.
+2. Route + middleware + policy hármas ellenőrzése.
+3. DB állapot ellenőrzése (`appointments`, `sales`, `messages`).
+4. Storage állapot ellenőrzése (`sales`, `service-photos`).
+5. Naplóelemzés (`laravel.log`, pail stream).
+6. Gyorsjavítás vagy visszaállítás döntése.
 
-### C.4 fejlesztési quality gate
+### C.4 Fejlesztési minőségi kapuk
 
-- kodstilus rendben,
-- validáció nem lazult,
-- jogosultság nem gyengult,
-- N+1 regresszio nincs,
-- route naming konzisztens,
-- UI feedback egyertelmu.
-
----
-
-## Zaradek
-Ez a dokumentacio az Autonex aktualis kodállapotahoz igazodva keszult, a valós route-ok, kontrollerek, modellek, policy-k, seederek és migracios állapot figyelembevetelevel. A dokumentum celja, hogy fejlesztoi, uzemeltetoi és atadasi oldalrol egyarant hasznalhato referencia legyen.
-
----
----
-
-## 31. Melleklet - Roviditett kiegeszitesek
-
-### 31.1 Controller-specifikacio (osszefoglalo)
-
-- SaleController: listázás, létrehozás, szerkesztés, képfeltöltés, képtörlés, policy-alapú törlés.
-- AppointmentController: user foglalás, konfliktuskezelés, lemondás, átütemezés, e-mail visszaigazolás.
-- AppointmentManagementController: admin szűrés, státuszfrissítés, service-fotók, kész állapot értesítés.
-- MessageController: autó- és hirdetés-kontextusú beszélgetések, olvasatlan szám, admin üzenetközpont.
-- DashboardController: user és admin KPI-k, napi/havi összesítések.
-
-### 31.2 Migration és seeder osszefoglalo
-
-- Migrációk fokozatosan bővítették az appointment/sales/message domaint.
-- A sales képkezelés külön táblában (`sale_images`) történik.
-- Seeder sorrend: userős -> cars -> sales -> issues -> appointments -> messages.
-- A sale képek lokális `képek` forrásból kerülnek storage-ba.
-
-### 31.3 Teszt és uzemeltetés roviden
-
-- Kritikus tesztek: jogosultságok, appointment konfliktus, sales képkezelés, messaging receiver logika.
-- Üzemeltetési fókusz: storage link, queue worker, log monitor, backup ellenőrzés.
-- Release minimum: smoke teszt + role alapú hozzáférés-ellenőrzés.
-
-### 31.4 Tovabbi fejlesztési iranyok
-
-1. Egységés API hiba-válaszok.
-2. Service layer a komplex controller logikák alá.
-3. Nagyobb tesztlefedettség policy és workflow ágon.
-4. Messaging teljesítmény-optimalizálás (pagination, indexek).
-5. Opcionális valós idejű kommunikáció (WebSocket).
-
-### 31.5 Word-export cel (40-45 oldal)
-
-Javasolt formázás:
-
-- Betű: Timés New Roman 12 vagy Calibri 11
-- Sorköz: 1.15
-- Margó: normál
-- Címsorok: Heading 1/2/3
-- Automatikus Tartalomjegyzék
-
-Ezzel a rövidített változat tipikusan a kért tartományhoz közelít.
+- [ ] Kódstílus rendben
+- [ ] Validáció nem lazult
+- [ ] Jogosultság nem gyengült
+- [ ] N+1 regresszió nincs
+- [ ] Route névadás konzisztens
+- [ ] UI visszajelzés egyértelmű
 
 ---
 
-## 32. Melleklet D - Hibakod és valaszmatrix
+## Záradék
 
-### 32.1 Altalanos status kodok
-
-A projektben a k\u00f6vetkezo status kodok tekinthetok iranyadonak:
-
-- 200: sikerés JSON valasz
-- 302: sikerés web redirect
-- 401: bejelentkezés hianya
-- 403: jogosultság hianya
-- 404: nem letezo eroforras
-- 422: validációs hiba
-
-### 32.2 Appointment hibaképek
-
-Tipikus hibak:
-
-- date multbeli -> 422
-- time format hiba -> 422
-- idegen auto -> 403
-- confirmed slot utkozés -> validációs hiba
-
-### 32.3 sales hibaképek
-
-Tipikus hibak:
-
-- hianyzo kotelezo mező -> 422
-- kép mime hiba -> 422
-- kép meret limit tullepés -> 422
-- nem jogosult modositas/torlés -> 403
-
-### 32.4 Message hibaképek
-
-Tipikus hibak:
-
-- jogosulatlan küldés inAktív kontextusban -> 403
-- hianyzo message text -> 422
-
-### 32.5 Notification hibaképek
-
-Tipikus hibak:
-
-- más user notificationjanak olvasasa -> 403
-
-### 32.6 Uzemeltetesi javaslat
-
-A gyakorlatban hasznos egy rovid hibakod-szotar a support csapatnak, ahol endpointonkent szerepel:
-
-- tipikus user hibaüzenet,
-- valós backend ok,
-- javasolt operator teendo.
-
----
-
-## 33. Melleklet E - Bovitett endpoint-csoportositas
-
-### 33.1 Auth és session
-
-- Laravel auth route-ok
-- session alapú hozzáférés
-- admin route extra middleware
-
-### 33.2 Profile és account
-
-- profile edit/update
-- account adatok karbantartasa
-
-### 33.3 Cars domain
-
-- teljes CRUD
-- ownership policy
-- kapcsolódás issue és appointment modulhoz
-
-### 33.4 Appointment domain
-
-- user oldali foglalas
-- admin oldali menedzsment
-- status workflow
-- conflict v\u00e9delmi szabaly
-
-### 33.5 sales domain
-
-- listazo + reszlet user oldalon
-- letrehozas/szerkesztés admin oldalon
-- tobbképés media modell
-
-### 33.6 Issue domain
-
-- hiba bejelentes
-- policy alapú hozzáférés
-
-### 33.7 Messaging domain
-
-- auto kontextus
-- hirdetés kontextus
-- olvasatlan badge
-- admin conversation center
-
-### 33.8 Notification domain
-
-- egyedi értesítés olvasas
-- osszés olvasottra allitas
-- admin oldali kezelés
-
-### 33.9 Utility API domain
-
-- vehiclés tipus/marka/modell/body-type vegpontok
-- URLap helper adatszolgaltatas
-
----
-
-## 34. Melleklet F - Bovitett tesztforgatokonyv
-
-### 34.1 Smoke teszt (rovid)
-
-1. login user/admin
-2. car letrehozas
-3. appointment store
-4. admin status update
-5. sale listázás és reszlet
-6. message küldés és olvasas
-7. notification read-all
-
-### 34.2 Funkcionalis teszt (reszletes)
-
-Cars:
-
-- create/update/delete ownership ellenőrzessel
-
-Appointments:
-
-- store konfliktusmentés slotra
-- store konfliktusos slotra
-- cancel és reschedule különbozo statuszoknal
-
-Sales:
-
-- admin create képekkel
-- image delete guard
-- update append image viselkedes
-
-Messaging:
-
-- car és sale kontextus receiver feloldas
-- read flag update ellenőrzes
-
-Notifications:
-
-- sajat olvasas
-- idegen elem tiltasa
-
-### 34.3 Regreszios teszt
-
-Minden release elott legalabb:
-
-- policy regression,
-- route v\u00e9delmi regression,
-- storage elerés regression,
-- dashboard aggregacio sanity check.
-
-### 34.4 Tesztadat policy
-
-A tesztekben ajánlott:
-
-- külön admin és normal user fixture,
-- legalabb két user + két auto + két sale minta,
-- konfliktusra eloallitott appointment minták.
-
-### 34.5 Exit kriterium
-
-Release csak akkor mehet productionre, ha:
-
-- blocker hiba nincs,
-- kritikus workflow-k passzolnak,
-- jogosultsági tesztek passzolnak.
-
----
-
-## 35. Melleklet G - Uzemeltetesi ellenőrzés bovitve
-
-### 35.1 Deployment elotti ellenőrzes
-
-- env valtozok
-- DB kapcsolat
-- migration dry-run terv
-- backup aktualitas
-
-### 35.2 Deployment utani ellenőrzes
-
-- application elérhetőség
-- key endpointok valaszideje
-- storage képelérés
-- queue process állapot
-
-### 35.3 Napi monitor checklist
-
-- kritikus hiba log
-- 5xx trend
-- unread badge endpoint elérhetőség
-- appointment store endpoint elérhetőség
-
-### 35.4 Heti monitor checklist
-
-- DB meret trend
-- storage meret trend
-- slow query minta
-- failed job minta
-
-### 35.5 Havi kontroll
-
-- jogosultsági audit
-- policy review
-- dokumentacio frissites
-- release checklist korrekcio
-
----
-
-## 36. Zaro megjegyzés a terjedelemhez
-
-Ez a verzio tudatosan roviditett, de tovabbra is teljes koru muszaki attekintest ad:
-
-- architektúra,
-- backend,
-- frontend,
-- domain modellek,
-- endpointok,
-- workflow-k,
-- teszteles,
-- uzemeltetes.
-
-A túlméretezett mellekletek helyett a legfontosabb reszek maradtak benne, hogy a dokumentum Wordben varhatoan kozelebb essen a kert 40-45 oldalas tartomanyhoz.
-
-Ha a vegso Word exportnal meg mindig 45 folott lenne, akkor a melleklet D-F pontok rovidithetok. Ha 40 alatt maradna, ugyanitt a tesztforgatokonyvek bovithetoek tovabbi use-case-ekkel.
-
+Ez a dokumentáció az Autonex aktuális kódállapotához igazodva készült, a valós route-ok, kontrollerek, modellek, policy-k, seederek és migrációs állapot figyelembevételével. A dokumentum célja, hogy fejlesztői, üzemeltetői és átadási oldalról egyaránt használható referencia legyen.

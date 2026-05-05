@@ -136,12 +136,21 @@
     </div>
 
     <section class="market-section">
+        @if($sales->count() > 0)
+            <p style="margin:0 0 14px;opacity:.72;font-size:.92rem;">
+                Megjelenítve {{ $sales->firstItem() }}-{{ $sales->lastItem() }} / {{ $sales->total() }} találat.
+            </p>
+        @endif
+
         <div class="market-card-grid" id="market-list">
             @forelse($sales as $sale)
                 @php
-                    $img = $sale->images->sortBy('sort_order')->first();
+                    $availableImages = $sale->images
+                        ->sortBy('sort_order')
+                        ->filter(fn ($image) => \Illuminate\Support\Facades\Storage::disk('public')->exists($image->path));
+                    $img = $availableImages->first();
                     $imgUrl = $img ? asset('storage/' . $img->path) : null;
-                    $imgCount = $sale->images->count();
+                    $imgCount = $availableImages->count();
                 @endphp
                 <a href="{{ route('sales.show', $sale) }}" class="market-card-item" data-market-item
                     data-brand="{{ mb_strtolower($sale->brand ?? '') }}"

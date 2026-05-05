@@ -14,6 +14,8 @@ class SaleSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->cleanupExistingSales();
+
         Storage::disk('public')->deleteDirectory('sales');
         Storage::disk('public')->makeDirectory('sales');
 
@@ -52,6 +54,30 @@ class SaleSeeder extends Seeder
             $this->attachImages($sale, $carData['image_prefix']);
 
             $this->command->info("  ✓ {$carData['brand']} {$carData['model']}");
+        }
+    }
+
+    private function cleanupExistingSales(): void
+    {
+        $sales = Sale::with(['images', 'car'])->get();
+
+        foreach ($sales as $sale) {
+            foreach ($sale->images as $image) {
+                Storage::disk('public')->delete($image->path);
+            }
+
+            $sale->images()->delete();
+
+            $car = $sale->car;
+            $sale->forceDelete();
+
+            if ($car
+                && !$car->appointments()->exists()
+                && !$car->issues()->exists()
+                && !$car->messages()->exists()
+                && !$car->sales()->withTrashed()->exists()) {
+                $car->forceDelete();
+            }
         }
     }
 

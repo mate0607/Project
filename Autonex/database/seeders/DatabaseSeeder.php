@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
             SaleSeeder::class,
             IssueSeeder::class,
             AppointmentSeeder::class,
-            MessageSeeder::class,
         ]);
     }
 }

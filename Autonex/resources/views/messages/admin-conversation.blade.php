@@ -28,6 +28,13 @@
                     <div class="msg-conv-bubble {{ $isMine ? 'msg-conv-bubble-mine' : 'msg-conv-bubble-theirs' }}">
                         <small class="msg-conv-sender">{{ $msg->sender?->name ?? 'Törölt felhasználó' }}</small>
                         <p class="msg-conv-text">{{ $msg->message }}</p>
+                        <form action="{{ route('admin.messages.destroy', $msg) }}" method="POST" style="margin-top:6px;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" onclick="return confirm('Biztosan törölni szeretnéd ezt az üzenetet?');" style="background:transparent;border:none;color:#fca5a5;padding:0;font-size:.78rem;cursor:pointer;">
+                                Moderálás (törlés)
+                            </button>
+                        </form>
                     </div>
                     <small class="msg-conv-time">{{ $msg->created_at->format('Y.m.d H:i') }}</small>
                 </div>

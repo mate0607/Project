@@ -42,6 +42,7 @@
                     <a href="{{ route('sales.index') }}">Eladások</a>
                     <a href="{{ route('admin.appointments.index') }}">Időpontok kezelése</a>
                     <a href="{{ route('admin.notifications.index') }}">Ügyfél értesítés</a>
+                    <a href="{{ route('admin.users.index') }}">Felhasználók</a>
                     <a href="{{ route('admin.messages.index') }}" style="position:relative;">Üzenetek
                         @if($adminUnreadMsgCount > 0)
                             <span style="position:absolute;top:-6px;right:-12px;background:#ef4444;color:#fff;font-size:11px;font-weight:700;min-width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;line-height:1;">{{ $adminUnreadMsgCount > 9 ? '9+' : $adminUnreadMsgCount }}</span>

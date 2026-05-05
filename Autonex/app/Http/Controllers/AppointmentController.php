@@ -7,6 +7,7 @@ use App\Mail\AppointmentConfirmationMail;
 use App\Models\AdminNotification;
 use App\Models\Appointment;
 use App\Models\Car;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -219,6 +220,27 @@ class AppointmentController extends Controller
 
         return redirect()->route('appointments.show', $appointment)
             ->with('success', 'Időpont sikeresen átütemezve.');
+    }
+
+    /**
+     * Download the work order as PDF (only when service_stage = ready).
+     */
+    public function downloadWorkOrderPdf(Appointment $appointment)
+    {
+        $this->ensureAppointmentOwnership($appointment);
+
+        if ($appointment->service_stage !== 'ready') {
+            abort(403, 'A számla csak akkor tölthető le, ha az autó készen áll az átvételre.');
+        }
+
+        $appointment->load(['car', 'user']);
+
+        $pdf = Pdf::loadView('appointments.work-order-pdf', compact('appointment'))
+            ->setPaper('a4', 'portrait');
+
+        $filename = 'szamla-' . ($appointment->work_number ?? $appointment->id) . '.pdf';
+
+        return $pdf->download($filename);
     }
 
 }

@@ -8,9 +8,67 @@ use App\Models\Message;
 use App\Models\Sale;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class MessageController extends Controller
 {
+    private function isAdminRelevantCar(Car $car): bool
+    {
+        return $car->user()?->where('role', 'admin')->exists()
+            || $car->sales()->exists()
+            || $car->messages()
+                ->where(function ($query) {
+                    $query->whereHas('sender', fn ($userQuery) => $userQuery->where('role', 'admin'))
+                        ->orWhereHas('receiver', fn ($userQuery) => $userQuery->where('role', 'admin'));
+                })
+                ->exists();
+    }
+
+    private function validateAntiSpam(Request $request, string $scope, int $scopeId): string
+    {
+        $user = auth()->user();
+        $message = trim((string) $request->input('message'));
+
+        if ($user && $user->isAdmin()) {
+            return $message;
+        }
+
+        $rateKey = "messages:{$scope}:{$scopeId}:{$user->id}";
+        if (RateLimiter::tooManyAttempts($rateKey, 6)) {
+            throw ValidationException::withMessages([
+                'message' => 'Túl sok üzenetet küldtél rövid idő alatt. Kérlek várj 1 percet.',
+            ]);
+        }
+        RateLimiter::hit($rateKey, 60);
+
+        $normalized = mb_strtolower(preg_replace('/\s+/u', ' ', $message) ?? $message);
+        $hasLink = (bool) preg_match('/https?:\/\/|www\.|bit\.ly|t\.me|telegram|whatsapp|discord\.gg/i', $message);
+        $containsSpamPhrase = Str::contains($normalized, [
+            'ingyen penz',
+            'gyors meggazdagodas',
+            'crypto',
+            'kaszino',
+            'adult',
+        ]);
+
+        $isDuplicate = Message::where('sender_id', $user->id)
+            ->when($scope === 'car', fn ($query) => $query->where('car_id', $scopeId))
+            ->when($scope === 'sale', fn ($query) => $query->where('sale_id', $scopeId))
+            ->whereRaw('LOWER(message) = ?', [mb_strtolower($message)])
+            ->where('created_at', '>=', now()->subMinutes(2))
+            ->exists();
+
+        if ($hasLink || $containsSpamPhrase || $isDuplicate) {
+            throw ValidationException::withMessages([
+                'message' => 'A rendszer spam-gyanús üzenetet észlelt. Kérlek módosítsd a szöveget.',
+            ]);
+        }
+
+        return $message;
+    }
+
     /**
      * User or admin sends a message about a car.
      */
@@ -28,6 +86,8 @@ class MessageController extends Controller
             abort(403);
         }
 
+        $message = $this->validateAntiSpam($request, 'car', (int) $car->id);
+
         if ($user->isAdmin()) {
             // Admin válasza: az utolsó nem-admin üzenet küldőjének megy
             $lastUserMessage = Message::where('car_id', $car->id)
@@ -43,7 +103,7 @@ class MessageController extends Controller
             'car_id' => $car->id,
             'sender_id' => $user->id,
             'receiver_id' => $receiverId,
-            'message' => $request->input('message'),
+            'message' => $message,
         ]);
 
         // Értesítés a címzettnek
@@ -102,6 +162,14 @@ class MessageController extends Controller
     {
         $carsWithMessages = Car::with(['user', 'messages' => fn ($q) => $q->latest()])
             ->whereHas('messages')
+            ->where(function ($query) {
+                $query->whereHas('user', fn ($userQuery) => $userQuery->where('role', 'admin'))
+                    ->orWhereHas('sales')
+                    ->orWhereHas('messages', function ($messageQuery) {
+                        $messageQuery->whereHas('sender', fn ($userQuery) => $userQuery->where('role', 'admin'))
+                            ->orWhereHas('receiver', fn ($userQuery) => $userQuery->where('role', 'admin'));
+                    });
+            })
             ->get()
             ->map(function ($car) {
                 $car->unread_count = $car->messages
@@ -121,6 +189,10 @@ class MessageController extends Controller
      */
     public function adminConversation(Car $car)
     {
+        if (!$this->isAdminRelevantCar($car)) {
+            abort(404);
+        }
+
         $messages = Message::with('sender')
             ->where('car_id', $car->id)
             ->oldest()
@@ -164,6 +236,8 @@ class MessageController extends Controller
             abort(403);
         }
 
+        $message = $this->validateAntiSpam($request, 'sale', (int) $sale->id);
+
         if ($user->isAdmin()) {
             // Admin replies to the last non-admin sender
             $lastUserMessage = Message::where('sale_id', $sale->id)
@@ -188,7 +262,7 @@ class MessageController extends Controller
             'car_id' => $sale->car_id,
             'sender_id' => $user->id,
             'receiver_id' => $receiverId,
-            'message' => $request->input('message'),
+            'message' => $message,
         ]);
 
         AdminNotification::create([
@@ -235,5 +309,19 @@ class MessageController extends Controller
             ]);
 
         return response()->json($messages);
+    }
+
+    /**
+     * Admin moderation: soft delete a message.
+     */
+    public function destroy(Message $message)
+    {
+        if (!auth()->user()?->isAdmin()) {
+            abort(403);
+        }
+
+        $message->delete();
+
+        return back()->with('success', 'Üzenet moderálva (törölve).');
     }
 }

@@ -167,6 +167,18 @@
         </div>
     @endif
 
+    {{-- PDF számla letöltés (ha kész, elvihető) --}}
+    @if($appointment->service_stage === 'ready')
+        <div class="svc-actions-bar" style="margin-top:0;margin-bottom:20px;">
+            <a href="{{ route('appointments.work-order-pdf', $appointment) }}"
+               class="svc-action-btn"
+               style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-color:#15803d;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Számla letöltése (PDF)
+            </a>
+        </div>
+    @endif
+
     {{-- Cancel / Reschedule akciók --}}
     @if($isUpcoming)
         <div class="svc-actions-bar">

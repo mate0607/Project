@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AppointmentManagementController;
 use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\DashboardController;
@@ -62,6 +63,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
         // Admin uzenetkezelo.
         Route::get('messages', [MessageController::class, 'adminIndex'])->name('messages.index');
         Route::get('messages/car/{car}', [MessageController::class, 'adminConversation'])->name('messages.conversation');
+        Route::delete('messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+
+        // Admin felhasznalo kezeles.
+        Route::get('users', [UserManagementController::class, 'index'])->name('users.index');
+        Route::delete('users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
+        Route::patch('users/{userId}/restore', [UserManagementController::class, 'restore'])->name('users.restore');
     });
 });
 
@@ -86,6 +93,9 @@ Route::middleware(['auth'])->group(function () {
     // Idopont lemondas es atutemezes.
     Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
     Route::patch('appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
+
+    // Munkalap PDF letoltese (csak ha service_stage = ready).
+    Route::get('appointments/{appointment}/work-order-pdf', [AppointmentController::class, 'downloadWorkOrderPdf'])->name('appointments.work-order-pdf');
 
     // Sales piacter oldalak: listazas + megtekintes minden auth usernek.
     Route::resource('sales', SaleController::class)->only([
